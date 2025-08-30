@@ -17,7 +17,8 @@ RUN apk add --no-cache \
     autoconf \
     gcc \
     g++ \
-    make
+    make \
+    linux-headers
 
 # Install PHP extensions
 RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd
@@ -31,14 +32,11 @@ COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy composer files
-COPY composer.json composer.lock ./
+# Copy application code
+COPY . .
 
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction
-
-# Copy application code
-COPY . .
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
@@ -52,8 +50,10 @@ FROM base AS production
 COPY docker/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 COPY docker/php/php-prod.ini /usr/local/etc/php/conf.d/99-custom.ini
 
-# Create log directories
-RUN mkdir -p /var/log/supervisor /var/log/nginx /var/www/html/storage/logs
+# Create log directories with proper permissions
+RUN mkdir -p /var/log/supervisor /var/log/nginx /var/www/html/storage/logs \
+    && chown -R www-data:www-data /var/log/supervisor \
+    && chmod -R 755 /var/log/supervisor
 
 # Expose port
 EXPOSE 80

@@ -13,7 +13,11 @@ RUN apk add --no-cache \
     postgresql-dev \
     redis \
     supervisor \
-    nginx
+    nginx \
+    autoconf \
+    gcc \
+    g++ \
+    make
 
 # Install PHP extensions
 RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd

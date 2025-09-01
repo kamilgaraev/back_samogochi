@@ -1,30 +1,23 @@
-# Multi-stage Docker build for Laravel application
-FROM php:8.3-fpm-alpine AS base
+# Multi-stage Docker build for Laravel application (Debian-based)
+FROM php:8.3-fpm-bookworm AS base
 
 # Install system dependencies
-RUN apk add --no-cache \
-    git \
-    curl \
-    libpng-dev \
-    oniguruma-dev \
-    libxml2-dev \
-    zip \
-    unzip \
-    postgresql-dev \
-    redis \
-    supervisor \
-    nginx \
-    autoconf \
-    gcc \
-    g++ \
-    make \
-    linux-headers
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+    git curl zip unzip \
+    libpq-dev libzip-dev libxml2-dev \
+    libjpeg62-turbo-dev libfreetype6-dev libpng-dev \
+    autoconf pkg-config make g++ \
+  && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions
-RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd
+# Configure and install PHP extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+  && docker-php-ext-install -j"$(nproc)" \
+     gd pdo pdo_pgsql mbstring exif pcntl bcmath zip
 
 # Install Redis extension
-RUN pecl install redis && docker-php-ext-enable redis
+RUN pecl install redis \
+  && docker-php-ext-enable redis
 
 # Install Composer
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
@@ -32,48 +25,41 @@ COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
+# Leverage build cache for composer dependencies
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --optimize-autoloader --no-interaction || true
+
 # Copy application code
 COPY . .
 
-# Install PHP dependencies
+# Re-run composer to install app code specific autoload files (idempotent)
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Set permissions
+# Set permissions expected by Laravel
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage \
-    && chmod -R 755 /var/www/html/bootstrap/cache
+  && chmod -R 775 storage bootstrap/cache
 
 # Production stage
 FROM base AS production
 
-# Copy configurations
-COPY docker/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
+# Production php.ini
 COPY docker/php/php-prod.ini /usr/local/etc/php/conf.d/99-custom.ini
 
-# Create log directories with proper permissions
-RUN mkdir -p /var/log/supervisor /var/log/nginx /var/www/html/storage/logs \
-    && chown -R www-data:www-data /var/log/supervisor \
-    && chmod -R 755 /var/log/supervisor
+# Expose PHP-FPM port
+EXPOSE 9000
 
-# Expose port
-EXPOSE 80
-
-# Start supervisor (which will start nginx, php-fpm, and workers)
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+# Default command: php-fpm
+CMD ["php-fpm"]
 
 # Development stage
 FROM base AS development
 
-# Install development dependencies
-RUN composer install --optimize-autoloader --no-interaction
+# Install and enable Xdebug
+RUN pecl install xdebug \
+  && docker-php-ext-enable xdebug
 
-# Install Xdebug for development
-RUN pecl install xdebug && docker-php-ext-enable xdebug
-
-# Copy development php.ini
+# Development php.ini
 COPY docker/php/php-dev.ini /usr/local/etc/php/conf.d/99-custom.ini
 
-# Copy supervisor configuration for development
-COPY docker/supervisor/supervisord-dev.conf /etc/supervisor/supervisord.conf
-
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+EXPOSE 9000
+CMD ["php-fpm"]

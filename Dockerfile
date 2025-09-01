@@ -2,11 +2,12 @@
 FROM php:8.3-fpm-bookworm AS base
 
 # Improve apt network resilience (force IPv4, retries) and switch to reliable mirrors
-RUN printf 'Acquire::Retries "5";\nAcquire::http::Pipeline-Depth "0";\nAcquire::ForceIPv4 "true";\n' > /etc/apt/apt.conf.d/99network \
-  && sed -i \
-     -e 's|http://deb.debian.org/debian|http://mirror.yandex.ru/debian|g' \
-     -e 's|http://security.debian.org/debian-security|http://mirror.yandex.ru/debian-security|g' \
-     /etc/apt/sources.list || true
+RUN set -eux; \
+  printf 'Acquire::Retries "5";\nAcquire::http::Pipeline-Depth "0";\nAcquire::ForceIPv4 "true";\n' > /etc/apt/apt.conf.d/99network; \
+  rm -f /etc/apt/sources.list.d/debian.sources || true; \
+  printf 'deb http://mirror.yandex.ru/debian bookworm main contrib non-free non-free-firmware\n' > /etc/apt/sources.list; \
+  printf 'deb http://mirror.yandex.ru/debian bookworm-updates main contrib non-free non-free-firmware\n' >> /etc/apt/sources.list; \
+  printf 'deb http://mirror.yandex.ru/debian-security bookworm-security main contrib non-free non-free-firmware\n' >> /etc/apt/sources.list
 
 # Install system dependencies
 RUN apt-get update \

@@ -1,6 +1,13 @@
 # Multi-stage Docker build for Laravel application (Debian-based)
 FROM php:8.3-fpm-bookworm AS base
 
+# Improve apt network resilience (force IPv4, retries) and switch to reliable mirrors
+RUN printf 'Acquire::Retries "5";\nAcquire::http::Pipeline-Depth "0";\nAcquire::ForceIPv4 "true";\n' > /etc/apt/apt.conf.d/99network \
+  && sed -i \
+     -e 's|http://deb.debian.org/debian|http://mirror.yandex.ru/debian|g' \
+     -e 's|http://security.debian.org/debian-security|http://mirror.yandex.ru/debian-security|g' \
+     /etc/apt/sources.list || true
+
 # Install system dependencies
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \

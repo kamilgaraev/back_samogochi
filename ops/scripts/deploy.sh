@@ -17,6 +17,7 @@ NC='\033[0m'
 DEPLOY_DIR="/opt/tamagotchi-api"
 BACKUP_DIR="/opt/backups/tamagotchi-api"
 WEB_USER="www-data"
+COMPOSER_BIN="$(command -v composer || echo /usr/local/bin/composer)"
 
 log_info() {
     echo -e "${BLUE}[INFO]${NC} $1"
@@ -74,7 +75,8 @@ install_dependencies() {
     cd "$DEPLOY_DIR"
     
     # Install PHP dependencies
-    composer install --no-dev --optimize-autoloader --no-interaction || composer update --no-dev --optimize-autoloader --no-interaction
+    "$COMPOSER_BIN" install --no-dev --optimize-autoloader --no-interaction || \
+    "$COMPOSER_BIN" update --no-dev --optimize-autoloader --no-interaction
     
     log_success "Dependencies installed"
 }
@@ -108,7 +110,7 @@ optimize_application() {
     php artisan view:cache
     
     # Optimize autoloader
-    composer dump-autoload --optimize
+    "$COMPOSER_BIN" dump-autoload --optimize
     
     log_success "Application optimized"
 }

@@ -9,6 +9,10 @@ RUN set -eux; \
   printf 'deb http://mirror.yandex.ru/debian bookworm-updates main contrib non-free non-free-firmware\n' >> /etc/apt/sources.list; \
   printf 'deb http://mirror.yandex.ru/debian-security bookworm-security main contrib non-free non-free-firmware\n' >> /etc/apt/sources.list
 
+# Force reliable DNS inside build stage (workaround for hosting DNS issues)
+RUN rm -f /etc/resolv.conf \
+  && printf 'nameserver 1.1.1.1\nnameserver 8.8.8.8\n' > /etc/resolv.conf
+
 # Install system dependencies
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \

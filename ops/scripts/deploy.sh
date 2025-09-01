@@ -60,8 +60,10 @@ update_code() {
     cd "$DEPLOY_DIR"
     
     # Pull latest changes
-    git fetch origin
-    git reset --hard origin/main
+    git fetch origin && git reset --hard origin/main || {
+        log_warning "Git reset failed, attempting fallback pull..."
+        git pull --rebase --autostash origin main || true
+    }
     
     log_success "Code updated"
 }
@@ -72,7 +74,7 @@ install_dependencies() {
     cd "$DEPLOY_DIR"
     
     # Install PHP dependencies
-    composer install --no-dev --optimize-autoloader --no-interaction
+    composer install --no-dev --optimize-autoloader --no-interaction || composer update --no-dev --optimize-autoloader --no-interaction
     
     log_success "Dependencies installed"
 }

@@ -1,0 +1,10 @@
+[Unit]
+Description=Tamagotchi Auto Deploy Timer
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=2min
+Unit=tamagotchi-autodeploy.service
+
+[Install]
+WantedBy=timers.target

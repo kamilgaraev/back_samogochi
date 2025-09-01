@@ -1,0 +1,5 @@
+# Laravel Task Scheduler for Tamagotchi API
+# This cron job runs every minute and executes scheduled tasks defined in Laravel
+# Copy this file to /etc/cron.d/tamagotchi-schedule
+
+* * * * * www-data php /opt/tamagotchi-api/artisan schedule:run >> /dev/null 2>&1

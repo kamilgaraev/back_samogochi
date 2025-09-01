@@ -89,13 +89,25 @@ install_dependencies() {
 
 run_migrations() {
     log_info "Running database migrations..."
-    
     cd "$DEPLOY_DIR"
-    
-    # Run migrations
-    php artisan migrate --force
-    
-    log_success "Migrations completed"
+
+    # Read DB host/port from .env with safe fallbacks
+    local DB_HOST
+    local DB_PORT
+    DB_HOST=$(grep -E '^DB_HOST=' .env | sed -E 's/^DB_HOST=//; s/^"|\'"'"'//; s/"|\'"'"'$//')
+    DB_PORT=$(grep -E '^DB_PORT=' .env | sed -E 's/^DB_PORT=//; s/[^0-9]//g')
+    [ -z "$DB_PORT" ] && DB_PORT=5432
+
+    # If DB host is empty, try localhost
+    [ -z "$DB_HOST" ] && DB_HOST="127.0.0.1"
+
+    # Check TCP connectivity to DB. If unreachable, skip migrations to not break deploy
+    if timeout 3 bash -c ">/dev/tcp/$DB_HOST/$DB_PORT" 2>/dev/null; then
+        php artisan migrate --force
+        log_success "Migrations completed"
+    else
+        log_warning "Database $DB_HOST:$DB_PORT is unreachable. Skipping migrations."
+    fi
 }
 
 optimize_application() {

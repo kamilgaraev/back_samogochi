@@ -2,8 +2,9 @@
 Description=Tamagotchi Auto Deploy Timer
 
 [Timer]
-OnBootSec=2min
-OnUnitActiveSec=2min
+OnBootSec=5min
+OnCalendar=hourly
+Persistent=true
 Unit=tamagotchi-autodeploy.service
 
 [Install]

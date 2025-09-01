@@ -19,6 +19,12 @@ BACKUP_DIR="/opt/backups/tamagotchi-api"
 WEB_USER="www-data"
 COMPOSER_BIN="$(command -v composer || echo /usr/local/bin/composer)"
 
+# Ensure environment for composer in non-interactive root context
+export HOME="${HOME:-/root}"
+export COMPOSER_HOME="${COMPOSER_HOME:-$HOME/.composer}"
+export COMPOSER_ALLOW_SUPERUSER=1
+mkdir -p "$COMPOSER_HOME"
+
 log_info() {
     echo -e "${BLUE}[INFO]${NC} $1"
 }

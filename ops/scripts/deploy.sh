@@ -19,7 +19,7 @@ BACKUP_DIR="/opt/backups/tamagotchi-api"
 WEB_USER="www-data"
 COMPOSER_BIN="$(command -v composer || echo /usr/local/bin/composer)"
 
-Зачеsure environment for composer in non-interactive root context
+# Ensure environment for composer in non-interactive root context
 export HOME="${HOME:-/root}"
 export COMPOSER_HOME="${COMPOSER_HOME:-$HOME/.composer}"
 export COMPOSER_ALLOW_SUPERUSER=1
@@ -85,6 +85,51 @@ install_dependencies() {
     "$COMPOSER_BIN" update --no-dev --optimize-autoloader --no-interaction
     
     log_success "Dependencies installed"
+}
+
+check_database_services() {
+    log_info "Checking database services..."
+    
+    # Check PostgreSQL service
+    if systemctl is-active --quiet postgresql; then
+        log_success "PostgreSQL service is running"
+    else
+        log_warning "PostgreSQL service is not running. Starting..."
+        systemctl start postgresql || log_error "Failed to start PostgreSQL"
+    fi
+    
+    # Check Redis service
+    if systemctl is-active --quiet redis-server; then
+        log_success "Redis service is running"
+    else
+        log_warning "Redis service is not running. Starting..."
+        systemctl start redis-server || log_error "Failed to start Redis"
+    fi
+    
+    # Test database connections
+    log_info "Testing database connections..."
+    
+    # Test PostgreSQL connection
+    cd "$DEPLOY_DIR"
+    if [ -f .env ]; then
+        DB_HOST=$(grep -E '^DB_HOST=' .env | sed -E 's/^DB_HOST=//; s/^"|\'"'"'//; s/"|\'"'"'$//' || echo "localhost")
+        DB_PORT=$(grep -E '^DB_PORT=' .env | sed -E 's/^DB_PORT=//; s/[^0-9]//g' || echo "5432")
+        DB_USERNAME=$(grep -E '^DB_USERNAME=' .env | sed -E 's/^DB_USERNAME=//; s/^"|\'"'"'//; s/"|\'"'"'$//')
+        DB_DATABASE=$(grep -E '^DB_DATABASE=' .env | sed -E 's/^DB_DATABASE=//; s/^"|\'"'"'//; s/"|\'"'"'$//')
+        
+        if nc -z -w5 "$DB_HOST" "$DB_PORT" 2>/dev/null; then
+            log_success "PostgreSQL is accessible at $DB_HOST:$DB_PORT"
+        else
+            log_warning "PostgreSQL at $DB_HOST:$DB_PORT is not accessible"
+        fi
+    fi
+    
+    # Test Redis connection
+    if redis-cli ping > /dev/null 2>&1; then
+        log_success "Redis is accessible"
+    else
+        log_warning "Redis is not accessible"
+    fi
 }
 
 run_migrations() {
@@ -214,6 +259,7 @@ main() {
     create_backup
     update_code
     install_dependencies
+    check_database_services
     run_migrations
     optimize_application
     fix_permissions

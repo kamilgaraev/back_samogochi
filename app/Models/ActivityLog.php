@@ -9,6 +9,9 @@ class ActivityLog extends Model
 {
     use HasFactory;
 
+    // Отключаем updated_at, так как логи не должны обновляться
+    const UPDATED_AT = null;
+
     protected $fillable = [
         'user_id',
         'event_type',

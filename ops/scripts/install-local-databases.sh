@@ -21,8 +21,8 @@ log_info "Обновление списка пакетов..."
 apt update
 
 # Устанавливаем PostgreSQL
-log_info "Установка PostgreSQL 15..."
-apt install -y postgresql-15 postgresql-client-15 postgresql-contrib-15
+log_info "Установка PostgreSQL 16..."
+apt install -y postgresql-16 postgresql-client-16 postgresql-contrib-16
 
 # Устанавливаем Redis
 log_info "Установка Redis..."
@@ -76,7 +76,7 @@ systemctl is-active redis-server || {
 # Настройка pg_hba.conf для локального подключения
 log_info "Настройка доступа PostgreSQL..."
 
-PG_VERSION=$(sudo -u postgres psql -t -c "SELECT version();" | grep -oP "\d+\.\d+" | head -1)
+PG_VERSION="16"
 PG_HBA_FILE="/etc/postgresql/${PG_VERSION}/main/pg_hba.conf"
 
 # Делаем бэкап конфига

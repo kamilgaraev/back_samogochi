@@ -19,7 +19,191 @@
             </style>
         @endif
     </head>
-    <body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] flex p-6 lg:p-8 items-center lg:justify-center min-h-screen flex-col">
-        Всем привет!
+    <body class="bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 dark:from-purple-900 dark:via-pink-900 dark:to-red-900 min-h-screen">
+        <!-- Header -->
+        <header class="fixed top-0 w-full bg-white/90 dark:bg-black/90 backdrop-blur-md z-50 border-b border-white/20">
+            <nav class="container mx-auto px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+                            <span class="text-white font-bold text-lg">🎮</span>
+                        </div>
+                        <span class="text-xl font-bold text-gray-800 dark:text-white">AntiStress</span>
+                    </div>
+                    <div class="hidden md:flex space-x-8">
+                        <a href="#features" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">Особенности</a>
+                        <a href="#download" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">Скачать</a>
+                        <a href="#contact" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">Контакты</a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Hero Section -->
+        <main class="pt-20">
+            <section class="container mx-auto px-6 py-20">
+                <div class="text-center">
+                    <h1 class="text-5xl md:text-7xl font-bold text-white mb-8 leading-tight">
+                        Твой личный<br>
+                        <span class="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+                            АнтиСтресс Тамагочи
+                        </span>
+                    </h1>
+                    <p class="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed">
+                        Борись со стрессом играючи! Выращивай своего цифрового питомца, 
+                        проходи ситуации и развивай навыки управления эмоциями.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                        <button class="bg-white text-purple-600 px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-gray-100 transition-all transform hover:scale-105 shadow-2xl">
+                            📱 Скачать для iOS
+                        </button>
+                        <button class="bg-black/30 text-white border-2 border-white/30 px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-white/10 transition-all transform hover:scale-105">
+                            🤖 Скачать для Android
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section id="features" class="bg-white/10 backdrop-blur-lg py-20">
+                <div class="container mx-auto px-6">
+                    <h2 class="text-4xl md:text-5xl font-bold text-center text-white mb-16">
+                        Почему выбирают нас?
+                    </h2>
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <div class="bg-white/20 backdrop-blur-lg rounded-3xl p-8 text-center hover:transform hover:scale-105 transition-all">
+                            <div class="text-6xl mb-4">🧘‍♀️</div>
+                            <h3 class="text-2xl font-bold text-white mb-4">Управление стрессом</h3>
+                            <p class="text-white/80">Изучай эффективные техники борьбы со стрессом через игровые механики</p>
+                        </div>
+                        <div class="bg-white/20 backdrop-blur-lg rounded-3xl p-8 text-center hover:transform hover:scale-105 transition-all">
+                            <div class="text-6xl mb-4">🎯</div>
+                            <h3 class="text-2xl font-bold text-white mb-4">Реальные ситуации</h3>
+                            <p class="text-white/80">Тренируйся на жизненных сценариях и развивай эмоциональный интеллект</p>
+                        </div>
+                        <div class="bg-white/20 backdrop-blur-lg rounded-3xl p-8 text-center hover:transform hover:scale-105 transition-all">
+                            <div class="text-6xl mb-4">📈</div>
+                            <h3 class="text-2xl font-bold text-white mb-4">Прогресс и рост</h3>
+                            <p class="text-white/80">Отслеживай свой прогресс и получай достижения за успехи</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stats Section -->
+            <section class="py-20">
+                <div class="container mx-auto px-6">
+                    <div class="grid md:grid-cols-4 gap-8 text-center">
+                        <div>
+                            <div class="text-4xl md:text-5xl font-bold text-white mb-2">10K+</div>
+                            <div class="text-white/80 text-lg">Активных пользователей</div>
+                        </div>
+                        <div>
+                            <div class="text-4xl md:text-5xl font-bold text-white mb-2">95%</div>
+                            <div class="text-white/80 text-lg">Снижение стресса</div>
+                        </div>
+                        <div>
+                            <div class="text-4xl md:text-5xl font-bold text-white mb-2">50+</div>
+                            <div class="text-white/80 text-lg">Игровых ситуаций</div>
+                        </div>
+                        <div>
+                            <div class="text-4xl md:text-5xl font-bold text-white mb-2">4.9★</div>
+                            <div class="text-white/80 text-lg">Рейтинг в App Store</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Download Section -->
+            <section id="download" class="bg-white/10 backdrop-blur-lg py-20">
+                <div class="container mx-auto px-6 text-center">
+                    <h2 class="text-4xl md:text-5xl font-bold text-white mb-8">
+                        Готов начать путь к спокойствию?
+                    </h2>
+                    <p class="text-xl text-white/90 mb-12 max-w-2xl mx-auto">
+                        Присоединяйся к тысячам пользователей, которые уже научились управлять стрессом с помощью нашего приложения
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                        <button class="bg-white text-purple-600 px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-gray-100 transition-all transform hover:scale-105 shadow-2xl">
+                            📱 App Store
+                        </button>
+                        <button class="bg-black/30 text-white border-2 border-white/30 px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-white/10 transition-all transform hover:scale-105">
+                            🤖 Google Play
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-black/30 backdrop-blur-lg border-t border-white/20 py-12">
+            <div class="container mx-auto px-6">
+                <div class="grid md:grid-cols-4 gap-8">
+                    <div>
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                                <span class="text-white font-bold">🎮</span>
+                            </div>
+                            <span class="text-lg font-bold text-white">AntiStress</span>
+                        </div>
+                        <p class="text-white/70">Твой путь к эмоциональному благополучию начинается здесь.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-white mb-4">Продукт</h4>
+                        <ul class="space-y-2 text-white/70">
+                            <li><a href="#" class="hover:text-white transition-colors">Особенности</a></li>
+                            <li><a href="#" class="hover:text-white transition-colors">Отзывы</a></li>
+                            <li><a href="#" class="hover:text-white transition-colors">FAQ</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-white mb-4">Поддержка</h4>
+                        <ul class="space-y-2 text-white/70">
+                            <li><a href="#" class="hover:text-white transition-colors">Помощь</a></li>
+                            <li><a href="#" class="hover:text-white transition-colors">Контакты</a></li>
+                            <li><a href="#" class="hover:text-white transition-colors">Сообщить об ошибке</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-white mb-4">Социальные сети</h4>
+                        <div class="flex space-x-4">
+                            <a href="#" class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center hover:bg-white/30 transition-colors">
+                                <span class="text-white">📘</span>
+                            </a>
+                            <a href="#" class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center hover:bg-white/30 transition-colors">
+                                <span class="text-white">📸</span>
+                            </a>
+                            <a href="#" class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center hover:bg-white/30 transition-colors">
+                                <span class="text-white">🐦</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="border-t border-white/20 mt-12 pt-8 text-center">
+                    <p class="text-white/70">© 2024 AntiStress Tamagotchi. Все права защищены.</p>
+                </div>
+            </div>
+        </footer>
+
+        <script>
+            // Smooth scroll for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+
+            // Simple parallax effect
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const parallax = document.querySelector('main');
+                const speed = scrolled * 0.5;
+                parallax.style.transform = `translateY(${speed}px)`;
+            });
+        </script>
     </body>
 </html>

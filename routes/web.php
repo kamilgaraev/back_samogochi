@@ -15,12 +15,7 @@ Route::get('/docs', function () {
     }
     
     return response()->json([
-        'message' => 'Документация не найдена. Выполните: cd docs && npm install && npm run build',
-        'commands' => [
-            'cd docs',
-            'npm install', 
-            'npm run build'
-        ]
+        'message' => 'Документация не найдена. Выполните сборку: cd docs && npm run build'
     ], 404);
 });
 

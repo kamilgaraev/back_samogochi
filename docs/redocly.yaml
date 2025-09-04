@@ -5,54 +5,88 @@ apis:
   main:
     root: openapi.yaml
 
-lint:
-  rules:
-    # Отключаем строгую проверку примеров
-    no-invalid-media-type-examples: off
-    # Разрешаем пустые описания
-    info-description: off
-    # Разрешаем теги без описания
-    tag-description: off
-    # Отключаем проверку серверов в production
-    no-server-variables-empty-enum: off
-    # Разрешаем дополнительные свойства
-    no-additionalProperties: off
-    
 theme:
-  colors:
-    primary:
-      main: '#2563eb'
-    success:
-      main: '#10b981'
-    warning:
-      main: '#f59e0b'
-    error:
-      main: '#ef4444'
-  typography:
-    fontSize:
-      base: '14px'
-    headings:
-      fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
-    code:
-      fontFamily: 'JetBrains Mono, Consolas, Monaco, monospace'
-  sidebar:
-    backgroundColor: '#f8fafc'
-  rightPanel:
-    backgroundColor: '#1e293b'
-    textColor: '#e2e8f0'
-
-features:
   openapi:
     generateCodeSamples:
       languages:
         - lang: curl
+          label: cURL
         - lang: javascript
-        - lang: python
+          label: JavaScript
+        - lang: python  
+          label: Python
         - lang: php
+          label: PHP
+    showConsole: true
     hideTryItPanel: false
+    hideDownloadButton: false
+    hideRequestPayloadSample: false
+    hideResponsePayloadSample: false
+    pathInMiddlePanel: true
+    expandResponses: "200,201"
     
-nav:
-  - label: 'API Reference'
-    page: openapi.yaml
-  - label: 'GitHub'
-    href: 'https://github.com/your-repo/tamagotchi-api'
+  colors:
+    primary: '#6366f1'
+    success: '#10b981' 
+    warning: '#f59e0b'
+    error: '#ef4444'
+    gray: 
+      50: '#f9fafb'
+      100: '#f3f4f6'
+      200: '#e5e7eb'
+      300: '#d1d5db'
+      400: '#9ca3af'
+      500: '#6b7280'
+      600: '#4b5563'
+      700: '#374151'
+      800: '#1f2937'
+      900: '#111827'
+    
+  typography:
+    fontSize: '15px'
+    lineHeight: '1.6'
+    fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+    headings:
+      fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+      fontWeight: '600'
+    code:
+      fontSize: '14px'
+      fontFamily: '"JetBrains Mono", "Fira Code", Consolas, "Liberation Mono", Menlo, Courier, monospace'
+      
+  sidebar:
+    width: '280px'
+    backgroundColor: '#ffffff'
+    textColor: '#374151'
+    groupItems:
+      textTransform: 'uppercase'
+      fontWeight: '600'
+      letterSpacing: '0.5px'
+    level1Items:
+      textTransform: 'none'
+      fontWeight: '500'
+    activeTextColor: '#6366f1'
+    
+  rightPanel:
+    backgroundColor: '#0f172a'
+    width: '40%'
+    textColor: '#e2e8f0'
+    
+  codeBlock:
+    backgroundColor: '#1e293b'
+    tokens:
+      string: '#a3e635'
+      keyword: '#f472b6'  
+      number: '#60a5fa'
+      property: '#fbbf24'
+      punctuation: '#94a3b8'
+      
+  http:
+    get: '#10b981'
+    post: '#3b82f6' 
+    put: '#f59e0b'
+    delete: '#ef4444'
+    patch: '#8b5cf6'
+    
+  layout:
+    showSidebar: true
+    showRightPanel: true

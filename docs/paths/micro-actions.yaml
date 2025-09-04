@@ -154,7 +154,7 @@
                             type: integer
                             example: 1
                           micro_action:
-                            $ref: '../components/schemas.yaml#/MicroAction'
+                            $ref: '../openapi.yaml#/components/schemas/MicroAction'
                           performed_at:
                             type: string
                             format: date-time
@@ -295,6 +295,6 @@
         content:
           application/json:
             schema:
-              $ref: '../components/responses.yaml#/ErrorResponse'
+              $ref: '../openapi.yaml#/components/responses/ErrorResponse'
       '401':
         description: Неавторизованный запрос

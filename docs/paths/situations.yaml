@@ -46,7 +46,7 @@
                     situations:
                       type: array
                       items:
-                        $ref: '../components/schemas.yaml#/Situation'
+                        $ref: '../openapi.yaml#/components/schemas/Situation'
                     pagination:
                       type: object
                       properties:
@@ -88,7 +88,7 @@
         content:
           application/json:
             schema:
-              $ref: '../components/responses.yaml#/ErrorResponse'
+              $ref: '../openapi.yaml#/components/responses/ErrorResponse'
       '401':
         description: Неавторизованный запрос
 
@@ -141,7 +141,7 @@
                             type: integer
                             example: 1
                           situation:
-                            $ref: '../components/schemas.yaml#/Situation'
+                            $ref: '../openapi.yaml#/components/schemas/Situation'
                           option_chosen:
                             $ref: '../components/schemas.yaml#/SituationOption'
                           completed_at:
@@ -247,7 +247,7 @@
         content:
           application/json:
             schema:
-              $ref: '../components/responses.yaml#/ErrorResponse'
+              $ref: '../openapi.yaml#/components/responses/ErrorResponse'
       '401':
         description: Неавторизованный запрос
 
@@ -329,12 +329,12 @@
         content:
           application/json:
             schema:
-              $ref: '../components/responses.yaml#/ErrorResponse'
+              $ref: '../openapi.yaml#/components/responses/ErrorResponse'
       '404':
         description: Ситуация или вариант не найден
         content:
           application/json:
             schema:
-              $ref: '../components/responses.yaml#/ErrorResponse'
+              $ref: '../openapi.yaml#/components/responses/ErrorResponse'
       '401':
         description: Неавторизованный запрос

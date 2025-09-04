@@ -23,7 +23,7 @@
                     configs:
                       type: array
                       items:
-                        $ref: '../components/schemas.yaml#/GameConfig'
+                        $ref: '../openapi.yaml#/components/schemas/GameConfig'
       '401':
         description: Неавторизованный запрос
       '403':
@@ -86,7 +86,7 @@
                   type: string
                   example: "Конфигурация успешно обновлена"
                 data:
-                  $ref: '../components/schemas.yaml#/GameConfig'
+                  $ref: '../openapi.yaml#/components/schemas/GameConfig'
       '401':
         description: Неавторизованный запрос
       '403':
@@ -96,7 +96,7 @@
         content:
           application/json:
             schema:
-              $ref: '../components/responses.yaml#/ErrorResponse'
+              $ref: '../openapi.yaml#/components/responses/ErrorResponse'
 
 /admin/situations:
   get:
@@ -154,7 +154,7 @@
                     situations:
                       type: array
                       items:
-                        $ref: '../components/schemas.yaml#/Situation'
+                        $ref: '../openapi.yaml#/components/schemas/Situation'
                     pagination:
                       type: object
                       properties:
@@ -276,13 +276,13 @@
                   type: string
                   example: "Ситуация успешно создана"
                 data:
-                  $ref: '../components/schemas.yaml#/Situation'
+                  $ref: '../openapi.yaml#/components/schemas/Situation'
       '400':
         description: Ошибка валидации или создания
         content:
           application/json:
             schema:
-              $ref: '../components/responses.yaml#/ErrorResponse'
+              $ref: '../openapi.yaml#/components/responses/ErrorResponse'
       '401':
         description: Неавторизованный запрос
       '403':
@@ -378,7 +378,7 @@
                   type: string
                   example: "Ситуация успешно обновлена"
                 data:
-                  $ref: '../components/schemas.yaml#/Situation'
+                  $ref: '../openapi.yaml#/components/schemas/Situation'
       '400':
         description: Ошибка валидации
       '401':
@@ -410,7 +410,7 @@
           application/json:
             schema:
               allOf:
-                - $ref: '../components/responses.yaml#/SuccessResponse'
+                - $ref: '../openapi.yaml#/components/responses/SuccessResponse'
                 - type: object
                   properties:
                     message:
@@ -424,4 +424,4 @@
         content:
           application/json:
             schema:
-              $ref: '../components/responses.yaml#/ErrorResponse'
+              $ref: '../openapi.yaml#/components/responses/ErrorResponse'

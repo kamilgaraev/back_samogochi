@@ -318,7 +318,7 @@
                         type: object
                         properties:
                           situation:
-                            $ref: '../components/schemas.yaml#/Situation'
+                            $ref: '../openapi.yaml#/components/schemas/Situation'
                           completion_count:
                             type: integer
                             example: 156
@@ -337,7 +337,7 @@
                         type: object
                         properties:
                           situation:
-                            $ref: '../components/schemas.yaml#/Situation'
+                            $ref: '../openapi.yaml#/components/schemas/Situation'
                           effectiveness_score:
                             type: number
                             format: float

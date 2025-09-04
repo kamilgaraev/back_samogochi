@@ -18,7 +18,7 @@
                   type: boolean
                   example: true
                 data:
-                  $ref: '../components/schemas.yaml#/PlayerProfile'
+                  $ref: '../openapi.yaml#/components/schemas/PlayerProfile'
       '401':
         description: Неавторизованный запрос
         
@@ -154,7 +154,7 @@
         content:
           application/json:
             schema:
-              $ref: '../components/responses.yaml#/ErrorResponse'
+              $ref: '../openapi.yaml#/components/responses/ErrorResponse'
       '401':
         description: Неавторизованный запрос
 

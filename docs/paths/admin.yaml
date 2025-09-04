@@ -32,7 +32,7 @@
           application/json:
             schema:
               allOf:
-                - $ref: '../components/responses.yaml#/ErrorResponse'
+                - $ref: '../openapi.yaml#/components/responses/ErrorResponse'
                 - type: object
                   properties:
                     message:

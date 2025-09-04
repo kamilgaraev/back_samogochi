@@ -44,7 +44,7 @@
                 data:
                   type: array
                   items:
-                    $ref: '../components/schemas.yaml#/MicroAction'
+                    $ref: '../openapi.yaml#/components/schemas/MicroAction'
       '401':
         description: Неавторизованный запрос
 
@@ -74,7 +74,7 @@
                       type: array
                       items:
                         allOf:
-                          - $ref: '../components/schemas.yaml#/MicroAction'
+                          - $ref: '../openapi.yaml#/components/schemas/MicroAction'
                           - type: object
                             properties:
                               recommendation_reason:
@@ -276,7 +276,7 @@
           application/json:
             schema:
               allOf:
-                - $ref: '../components/responses.yaml#/ErrorResponse'
+                - $ref: '../openapi.yaml#/components/responses/ErrorResponse'
                 - type: object
                   properties:
                     message:

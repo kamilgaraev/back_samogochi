@@ -55,7 +55,7 @@
           application/json:
             schema:
               allOf:
-                - $ref: '../components/responses.yaml#/SuccessResponse'
+                - $ref: '../openapi.yaml#/components/responses/SuccessResponse'
                 - type: object
                   properties:
                     message:

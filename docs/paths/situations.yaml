@@ -82,7 +82,7 @@
                   type: boolean
                   example: true
                 data:
-                  $ref: '../components/schemas.yaml#/Situation'
+                  $ref: '../openapi.yaml#/components/schemas/Situation'
       '404':
         description: Подходящие ситуации не найдены
         content:
@@ -143,7 +143,7 @@
                           situation:
                             $ref: '../openapi.yaml#/components/schemas/Situation'
                           option_chosen:
-                            $ref: '../components/schemas.yaml#/SituationOption'
+                            $ref: '../openapi.yaml#/components/schemas/SituationOption'
                           completed_at:
                             type: string
                             format: date-time
@@ -198,7 +198,7 @@
                       type: array
                       items:
                         allOf:
-                          - $ref: '../components/schemas.yaml#/Situation'
+                          - $ref: '../openapi.yaml#/components/schemas/Situation'
                           - type: object
                             properties:
                               recommendation_reason:
@@ -241,7 +241,7 @@
                   type: boolean
                   example: true
                 data:
-                  $ref: '../components/schemas.yaml#/Situation'
+                  $ref: '../openapi.yaml#/components/schemas/Situation'
       '404':
         description: Ситуация не найдена
         content:

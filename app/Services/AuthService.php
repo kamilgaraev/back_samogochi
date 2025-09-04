@@ -15,52 +15,35 @@ class AuthService
 {
     public function register(array $data)
     {
-        try {
-            $user = User::create([
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'password' => Hash::make($data['password']),
-                'is_admin' => false,
-            ]);
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+            'is_admin' => false,
+        ]);
 
-            \Log::info('User created successfully', ['user_id' => $user->id]);
+        $playerProfile = PlayerProfile::create([
+            'user_id' => $user->id,
+            'level' => 1,
+            'total_experience' => 0,
+            'energy' => 100,
+            'stress' => 50,
+            'anxiety' => 30,
+            'last_login' => now(),
+            'consecutive_days' => 0,
+        ]);
 
-            $playerProfile = PlayerProfile::create([
-                'user_id' => $user->id,
-                'level' => 1,
-                'total_experience' => 0,
-                'energy' => 100,
-                'stress' => 50,
-                'anxiety' => 30,
-                'last_login' => now(),
-                'consecutive_days' => 0,
-            ]);
+        ActivityLog::logRegistration($user->id);
 
-            \Log::info('PlayerProfile created successfully', ['profile_id' => $playerProfile->id]);
+        $token = JWTAuth::fromUser($user);
 
-            ActivityLog::logRegistration($user->id);
-
-            \Log::info('ActivityLog created successfully');
-
-            $token = JWTAuth::fromUser($user);
-
-            \Log::info('JWT token created successfully');
-
-            return [
-                'user' => $user,
-                'player' => $playerProfile,
-                'token' => $token,
-                'token_type' => 'bearer',
-                'expires_in' => config('jwt.ttl') * 60
-            ];
-        } catch (\Exception $e) {
-            \Log::error('Registration failed: ' . $e->getMessage(), [
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            throw $e;
-        }
+        return [
+            'user' => $user,
+            'player' => $playerProfile,
+            'token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => (int)config('jwt.ttl') * 60
+        ];
     }
 
     public function login(array $credentials)
@@ -83,7 +66,7 @@ class AuthService
             'player' => $user->playerProfile,
             'token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => config('jwt.ttl') * 60
+            'expires_in' => (int)config('jwt.ttl') * 60
         ];
     }
 
@@ -110,7 +93,7 @@ class AuthService
             return [
                 'token' => $token,
                 'token_type' => 'bearer',
-                'expires_in' => config('jwt.ttl') * 60
+                'expires_in' => (int)config('jwt.ttl') * 60
             ];
         } catch (JWTException $e) {
             return null;

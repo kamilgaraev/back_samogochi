@@ -1,0 +1,427 @@
+/admin/configs:
+  get:
+    tags:
+      - Admin
+    summary: Получение конфигураций игры
+    description: Получение всех конфигурационных параметров игры (только для администраторов)
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Конфигурации получены успешно
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    configs:
+                      type: array
+                      items:
+                        $ref: '../components/schemas.yaml#/GameConfig'
+      '401':
+        description: Неавторизованный запрос
+      '403':
+        description: Недостаточно прав доступа
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/responses.yaml#/ErrorResponse'
+                - type: object
+                  properties:
+                    message:
+                      example: "Недостаточно прав для выполнения этого действия"
+
+/admin/configs/{key}:
+  put:
+    tags:
+      - Admin
+    summary: Обновление конфигурации
+    description: Обновление значения конфигурационного параметра игры
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: key
+        in: path
+        required: true
+        description: Ключ конфигурации
+        schema:
+          type: string
+          example: "daily_reward_base_experience"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - value
+            properties:
+              value:
+                type: string
+                example: "75"
+                description: "Новое значение конфигурации"
+              description:
+                type: string
+                example: "Базовое количество опыта за ежедневную награду"
+                description: "Описание конфигурации (опционально)"
+    responses:
+      '200':
+        description: Конфигурация успешно обновлена
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: "Конфигурация успешно обновлена"
+                data:
+                  $ref: '../components/schemas.yaml#/GameConfig'
+      '401':
+        description: Неавторизованный запрос
+      '403':
+        description: Недостаточно прав доступа
+      '404':
+        description: Конфигурация не найдена
+        content:
+          application/json:
+            schema:
+              $ref: '../components/responses.yaml#/ErrorResponse'
+
+/admin/situations:
+  get:
+    tags:
+      - Admin
+    summary: Управление ситуациями
+    description: Получение списка всех ситуаций для администрирования
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: page
+        in: query
+        description: Номер страницы
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: per_page
+        in: query
+        description: Количество записей на страницу
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+      - name: category
+        in: query
+        description: Фильтр по категории
+        required: false
+        schema:
+          type: string
+          enum: [work, personal, health, social, education]
+      - name: active
+        in: query
+        description: Фильтр по активности
+        required: false
+        schema:
+          type: boolean
+    responses:
+      '200':
+        description: Список ситуаций получен
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    situations:
+                      type: array
+                      items:
+                        $ref: '../components/schemas.yaml#/Situation'
+                    pagination:
+                      type: object
+                      properties:
+                        current_page:
+                          type: integer
+                          example: 1
+                        per_page:
+                          type: integer
+                          example: 20
+                        total:
+                          type: integer
+                          example: 150
+                        total_pages:
+                          type: integer
+                          example: 8
+      '401':
+        description: Неавторизованный запрос
+      '403':
+        description: Недостаточно прав доступа
+
+  post:
+    tags:
+      - Admin
+    summary: Создание новой ситуации
+    description: Создание новой игровой ситуации с вариантами решений
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - title
+              - description
+              - category
+              - difficulty_level
+              - options
+            properties:
+              title:
+                type: string
+                maxLength: 255
+                example: "Конфликт с коллегой"
+              description:
+                type: string
+                example: "Ваш коллега постоянно критикует вашу работу на совещаниях"
+              category:
+                type: string
+                enum: [work, personal, health, social, education]
+                example: "work"
+              difficulty_level:
+                type: string
+                enum: [easy, medium, hard]
+                example: "medium"
+              min_level_required:
+                type: integer
+                minimum: 1
+                default: 1
+                example: 3
+              stress_impact:
+                type: integer
+                minimum: -50
+                maximum: 50
+                example: 20
+              experience_reward:
+                type: integer
+                minimum: 0
+                example: 30
+              is_active:
+                type: boolean
+                default: true
+                example: true
+              options:
+                type: array
+                minItems: 2
+                maxItems: 5
+                items:
+                  type: object
+                  required:
+                    - text
+                    - stress_change
+                    - experience_reward
+                  properties:
+                    text:
+                      type: string
+                      example: "Открыто поговорить с коллегой о ситуации"
+                    stress_change:
+                      type: integer
+                      minimum: -50
+                      maximum: 50
+                      example: -15
+                    experience_reward:
+                      type: integer
+                      minimum: 0
+                      example: 20
+                    energy_cost:
+                      type: integer
+                      minimum: 0
+                      default: 0
+                      example: 15
+                    min_level_required:
+                      type: integer
+                      minimum: 1
+                      default: 1
+                      example: 1
+    responses:
+      '201':
+        description: Ситуация успешно создана
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: "Ситуация успешно создана"
+                data:
+                  $ref: '../components/schemas.yaml#/Situation'
+      '400':
+        description: Ошибка валидации или создания
+        content:
+          application/json:
+            schema:
+              $ref: '../components/responses.yaml#/ErrorResponse'
+      '401':
+        description: Неавторизованный запрос
+      '403':
+        description: Недостаточно прав доступа
+
+/admin/situations/{id}:
+  put:
+    tags:
+      - Admin
+    summary: Обновление ситуации
+    description: Обновление существующей игровой ситуации
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID ситуации
+        schema:
+          type: integer
+          example: 1
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                maxLength: 255
+                example: "Конфликт с коллегой (обновлено)"
+              description:
+                type: string
+                example: "Ваш коллега постоянно критикует вашу работу"
+              category:
+                type: string
+                enum: [work, personal, health, social, education]
+                example: "work"
+              difficulty_level:
+                type: string
+                enum: [easy, medium, hard]
+                example: "hard"
+              min_level_required:
+                type: integer
+                minimum: 1
+                example: 5
+              stress_impact:
+                type: integer
+                minimum: -50
+                maximum: 50
+                example: 25
+              experience_reward:
+                type: integer
+                minimum: 0
+                example: 40
+              is_active:
+                type: boolean
+                example: true
+              options:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                      description: "ID существующего варианта (для обновления)"
+                    text:
+                      type: string
+                      example: "Обсудить проблему с руководителем"
+                    stress_change:
+                      type: integer
+                      example: -20
+                    experience_reward:
+                      type: integer
+                      example: 25
+                    energy_cost:
+                      type: integer
+                      example: 20
+    responses:
+      '200':
+        description: Ситуация успешно обновлена
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: "Ситуация успешно обновлена"
+                data:
+                  $ref: '../components/schemas.yaml#/Situation'
+      '400':
+        description: Ошибка валидации
+      '401':
+        description: Неавторизованный запрос
+      '403':
+        description: Недостаточно прав доступа
+      '404':
+        description: Ситуация не найдена
+
+  delete:
+    tags:
+      - Admin
+    summary: Удаление ситуации
+    description: Удаление игровой ситуации (мягкое удаление)
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID ситуации для удаления
+        schema:
+          type: integer
+          example: 1
+    responses:
+      '200':
+        description: Ситуация успешно удалена
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/responses.yaml#/SuccessResponse'
+                - type: object
+                  properties:
+                    message:
+                      example: "Ситуация успешно удалена"
+      '401':
+        description: Неавторизованный запрос
+      '403':
+        description: Недостаточно прав доступа
+      '404':
+        description: Ситуация не найдена
+        content:
+          application/json:
+            schema:
+              $ref: '../components/responses.yaml#/ErrorResponse'

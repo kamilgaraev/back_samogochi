@@ -51,9 +51,9 @@ AuthResponse:
       type: object
       properties:
         user:
-          $ref: '../schemas.yaml#/User'
+          $ref: './schemas.yaml#/User'
         player:
-          $ref: '../schemas.yaml#/PlayerProfile'
+          $ref: './schemas.yaml#/PlayerProfile'
         token:
           type: string
           example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."

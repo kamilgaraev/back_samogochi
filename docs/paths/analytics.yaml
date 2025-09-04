@@ -1,0 +1,506 @@
+/analytics/dashboard:
+  get:
+    tags:
+      - Analytics
+    summary: Основная аналитика (дашборд)
+    description: Получение ключевых метрик и статистики для дашборда
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: period
+        in: query
+        description: Период для анализа
+        required: false
+        schema:
+          type: string
+          enum: [today, week, month, quarter, year]
+          default: month
+      - name: date_from
+        in: query
+        description: Начальная дата (ISO 8601)
+        required: false
+        schema:
+          type: string
+          format: date
+          example: "2025-08-01"
+      - name: date_to
+        in: query
+        description: Конечная дата (ISO 8601)
+        required: false
+        schema:
+          type: string
+          format: date
+          example: "2025-09-01"
+    responses:
+      '200':
+        description: Аналитика получена успешно
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    overview:
+                      type: object
+                      properties:
+                        total_users:
+                          type: integer
+                          example: 1234
+                        active_users:
+                          type: integer
+                          example: 456
+                        total_situations_completed:
+                          type: integer
+                          example: 5678
+                        total_micro_actions_performed:
+                          type: integer
+                          example: 12345
+                        average_stress_level:
+                          type: number
+                          format: float
+                          example: 42.5
+                        average_session_duration:
+                          type: integer
+                          example: 1800
+                          description: "Средняя длительность сессии в секундах"
+                    trends:
+                      type: object
+                      properties:
+                        user_growth:
+                          type: number
+                          format: float
+                          example: 15.2
+                          description: "Рост пользователей в процентах"
+                        engagement_rate:
+                          type: number
+                          format: float
+                          example: 78.5
+                          description: "Уровень вовлеченности в процентах"
+                        stress_reduction:
+                          type: number
+                          format: float
+                          example: -12.3
+                          description: "Среднее изменение уровня стресса"
+                    top_categories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          category:
+                            type: string
+                            example: "work"
+                          count:
+                            type: integer
+                            example: 234
+                          percentage:
+                            type: number
+                            format: float
+                            example: 35.6
+                    recent_activity:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          event_type:
+                            type: string
+                            example: "user.registration"
+                          count:
+                            type: integer
+                            example: 15
+                          timestamp:
+                            type: string
+                            format: date-time
+                            example: "2025-09-04T12:00:00Z"
+      '401':
+        description: Неавторизованный запрос
+      '403':
+        description: Недостаточно прав доступа
+
+/analytics/player-behavior:
+  get:
+    tags:
+      - Analytics
+    summary: Анализ поведения игроков
+    description: Подробная аналитика поведенческих паттернов игроков
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: segment
+        in: query
+        description: Сегмент пользователей для анализа
+        required: false
+        schema:
+          type: string
+          enum: [all, new, returning, active, inactive]
+          default: all
+      - name: period
+        in: query
+        description: Период для анализа
+        required: false
+        schema:
+          type: string
+          enum: [week, month, quarter]
+          default: month
+    responses:
+      '200':
+        description: Анализ поведения получен
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    user_segments:
+                      type: object
+                      properties:
+                        new_users:
+                          type: integer
+                          example: 123
+                        returning_users:
+                          type: integer
+                          example: 456
+                        churned_users:
+                          type: integer
+                          example: 78
+                    engagement_patterns:
+                      type: object
+                      properties:
+                        average_sessions_per_user:
+                          type: number
+                          format: float
+                          example: 4.2
+                        average_session_duration:
+                          type: integer
+                          example: 1200
+                        most_active_hours:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              hour:
+                                type: integer
+                                example: 20
+                              activity_count:
+                                type: integer
+                                example: 156
+                        most_active_days:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              day:
+                                type: string
+                                example: "monday"
+                              activity_count:
+                                type: integer
+                                example: 234
+                    feature_usage:
+                      type: object
+                      properties:
+                        situations_vs_micro_actions:
+                          type: object
+                          properties:
+                            situations_percentage:
+                              type: number
+                              format: float
+                              example: 65.3
+                            micro_actions_percentage:
+                              type: number
+                              format: float
+                              example: 34.7
+                        preferred_categories:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              category:
+                                type: string
+                                example: "work"
+                              usage_percentage:
+                                type: number
+                                format: float
+                                example: 45.2
+                    stress_patterns:
+                      type: object
+                      properties:
+                        average_initial_stress:
+                          type: number
+                          format: float
+                          example: 65.2
+                        average_final_stress:
+                          type: number
+                          format: float
+                          example: 42.8
+                        improvement_rate:
+                          type: number
+                          format: float
+                          example: 85.6
+                          description: "Процент пользователей с улучшением"
+      '401':
+        description: Неавторизованный запрос
+
+/analytics/situation-stats:
+  get:
+    tags:
+      - Analytics
+    summary: Статистика по ситуациям
+    description: Анализ популярности и эффективности игровых ситуаций
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: category
+        in: query
+        description: Фильтр по категории ситуаций
+        required: false
+        schema:
+          type: string
+          enum: [work, personal, health, social, education]
+      - name: period
+        in: query
+        description: Период для анализа
+        required: false
+        schema:
+          type: string
+          enum: [week, month, quarter]
+          default: month
+      - name: sort_by
+        in: query
+        description: Сортировка результатов
+        required: false
+        schema:
+          type: string
+          enum: [popularity, effectiveness, completion_rate]
+          default: popularity
+    responses:
+      '200':
+        description: Статистика ситуаций получена
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    overview:
+                      type: object
+                      properties:
+                        total_situations:
+                          type: integer
+                          example: 45
+                        active_situations:
+                          type: integer
+                          example: 42
+                        total_completions:
+                          type: integer
+                          example: 1234
+                        average_completion_rate:
+                          type: number
+                          format: float
+                          example: 73.5
+                    most_popular:
+                      type: array
+                      description: "Самые популярные ситуации"
+                      items:
+                        type: object
+                        properties:
+                          situation:
+                            $ref: '../components/schemas.yaml#/Situation'
+                          completion_count:
+                            type: integer
+                            example: 156
+                          completion_rate:
+                            type: number
+                            format: float
+                            example: 82.3
+                          average_stress_change:
+                            type: number
+                            format: float
+                            example: -15.2
+                    most_effective:
+                      type: array
+                      description: "Наиболее эффективные ситуации"
+                      items:
+                        type: object
+                        properties:
+                          situation:
+                            $ref: '../components/schemas.yaml#/Situation'
+                          effectiveness_score:
+                            type: number
+                            format: float
+                            example: 4.2
+                            description: "Оценка эффективности от 1 до 5"
+                          stress_reduction:
+                            type: number
+                            format: float
+                            example: 18.5
+                    category_breakdown:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          category:
+                            type: string
+                            example: "work"
+                          total_situations:
+                            type: integer
+                            example: 15
+                          completion_count:
+                            type: integer
+                            example: 450
+                          average_effectiveness:
+                            type: number
+                            format: float
+                            example: 3.8
+                    option_choices:
+                      type: array
+                      description: "Статистика выбора вариантов решений"
+                      items:
+                        type: object
+                        properties:
+                          situation_title:
+                            type: string
+                            example: "Сложная презентация на работе"
+                          options:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                option_text:
+                                  type: string
+                                  example: "Тщательно подготовиться"
+                                choice_percentage:
+                                  type: number
+                                  format: float
+                                  example: 45.6
+                                success_rate:
+                                  type: number
+                                  format: float
+                                  example: 78.2
+      '401':
+        description: Неавторизованный запрос
+
+/analytics/activity-stats:
+  get:
+    tags:
+      - Analytics
+    summary: Статистика активности
+    description: Анализ общей активности пользователей и системы
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: granularity
+        in: query
+        description: Детализация временных данных
+        required: false
+        schema:
+          type: string
+          enum: [hour, day, week, month]
+          default: day
+      - name: period
+        in: query
+        description: Период для анализа
+        required: false
+        schema:
+          type: string
+          enum: [week, month, quarter, year]
+          default: month
+    responses:
+      '200':
+        description: Статистика активности получена
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    timeline:
+                      type: array
+                      description: "Временная шкала активности"
+                      items:
+                        type: object
+                        properties:
+                          period:
+                            type: string
+                            example: "2025-09-04"
+                          registrations:
+                            type: integer
+                            example: 15
+                          logins:
+                            type: integer
+                            example: 127
+                          situations_completed:
+                            type: integer
+                            example: 89
+                          micro_actions_performed:
+                            type: integer
+                            example: 234
+                          active_users:
+                            type: integer
+                            example: 78
+                    event_types:
+                      type: array
+                      description: "Статистика по типам событий"
+                      items:
+                        type: object
+                        properties:
+                          event_type:
+                            type: string
+                            example: "situation.completed"
+                          count:
+                            type: integer
+                            example: 1234
+                          percentage:
+                            type: number
+                            format: float
+                            example: 23.4
+                    peak_hours:
+                      type: array
+                      description: "Часы пиковой активности"
+                      items:
+                        type: object
+                        properties:
+                          hour:
+                            type: integer
+                            example: 20
+                          activity_level:
+                            type: string
+                            example: "high"
+                          event_count:
+                            type: integer
+                            example: 234
+                    retention_metrics:
+                      type: object
+                      properties:
+                        daily_retention:
+                          type: number
+                          format: float
+                          example: 45.2
+                        weekly_retention:
+                          type: number
+                          format: float
+                          example: 28.7
+                        monthly_retention:
+                          type: number
+                          format: float
+                          example: 15.3
+      '401':
+        description: Неавторизованный запрос

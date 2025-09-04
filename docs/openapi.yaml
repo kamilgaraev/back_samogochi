@@ -181,3 +181,23 @@ paths:
     $ref: './paths/micro-actions.yaml#/~1micro-actions~1history'
   /micro-actions/{id}/perform:
     $ref: './paths/micro-actions.yaml#/~1micro-actions~1{id}~1perform'
+    
+  # Admin endpoints (only for administrators)
+  /admin/configs:
+    $ref: './paths/admin.yaml#/~1admin~1configs'
+  /admin/configs/{key}:
+    $ref: './paths/admin.yaml#/~1admin~1configs~1{key}'
+  /admin/situations:
+    $ref: './paths/admin.yaml#/~1admin~1situations'
+  /admin/situations/{id}:
+    $ref: './paths/admin.yaml#/~1admin~1situations~1{id}'
+    
+  # Analytics endpoints
+  /analytics/dashboard:
+    $ref: './paths/analytics.yaml#/~1analytics~1dashboard'
+  /analytics/player-behavior:
+    $ref: './paths/analytics.yaml#/~1analytics~1player-behavior'
+  /analytics/situation-stats:
+    $ref: './paths/analytics.yaml#/~1analytics~1situation-stats'
+  /analytics/activity-stats:
+    $ref: './paths/analytics.yaml#/~1analytics~1activity-stats'

@@ -52,19 +52,19 @@
         content:
           application/json:
             schema:
-              $ref: '../components/responses.yaml#/AuthResponse'
+              $ref: '../openapi.yaml#/components/responses/AuthResponse'
       '422':
         description: Ошибки валидации
         content:
           application/json:
             schema:
-              $ref: '../components/responses.yaml#/ValidationErrorResponse'
+              $ref: '../openapi.yaml#/components/responses/ValidationErrorResponse'
       '500':
         description: Внутренняя ошибка сервера
         content:
           application/json:
             schema:
-              $ref: '../components/responses.yaml#/ErrorResponse'
+              $ref: '../openapi.yaml#/components/responses/ErrorResponse'
 
 /auth/login:
   post:
@@ -96,7 +96,7 @@
         content:
           application/json:
             schema:
-              $ref: '../components/responses.yaml#/AuthResponse'
+              $ref: '../openapi.yaml#/components/responses/AuthResponse'
       '401':
         description: Неверные учетные данные
         content:
@@ -113,7 +113,7 @@
         content:
           application/json:
             schema:
-              $ref: '../components/responses.yaml#/ValidationErrorResponse'
+              $ref: '../openapi.yaml#/components/responses/ValidationErrorResponse'
 
 /auth/logout:
   post:
@@ -142,7 +142,7 @@
         content:
           application/json:
             schema:
-              $ref: '../components/responses.yaml#/ErrorResponse'
+              $ref: '../openapi.yaml#/components/responses/ErrorResponse'
 
 /auth/refresh:
   post:
@@ -183,7 +183,7 @@
         content:
           application/json:
             schema:
-              $ref: '../components/responses.yaml#/ErrorResponse'
+              $ref: '../openapi.yaml#/components/responses/ErrorResponse'
 
 /auth/forgot-password:
   post:
@@ -232,7 +232,7 @@
         content:
           application/json:
             schema:
-              $ref: '../components/responses.yaml#/ValidationErrorResponse'
+              $ref: '../openapi.yaml#/components/responses/ValidationErrorResponse'
 
 /auth/reset-password:
   post:
@@ -284,13 +284,13 @@
         content:
           application/json:
             schema:
-              $ref: '../components/responses.yaml#/ErrorResponse'
+              $ref: '../openapi.yaml#/components/responses/ErrorResponse'
       '422':
         description: Ошибки валидации
         content:
           application/json:
             schema:
-              $ref: '../components/responses.yaml#/ValidationErrorResponse'
+              $ref: '../openapi.yaml#/components/responses/ValidationErrorResponse'
 
 /auth/verify-email:
   post:
@@ -338,4 +338,4 @@
         content:
           application/json:
             schema:
-              $ref: '../components/responses.yaml#/ValidationErrorResponse'
+              $ref: '../openapi.yaml#/components/responses/ValidationErrorResponse'

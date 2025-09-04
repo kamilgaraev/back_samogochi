@@ -1,0 +1,58 @@
+extends:
+  - recommended
+
+apis:
+  main:
+    root: openapi.yaml
+
+lint:
+  rules:
+    # Отключаем строгую проверку примеров
+    no-invalid-media-type-examples: off
+    # Разрешаем пустые описания
+    info-description: off
+    # Разрешаем теги без описания
+    tag-description: off
+    # Отключаем проверку серверов в production
+    no-server-variables-empty-enum: off
+    # Разрешаем дополнительные свойства
+    no-additionalProperties: off
+    
+theme:
+  colors:
+    primary:
+      main: '#2563eb'
+    success:
+      main: '#10b981'
+    warning:
+      main: '#f59e0b'
+    error:
+      main: '#ef4444'
+  typography:
+    fontSize:
+      base: '14px'
+    headings:
+      fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
+    code:
+      fontFamily: 'JetBrains Mono, Consolas, Monaco, monospace'
+  sidebar:
+    backgroundColor: '#f8fafc'
+  rightPanel:
+    backgroundColor: '#1e293b'
+    textColor: '#e2e8f0'
+
+features:
+  openapi:
+    generateCodeSamples:
+      languages:
+        - lang: curl
+        - lang: javascript
+        - lang: python
+        - lang: php
+    hideTryItPanel: false
+    
+nav:
+  - label: 'API Reference'
+    page: openapi.yaml
+  - label: 'GitHub'
+    href: 'https://github.com/your-repo/tamagotchi-api'

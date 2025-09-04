@@ -1,0 +1,313 @@
+/player/profile:
+  get:
+    tags:
+      - Player
+    summary: Получение профиля игрока
+    description: Возвращает текущий профиль игрока с актуальной статистикой
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Профиль игрока получен успешно
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  $ref: '../components/schemas.yaml#/PlayerProfile'
+      '401':
+        description: Неавторизованный запрос
+        
+  put:
+    tags:
+      - Player
+    summary: Обновление профиля игрока
+    description: Обновление данных профиля игрока (стресс, тревожность)
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              stress:
+                type: integer
+                minimum: 0
+                maximum: 100
+                example: 45
+                description: "Уровень стресса"
+              anxiety:
+                type: integer
+                minimum: 0
+                maximum: 100
+                example: 30
+                description: "Уровень тревожности"
+    responses:
+      '200':
+        description: Профиль успешно обновлен
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/responses.yaml#/SuccessResponse'
+                - type: object
+                  properties:
+                    message:
+                      example: "Профиль успешно обновлен"
+      '401':
+        description: Неавторизованный запрос
+
+/player/stats:
+  get:
+    tags:
+      - Player
+    summary: Статистика игрока
+    description: Получение детальной статистики игрока
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Статистика получена успешно
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    total_situations_completed:
+                      type: integer
+                      example: 45
+                    total_micro_actions_performed:
+                      type: integer
+                      example: 120
+                    average_stress_level:
+                      type: number
+                      format: float
+                      example: 35.5
+                    time_played_hours:
+                      type: integer
+                      example: 24
+                    achievements:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          name:
+                            type: string
+                          description:
+                            type: string
+                          unlocked_at:
+                            type: string
+                            format: date-time
+      '401':
+        description: Неавторизованный запрос
+
+/player/daily-reward:
+  post:
+    tags:
+      - Player
+    summary: Получение ежедневной награды
+    description: Получение ежедневной награды (опыт, энергия). Доступно раз в день.
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Награда получена успешно
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: "Ежедневная награда получена"
+                data:
+                  type: object
+                  properties:
+                    experience_gained:
+                      type: integer
+                      example: 50
+                    energy_gained:
+                      type: integer
+                      example: 20
+                    consecutive_days:
+                      type: integer
+                      example: 5
+      '400':
+        description: Награда уже получена сегодня
+        content:
+          application/json:
+            schema:
+              $ref: '../components/responses.yaml#/ErrorResponse'
+      '401':
+        description: Неавторизованный запрос
+
+/player/add-experience:
+  post:
+    tags:
+      - Player
+    summary: Добавление опыта
+    description: Добавление опыта игроку (для внутренних нужд)
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - amount
+            properties:
+              amount:
+                type: integer
+                minimum: 1
+                maximum: 1000
+                example: 25
+                description: "Количество опыта для добавления"
+              reason:
+                type: string
+                example: "Завершение ситуации"
+                description: "Причина добавления опыта"
+    responses:
+      '200':
+        description: Опыт успешно добавлен
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    experience_added:
+                      type: integer
+                      example: 25
+                    level_up:
+                      type: boolean
+                      example: false
+                    old_level:
+                      type: integer
+                      example: 5
+                    new_level:
+                      type: integer
+                      example: 5
+      '401':
+        description: Неавторизованный запрос
+
+/player/update-energy:
+  post:
+    tags:
+      - Player
+    summary: Обновление энергии
+    description: Изменение уровня энергии игрока
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - amount
+            properties:
+              amount:
+                type: integer
+                minimum: -200
+                maximum: 200
+                example: -20
+                description: "Изменение энергии (может быть отрицательным)"
+    responses:
+      '200':
+        description: Энергия успешно обновлена
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    old_energy:
+                      type: integer
+                      example: 100
+                    new_energy:
+                      type: integer
+                      example: 80
+                    change:
+                      type: integer
+                      example: -20
+      '401':
+        description: Неавторизованный запрос
+
+/player/update-stress:
+  post:
+    tags:
+      - Player
+    summary: Обновление стресса
+    description: Изменение уровня стресса игрока
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - amount
+            properties:
+              amount:
+                type: integer
+                minimum: -100
+                maximum: 100
+                example: -10
+                description: "Изменение стресса (может быть отрицательным)"
+    responses:
+      '200':
+        description: Стресс успешно обновлен
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    old_stress:
+                      type: integer
+                      example: 40
+                    new_stress:
+                      type: integer
+                      example: 30
+                    change:
+                      type: integer
+                      example: -10
+      '401':
+        description: Неавторизованный запрос

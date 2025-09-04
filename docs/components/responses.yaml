@@ -1,0 +1,66 @@
+SuccessResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    message:
+      type: string
+      example: "Операция выполнена успешно"
+    data:
+      type: object
+      
+ErrorResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: "Произошла ошибка"
+    error:
+      type: string
+      example: "Подробное описание ошибки"
+      
+ValidationErrorResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: "Ошибки валидации"
+    errors:
+      type: object
+      example:
+        email: ["Введите корректный email адрес"]
+        password: ["Пароль должен содержать минимум 8 символов"]
+
+AuthResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+      example: true
+    message:
+      type: string
+      example: "Пользователь успешно зарегистрирован"
+    data:
+      type: object
+      properties:
+        user:
+          $ref: '../schemas.yaml#/User'
+        player:
+          $ref: '../schemas.yaml#/PlayerProfile'
+        token:
+          type: string
+          example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+        token_type:
+          type: string
+          example: "bearer"
+        expires_in:
+          type: integer
+          example: 900
+          description: "Время жизни токена в секундах"

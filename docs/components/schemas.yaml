@@ -1,0 +1,260 @@
+User:
+  type: object
+  properties:
+    id:
+      type: integer
+      example: 1
+    name:
+      type: string
+      example: "Иван Иванов"
+    email:
+      type: string
+      format: email
+      example: "ivan@example.com"
+    is_admin:
+      type: boolean
+      example: false
+    created_at:
+      type: string
+      format: date-time
+      example: "2025-09-04T06:10:25.000000Z"
+    updated_at:
+      type: string
+      format: date-time
+      example: "2025-09-04T06:10:25.000000Z"
+
+PlayerProfile:
+  type: object
+  properties:
+    id:
+      type: integer
+      example: 1
+    user_id:
+      type: integer
+      example: 1
+    level:
+      type: integer
+      minimum: 1
+      example: 5
+    total_experience:
+      type: integer
+      minimum: 0
+      example: 450
+    energy:
+      type: integer
+      minimum: 0
+      maximum: 200
+      example: 100
+    stress:
+      type: integer
+      minimum: 0
+      maximum: 100
+      example: 30
+    anxiety:
+      type: integer
+      minimum: 0
+      maximum: 100
+      example: 25
+    last_login:
+      type: string
+      format: date-time
+      example: "2025-09-04T06:10:25.000000Z"
+    last_daily_reward:
+      type: string
+      format: date-time
+      nullable: true
+      example: "2025-09-04T00:00:00.000000Z"
+    consecutive_days:
+      type: integer
+      minimum: 0
+      example: 3
+    created_at:
+      type: string
+      format: date-time
+      example: "2025-09-04T06:10:25.000000Z"
+    updated_at:
+      type: string
+      format: date-time
+      example: "2025-09-04T06:10:25.000000Z"
+
+Situation:
+  type: object
+  properties:
+    id:
+      type: integer
+      example: 1
+    title:
+      type: string
+      example: "Сложная презентация на работе"
+    description:
+      type: string
+      example: "Завтра у вас важная презентация перед руководством"
+    category:
+      type: string
+      enum: [work, personal, health, social, education]
+      example: "work"
+    difficulty_level:
+      type: string
+      enum: [easy, medium, hard]
+      example: "medium"
+    min_level_required:
+      type: integer
+      minimum: 1
+      example: 1
+    stress_impact:
+      type: integer
+      minimum: -50
+      maximum: 50
+      example: 15
+    experience_reward:
+      type: integer
+      minimum: 0
+      example: 25
+    is_active:
+      type: boolean
+      example: true
+    created_at:
+      type: string
+      format: date-time
+    updated_at:
+      type: string
+      format: date-time
+    options:
+      type: array
+      items:
+        $ref: '#/SituationOption'
+
+SituationOption:
+  type: object
+  properties:
+    id:
+      type: integer
+      example: 1
+    situation_id:
+      type: integer
+      example: 1
+    text:
+      type: string
+      example: "Тщательно подготовиться и порепетировать"
+    stress_change:
+      type: integer
+      minimum: -50
+      maximum: 50
+      example: -10
+    experience_reward:
+      type: integer
+      minimum: 0
+      example: 15
+    energy_cost:
+      type: integer
+      minimum: 0
+      example: 20
+    min_level_required:
+      type: integer
+      minimum: 1
+      example: 1
+    order:
+      type: integer
+      example: 1
+
+MicroAction:
+  type: object
+  properties:
+    id:
+      type: integer
+      example: 1
+    name:
+      type: string
+      example: "Глубокое дыхание"
+    description:
+      type: string
+      example: "5 минут дыхательных упражнений для снижения стресса"
+    category:
+      type: string
+      enum: [breathing, physical, mental, social]
+      example: "breathing"
+    stress_reduction:
+      type: integer
+      minimum: 0
+      maximum: 30
+      example: 10
+    energy_cost:
+      type: integer
+      minimum: 0
+      example: 5
+    duration_minutes:
+      type: integer
+      minimum: 1
+      example: 5
+    experience_reward:
+      type: integer
+      minimum: 0
+      example: 3
+    min_level_required:
+      type: integer
+      minimum: 1
+      example: 1
+    is_active:
+      type: boolean
+      example: true
+    created_at:
+      type: string
+      format: date-time
+    updated_at:
+      type: string
+      format: date-time
+
+ActivityLog:
+  type: object
+  properties:
+    id:
+      type: integer
+      example: 1
+    user_id:
+      type: integer
+      nullable: true
+      example: 1
+    event_type:
+      type: string
+      example: "user.login"
+    event_data:
+      type: object
+      nullable: true
+      example:
+        ip: "192.168.1.1"
+        user_agent: "Mozilla/5.0..."
+    ip_address:
+      type: string
+      nullable: true
+      example: "192.168.1.1"
+    user_agent:
+      type: string
+      nullable: true
+      example: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    created_at:
+      type: string
+      format: date-time
+      example: "2025-09-04T06:10:25.000000Z"
+
+GameConfig:
+  type: object
+  properties:
+    id:
+      type: integer
+      example: 1
+    key:
+      type: string
+      example: "daily_reward_base_experience"
+    value:
+      type: string
+      example: "50"
+    description:
+      type: string
+      nullable: true
+      example: "Базовое количество опыта за ежедневную награду"
+    created_at:
+      type: string
+      format: date-time
+    updated_at:
+      type: string
+      format: date-time

@@ -1,0 +1,17 @@
+{
+  "name": "tamagotchi-api-docs",
+  "version": "1.0.0",
+  "description": "API Documentation for Tamagotchi Game",
+  "scripts": {
+    "dev": "redocly preview-docs openapi.yaml --port 8080",
+    "build": "redocly build-docs openapi.yaml --output ./build/index.html",
+    "lint": "redocly lint openapi.yaml",
+    "bundle": "redocly bundle openapi.yaml --output ./dist/openapi.json"
+  },
+  "devDependencies": {
+    "@redocly/cli": "^1.19.0"
+  },
+  "keywords": ["api", "openapi", "tamagotchi"],
+  "author": "Tamagotchi API Team",
+  "license": "MIT"
+}

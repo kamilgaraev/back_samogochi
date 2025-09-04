@@ -1,0 +1,144 @@
+openapi: 3.0.3
+info:
+  title: Tamagotchi API
+  description: |
+    API для игры-тамагочи с системой управления стрессом и тревожностью.
+    
+    ## Аутентификация
+    
+    API использует JWT Bearer токены для аутентификации. После успешного логина или регистрации вы получите токен, который необходимо передавать в заголовке:
+    
+    ```
+    Authorization: Bearer YOUR_JWT_TOKEN
+    ```
+    
+    ## Структура ответов
+    
+    Все ответы API имеют единообразную структуру:
+    
+    ```json
+    {
+      "success": true|false,
+      "message": "Описание результата",
+      "data": { ... },      // При success: true
+      "errors": { ... }     // При ошибках валидации
+    }
+    ```
+    
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@tamagotchi-api.com
+  license:
+    name: MIT
+    
+servers:
+  - url: http://31.130.149.164/api
+    description: Production server
+  - url: http://localhost:8000/api
+    description: Development server
+
+tags:
+  - name: Authentication
+    description: Регистрация, авторизация и управление аккаунтом
+  - name: Player
+    description: Профиль игрока, статистика и прогресс
+  - name: Situations
+    description: Игровые ситуации и их прохождение
+  - name: Micro Actions
+    description: Микродействия для управления состоянием
+  - name: Admin
+    description: Административная панель (только для админов)
+  - name: Analytics
+    description: Аналитика и статистика игры
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT токен полученный при логине или регистрации
+      
+  schemas:
+    # Импорт всех схем из отдельных файлов
+    User:
+      $ref: './components/schemas.yaml#/User'
+    PlayerProfile:
+      $ref: './components/schemas.yaml#/PlayerProfile'
+    Situation:
+      $ref: './components/schemas.yaml#/Situation'
+    SituationOption:
+      $ref: './components/schemas.yaml#/SituationOption'
+    MicroAction:
+      $ref: './components/schemas.yaml#/MicroAction'
+    ActivityLog:
+      $ref: './components/schemas.yaml#/ActivityLog'
+    GameConfig:
+      $ref: './components/schemas.yaml#/GameConfig'
+      
+  responses:
+    # Импорт всех стандартных ответов
+    SuccessResponse:
+      $ref: './components/responses.yaml#/SuccessResponse'
+    ErrorResponse:
+      $ref: './components/responses.yaml#/ErrorResponse'
+    ValidationErrorResponse:
+      $ref: './components/responses.yaml#/ValidationErrorResponse'
+    AuthResponse:
+      $ref: './components/responses.yaml#/AuthResponse'
+
+paths:
+  # Authentication endpoints
+  /auth/register:
+    $ref: './paths/auth.yaml#/~1auth~1register'
+  /auth/login:
+    $ref: './paths/auth.yaml#/~1auth~1login'
+  /auth/logout:
+    $ref: './paths/auth.yaml#/~1auth~1logout'
+  /auth/refresh:
+    $ref: './paths/auth.yaml#/~1auth~1refresh'
+  /auth/forgot-password:
+    $ref: './paths/auth.yaml#/~1auth~1forgot-password'
+  /auth/reset-password:
+    $ref: './paths/auth.yaml#/~1auth~1reset-password'
+  /auth/verify-email:
+    $ref: './paths/auth.yaml#/~1auth~1verify-email'
+    
+  # Player endpoints
+  /player/profile:
+    $ref: './paths/player.yaml#/~1player~1profile'
+  /player/stats:
+    $ref: './paths/player.yaml#/~1player~1stats'
+  /player/daily-reward:
+    $ref: './paths/player.yaml#/~1player~1daily-reward'
+  /player/add-experience:
+    $ref: './paths/player.yaml#/~1player~1add-experience'
+  /player/update-energy:
+    $ref: './paths/player.yaml#/~1player~1update-energy'
+  /player/update-stress:
+    $ref: './paths/player.yaml#/~1player~1update-stress'
+    
+  # Situations endpoints
+  /situations:
+    $ref: './paths/situations.yaml#/~1situations'
+  /situations/random:
+    $ref: './paths/situations.yaml#/~1situations~1random'
+  /situations/history:
+    $ref: './paths/situations.yaml#/~1situations~1history'
+  /situations/recommendations:
+    $ref: './paths/situations.yaml#/~1situations~1recommendations'
+  /situations/{id}:
+    $ref: './paths/situations.yaml#/~1situations~1{id}'
+  /situations/{id}/complete:
+    $ref: './paths/situations.yaml#/~1situations~1{id}~1complete'
+    
+  # Micro Actions endpoints
+  /micro-actions:
+    $ref: './paths/micro-actions.yaml#/~1micro-actions'
+  /micro-actions/recommendations:
+    $ref: './paths/micro-actions.yaml#/~1micro-actions~1recommendations'
+  /micro-actions/history:
+    $ref: './paths/micro-actions.yaml#/~1micro-actions~1history'
+  /micro-actions/{id}/perform:
+    $ref: './paths/micro-actions.yaml#/~1micro-actions~1{id}~1perform'

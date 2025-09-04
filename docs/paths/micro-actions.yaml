@@ -1,0 +1,300 @@
+/micro-actions:
+  get:
+    tags:
+      - Micro Actions
+    summary: Список доступных микродействий
+    description: Получение списка микродействий для управления стрессом и восстановления энергии
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: category
+        in: query
+        description: Фильтр по категории микродействия
+        required: false
+        schema:
+          type: string
+          enum: [breathing, physical, mental, social]
+      - name: max_energy_cost
+        in: query
+        description: Максимальная стоимость энергии
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 50
+      - name: min_stress_reduction
+        in: query
+        description: Минимальное снижение стресса
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 30
+    responses:
+      '200':
+        description: Список микродействий получен
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: array
+                  items:
+                    $ref: '../components/schemas.yaml#/MicroAction'
+      '401':
+        description: Неавторизованный запрос
+
+/micro-actions/recommendations:
+  get:
+    tags:
+      - Micro Actions
+    summary: Рекомендованные микродействия
+    description: Получение микродействий, рекомендованных для текущего состояния игрока
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Рекомендации получены успешно
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    recommended_actions:
+                      type: array
+                      items:
+                        allOf:
+                          - $ref: '../components/schemas.yaml#/MicroAction'
+                          - type: object
+                            properties:
+                              recommendation_reason:
+                                type: string
+                                example: "Эффективно для снижения стресса при текущем уровне энергии"
+                              effectiveness_score:
+                                type: number
+                                format: float
+                                minimum: 0
+                                maximum: 1
+                                example: 0.92
+      '401':
+        description: Неавторизованный запрос
+
+/micro-actions/history:
+  get:
+    tags:
+      - Micro Actions
+    summary: История выполненных микродействий
+    description: Получение истории микродействий, выполненных игроком
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: page
+        in: query
+        description: Номер страницы для пагинации
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: limit
+        in: query
+        description: Количество записей на страницу
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+      - name: date_from
+        in: query
+        description: Начальная дата фильтра (ISO 8601)
+        required: false
+        schema:
+          type: string
+          format: date
+          example: "2025-09-01"
+      - name: date_to
+        in: query
+        description: Конечная дата фильтра (ISO 8601)
+        required: false
+        schema:
+          type: string
+          format: date
+          example: "2025-09-30"
+    responses:
+      '200':
+        description: История получена успешно
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    history:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          micro_action:
+                            $ref: '../components/schemas.yaml#/MicroAction'
+                          performed_at:
+                            type: string
+                            format: date-time
+                            example: "2025-09-04T14:30:00Z"
+                          results:
+                            type: object
+                            properties:
+                              stress_reduced:
+                                type: integer
+                                example: 10
+                              energy_spent:
+                                type: integer
+                                example: 5
+                              experience_gained:
+                                type: integer
+                                example: 3
+                    pagination:
+                      type: object
+                      properties:
+                        current_page:
+                          type: integer
+                          example: 1
+                        total_pages:
+                          type: integer
+                          example: 5
+                        total:
+                          type: integer
+                          example: 120
+                    statistics:
+                      type: object
+                      properties:
+                        total_actions_performed:
+                          type: integer
+                          example: 120
+                        total_stress_reduced:
+                          type: integer
+                          example: 850
+                        favorite_category:
+                          type: string
+                          example: "breathing"
+                        average_daily_actions:
+                          type: number
+                          format: float
+                          example: 4.2
+      '401':
+        description: Неавторизованный запрос
+
+/micro-actions/{id}/perform:
+  post:
+    tags:
+      - Micro Actions
+    summary: Выполнение микродействия
+    description: Выполнение выбранного микродействия для снижения стресса
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID микродействия
+        schema:
+          type: integer
+          example: 1
+    responses:
+      '200':
+        description: Микродействие успешно выполнено
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: "Микродействие выполнено успешно"
+                data:
+                  type: object
+                  properties:
+                    stress_reduced:
+                      type: integer
+                      example: 10
+                    energy_spent:
+                      type: integer
+                      example: 5
+                    experience_gained:
+                      type: integer
+                      example: 3
+                    new_stats:
+                      type: object
+                      properties:
+                        stress:
+                          type: integer
+                          example: 25
+                        energy:
+                          type: integer
+                          example: 95
+                        experience:
+                          type: integer
+                          example: 458
+                    next_recommended_actions:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 3
+                          name:
+                            type: string
+                            example: "Медитация"
+                          category:
+                            type: string
+                            example: "mental"
+      '400':
+        description: Недостаточно энергии для выполнения действия
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/responses.yaml#/ErrorResponse'
+                - type: object
+                  properties:
+                    message:
+                      example: "Недостаточно энергии для выполнения этого действия"
+                    data:
+                      type: object
+                      properties:
+                        required_energy:
+                          type: integer
+                          example: 10
+                        current_energy:
+                          type: integer
+                          example: 5
+      '404':
+        description: Микродействие не найдено
+        content:
+          application/json:
+            schema:
+              $ref: '../components/responses.yaml#/ErrorResponse'
+      '401':
+        description: Неавторизованный запрос

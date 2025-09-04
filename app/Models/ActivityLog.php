@@ -35,7 +35,7 @@ class ActivityLog extends Model
     public static function logEvent($eventType, $eventData = null, $userId = null, $ipAddress = null, $userAgent = null)
     {
         return self::create([
-            'user_id' => $userId ?? auth('api')->id(),
+            'user_id' => $userId ?? (\Tymon\JWTAuth\Facades\JWTAuth::user() ? \Tymon\JWTAuth\Facades\JWTAuth::user()->id : null),
             'event_type' => $eventType,
             'event_data' => $eventData,
             'ip_address' => $ipAddress ?? request()->ip(),

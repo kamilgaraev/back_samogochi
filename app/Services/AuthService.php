@@ -53,7 +53,8 @@ class AuthService
             return null;
         }
 
-        $user = auth('api')->user();
+        // Получаем пользователя напрямую через JWTAuth
+        $user = JWTAuth::user();
         
         if ($user && $user->playerProfile) {
             $user->playerProfile->updateLastLogin();
@@ -72,7 +73,7 @@ class AuthService
 
     public function logout()
     {
-        $user = auth('api')->user();
+        $user = JWTAuth::user();
         
         if ($user) {
             ActivityLog::logLogout($user->id);
@@ -102,7 +103,7 @@ class AuthService
 
     public function me()
     {
-        $user = auth('api')->user();
+        $user = JWTAuth::user();
         return [
             'user' => $user,
             'player' => $user ? $user->playerProfile : null,

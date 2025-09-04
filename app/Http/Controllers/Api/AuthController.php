@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\AuthService;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\ForgotPasswordRequest;
+use App\Http\Requests\Auth\ResetPasswordRequest;
+use App\Http\Requests\Auth\VerifyEmailRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
@@ -16,22 +20,8 @@ class AuthController extends Controller
         $this->authService = $authService;
     }
 
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Ошибки валидации',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
         try {
             $result = $this->authService->register($request->only(['name', 'email', 'password']));
             
@@ -49,21 +39,8 @@ class AuthController extends Controller
         }
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Ошибки валидации',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
         $credentials = $request->only(['email', 'password']);
         $result = $this->authService->login($credentials);
 
@@ -126,20 +103,8 @@ class AuthController extends Controller
         ]);
     }
 
-    public function forgotPassword(Request $request)
+    public function forgotPassword(ForgotPasswordRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Ошибки валидации',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
         $success = $this->authService->forgotPassword($request->email);
 
         if ($success) {
@@ -155,22 +120,8 @@ class AuthController extends Controller
         ], 404);
     }
 
-    public function resetPassword(Request $request)
+    public function resetPassword(ResetPasswordRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'token' => 'required|string',
-            'password' => 'required|string|min:6|confirmed',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Ошибки валидации',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
         $success = $this->authService->resetPassword(
             $request->email,
             $request->token,
@@ -190,20 +141,8 @@ class AuthController extends Controller
         ], 400);
     }
 
-    public function verifyEmail(Request $request)
+    public function verifyEmail(VerifyEmailRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'token' => 'required|string'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Ошибки валидации',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
         $success = $this->authService->verifyEmail($request->token);
 
         if ($success) {

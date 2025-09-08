@@ -78,7 +78,7 @@ class AdminWebController extends Controller
     // === УПРАВЛЕНИЕ ПОЛЬЗОВАТЕЛЯМИ ===
     public function users(Request $request)
     {
-        Gate::authorize('view-users');
+        Gate::authorize('users.view');
         $query = User::with(['playerProfile', 'roles']);
 
         if ($request->search) {
@@ -97,7 +97,7 @@ class AdminWebController extends Controller
 
     public function userShow($id)
     {
-        Gate::authorize('view-users');
+        Gate::authorize('users.view');
         
         $user = User::with(['playerProfile', 'roles', 'activityLogs' => function($q) {
             $q->latest()->limit(50);
@@ -110,7 +110,7 @@ class AdminWebController extends Controller
 
     public function userToggleAdmin(Request $request, $id)
     {
-        Gate::authorize('manage-user-roles');
+        Gate::authorize('users.manage-roles');
         
         $user = User::findOrFail($id);
         
@@ -139,7 +139,7 @@ class AdminWebController extends Controller
      */
     public function userAssignRole(Request $request, $id)
     {
-        Gate::authorize('manage-user-roles');
+        Gate::authorize('users.manage-roles');
         
         $request->validate([
             'role_id' => 'required|exists:roles,id'
@@ -162,7 +162,7 @@ class AdminWebController extends Controller
      */
     public function userRemoveRole(Request $request, $userId, $roleId)
     {
-        Gate::authorize('manage-user-roles');
+        Gate::authorize('users.manage-roles');
         
         $user = User::findOrFail($userId);
         $role = Role::findOrFail($roleId);
@@ -186,7 +186,7 @@ class AdminWebController extends Controller
      */
     public function roles()
     {
-        Gate::authorize('manage-user-roles');
+        Gate::authorize('users.manage-roles');
         
         $roles = Role::with(['permissions', 'users'])->orderBy('priority', 'desc')->get();
         $permissions = Permission::orderBy('category')->orderBy('name')->get();
@@ -199,7 +199,7 @@ class AdminWebController extends Controller
      */
     public function roleCreate()
     {
-        Gate::authorize('manage-user-roles');
+        Gate::authorize('users.manage-roles');
         
         $permissions = Permission::active()->orderBy('category')->orderBy('name')->get();
         $groupedPermissions = $permissions->groupBy('category');
@@ -212,7 +212,7 @@ class AdminWebController extends Controller
      */
     public function roleStore(Request $request)
     {
-        Gate::authorize('manage-user-roles');
+        Gate::authorize('users.manage-roles');
         
         $request->validate([
             'name' => 'required|string|max:255|unique:roles,name',
@@ -241,7 +241,7 @@ class AdminWebController extends Controller
     // === УПРАВЛЕНИЕ СИТУАЦИЯМИ ===
     public function situations(Request $request)
     {
-        Gate::authorize('view-situations');
+        Gate::authorize('situations.view');
         
         $filters = $request->only(['category', 'difficulty_level', 'is_active']);
         $result = $this->adminService->getSituations($filters);
@@ -255,13 +255,13 @@ class AdminWebController extends Controller
 
     public function situationCreate()
     {
-        Gate::authorize('create-situations');
+        Gate::authorize('situations.create');
         return view('admin.situations.create');
     }
 
     public function situationStore(Request $request)
     {
-        Gate::authorize('create-situations');
+        Gate::authorize('situations.create');
         
         $result = $this->adminService->createSituation($request->all(), auth()->id());
 
@@ -274,7 +274,7 @@ class AdminWebController extends Controller
 
     public function situationEdit($id)
     {
-        Gate::authorize('edit-situations');
+        Gate::authorize('situations.edit');
         
         $situation = \App\Models\Situation::with('options')->findOrFail($id);
         return view('admin.situations.edit', compact('situation'));
@@ -282,7 +282,7 @@ class AdminWebController extends Controller
 
     public function situationUpdate(Request $request, $id)
     {
-        Gate::authorize('edit-situations');
+        Gate::authorize('situations.edit');
         
         $result = $this->adminService->updateSituation($id, $request->all(), auth()->id());
 
@@ -295,7 +295,7 @@ class AdminWebController extends Controller
 
     public function situationDestroy($id)
     {
-        Gate::authorize('delete-situations');
+        Gate::authorize('situations.delete');
         
         $result = $this->adminService->deleteSituation($id, auth()->id());
 
@@ -309,7 +309,7 @@ class AdminWebController extends Controller
     // === КОНФИГУРАЦИИ ИГРЫ ===
     public function configs()
     {
-        Gate::authorize('view-configs');
+        Gate::authorize('configs.view');
         
         $result = $this->adminService->getConfigs();
         return view('admin.configs.index', ['configs' => $result['data']['configs']]);
@@ -317,7 +317,7 @@ class AdminWebController extends Controller
 
     public function configUpdate(Request $request, $key)
     {
-        Gate::authorize('edit-configs');
+        Gate::authorize('configs.edit');
         
         $result = $this->adminService->updateConfig($key, $request->all(), auth()->id());
 

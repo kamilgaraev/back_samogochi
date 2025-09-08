@@ -51,10 +51,11 @@
                     <select name="category" id="category" required
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('category') border-red-500 @enderror">
                         <option value="">Выберите категорию</option>
-                        @foreach(\App\Enums\SituationCategory::cases() as $categoryOption)
-                            <option value="{{ $categoryOption->value }}" 
-                                    {{ old('category') == $categoryOption->value ? 'selected' : '' }}>
-                                {{ $categoryOption->getIcon() }} {{ $categoryOption->getLabel() }}
+                        @foreach($categories as $category)
+                            <option value="{{ $category['value'] }}" 
+                                    {{ old('category') == $category['value'] ? 'selected' : '' }}
+                                    title="{{ $category['description'] }}">
+                                {{ $category['icon'] }} {{ $category['label'] }}
                             </option>
                         @endforeach
                     </select>
@@ -71,10 +72,11 @@
                     <select name="difficulty_level" id="difficulty_level" required
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('difficulty_level') border-red-500 @enderror">
                         <option value="">Выберите сложность</option>
-                        @foreach(\App\Enums\DifficultyLevel::cases() as $difficultyOption)
-                            <option value="{{ $difficultyOption->value }}" 
-                                    {{ old('difficulty_level') == $difficultyOption->value ? 'selected' : '' }}>
-                                {{ $difficultyOption->getIcon() }} {{ $difficultyOption->getLabel() }}
+                        @foreach($difficulties as $difficulty)
+                            <option value="{{ $difficulty['value'] }}" 
+                                    {{ old('difficulty_level') == $difficulty['value'] ? 'selected' : '' }}
+                                    title="{{ $difficulty['description'] }}">
+                                {{ $difficulty['icon'] }} {{ $difficulty['label'] }}
                             </option>
                         @endforeach
                     </select>

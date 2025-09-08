@@ -256,7 +256,10 @@ class AdminWebController extends Controller
     public function situationCreate()
     {
         Gate::authorize('situations.create');
-        return view('admin.situations.create');
+        
+        $enumData = $this->prepareSituationEnumData();
+        
+        return view('admin.situations.create', $enumData);
     }
 
     public function situationStore(Request $request)
@@ -277,7 +280,9 @@ class AdminWebController extends Controller
         Gate::authorize('situations.edit');
         
         $situation = \App\Models\Situation::with('options')->findOrFail($id);
-        return view('admin.situations.edit', compact('situation'));
+        $enumData = $this->prepareSituationEnumData();
+        
+        return view('admin.situations.edit', array_merge(compact('situation'), $enumData));
     }
 
     public function situationUpdate(Request $request, $id)
@@ -326,5 +331,35 @@ class AdminWebController extends Controller
         }
 
         return back()->with('success', $result['message']);
+    }
+
+    // === PRIVATE HELPERS ===
+
+    /**
+     * Prepare enum data for situation forms
+     */
+    private function prepareSituationEnumData(): array
+    {
+        $categories = collect(\App\Enums\SituationCategory::cases())->map(function ($category) {
+            return [
+                'value' => $category->value,
+                'label' => $category->getLabel(),
+                'icon' => $category->getIcon(),
+                'description' => $category->getDescription()
+            ];
+        });
+        
+        $difficulties = collect(\App\Enums\DifficultyLevel::cases())->map(function ($difficulty) {
+            return [
+                'value' => $difficulty->value,
+                'label' => $difficulty->getLabel(),
+                'icon' => $difficulty->getIcon(),
+                'description' => $difficulty->getDescription(),
+                'experience' => $difficulty->getTypicalExperienceReward(),
+                'stress' => $difficulty->getTypicalStressImpact()
+            ];
+        });
+        
+        return compact('categories', 'difficulties');
     }
 }

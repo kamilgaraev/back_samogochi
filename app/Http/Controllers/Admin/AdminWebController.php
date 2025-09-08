@@ -59,7 +59,7 @@ class AdminWebController extends Controller
     public function dashboard()
     {
         // Получаем статистику через AnalyticsService
-        $analytics = $this->analyticsService->getOverallStats();
+        $analytics = $this->analyticsService->getDashboard();
         
         // Дополнительные данные для дашборда
         $stats = [

@@ -7,6 +7,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// === DEFAULT LOGIN ROUTE ===
+Route::get('/login', function () {
+    return redirect()->route('admin.login');
+})->name('login');
+
 // === ADMIN ROUTES ===
 Route::prefix('admin')->name('admin.')->group(function () {
     

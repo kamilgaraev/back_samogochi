@@ -22,6 +22,7 @@ class RolePermissionSeeder extends Seeder
             $this->seedRoles();
             $this->assignPermissionsToRoles();
             $this->migrateExistingAdmins();
+            $this->createTestUsers();
             
             DB::commit();
             
@@ -131,6 +132,91 @@ class RolePermissionSeeder extends Seeder
     }
 
     /**
+     * Create test users with different roles
+     */
+    protected function createTestUsers(): void
+    {
+        $this->command->info('👥 Creating test users with different roles...');
+        
+        $testUsers = [
+            [
+                'name' => 'Super Admin Test',
+                'email' => 'superadmin@test.com',
+                'password' => bcrypt('password123'),
+                'is_admin' => true,
+                'role' => Role::SUPER_ADMIN,
+                'profile' => [
+                    'level' => 10,
+                    'total_experience' => 50000,
+                    'energy' => 200,
+                    'stress' => 20,
+                    'anxiety' => 10,
+                ]
+            ],
+            [
+                'name' => 'Admin Test',
+                'email' => 'admin@test.com', 
+                'password' => bcrypt('password123'),
+                'is_admin' => true,
+                'role' => Role::ADMIN,
+                'profile' => [
+                    'level' => 7,
+                    'total_experience' => 25000,
+                    'energy' => 150,
+                    'stress' => 30,
+                    'anxiety' => 25,
+                ]
+            ],
+            [
+                'name' => 'Moderator Test',
+                'email' => 'moderator@test.com',
+                'password' => bcrypt('password123'),
+                'is_admin' => false,
+                'role' => Role::MODERATOR,
+                'profile' => [
+                    'level' => 5,
+                    'total_experience' => 12000,
+                    'energy' => 120,
+                    'stress' => 40,
+                    'anxiety' => 35,
+                ]
+            ],
+        ];
+
+        foreach ($testUsers as $userData) {
+            // Check if user already exists
+            $existingUser = User::where('email', $userData['email'])->first();
+            
+            if ($existingUser) {
+                $this->command->info("   ⚠️  User {$userData['email']} already exists, updating role...");
+                $user = $existingUser;
+            } else {
+                // Create new user
+                $user = User::create([
+                    'name' => $userData['name'],
+                    'email' => $userData['email'],
+                    'password' => $userData['password'],
+                    'is_admin' => $userData['is_admin'],
+                    'email_verified_at' => now(),
+                ]);
+                
+                // Create player profile
+                $user->playerProfile()->create($userData['profile']);
+                $this->command->info("   ✓ Created user: {$userData['email']}");
+            }
+            
+            // Assign role
+            $role = Role::where('name', $userData['role'])->first();
+            if ($role && !$user->hasRole($userData['role'])) {
+                $user->assignRole($role);
+                $this->command->info("   ✓ Assigned {$role->display_name} role to {$user->email}");
+            }
+        }
+        
+        $this->command->info("   ✓ Test users setup completed");
+    }
+
+    /**
      * Print summary of created roles and permissions
      */
     protected function printSummary(): void
@@ -155,6 +241,21 @@ class RolePermissionSeeder extends Seeder
             $count = Permission::byCategory($category)->count();
             $this->command->info("   {$category}: {$count} permissions");
         }
+        
+        // Test users summary
+        $this->command->info("\n👥 Test Users Created:");
+        $testEmails = ['superadmin@test.com', 'admin@test.com', 'moderator@test.com'];
+        foreach ($testEmails as $email) {
+            $user = User::where('email', $email)->with('roles')->first();
+            if ($user) {
+                $roleName = $user->roles->first() ? $user->roles->first()->display_name : 'No Role';
+                $this->command->info("   {$user->name} ({$email}) - {$roleName}");
+            }
+        }
+        
+        $this->command->info("\n🔐 Login Credentials:");
+        $this->command->info("   All test users password: password123");
+        $this->command->info("   Admin panel: /admin/login");
         
         $this->command->info("\n🚀 Next Steps:");
         $this->command->info("1. Run migrations: php artisan migrate");

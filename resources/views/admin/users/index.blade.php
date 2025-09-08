@@ -146,13 +146,40 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                @if($user->is_admin)
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                                        <i class="fas fa-crown mr-1"></i> Админ
+                                @if($user->roles->count() > 0)
+                                    <div class="flex flex-wrap gap-1">
+                                        @foreach($user->roles->sortByDesc('priority')->take(2) as $role)
+                                            @php
+                                                $roleColors = [
+                                                    'super-admin' => 'bg-red-100 text-red-800',
+                                                    'admin' => 'bg-blue-100 text-blue-800',
+                                                    'moderator' => 'bg-green-100 text-green-800'
+                                                ];
+                                                $color = $roleColors[$role->name] ?? 'bg-gray-100 text-gray-800';
+                                                $icons = [
+                                                    'super-admin' => 'fa-crown',
+                                                    'admin' => 'fa-user-shield',
+                                                    'moderator' => 'fa-user-check'
+                                                ];
+                                                $icon = $icons[$role->name] ?? 'fa-user';
+                                            @endphp
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $color }}">
+                                                <i class="fas {{ $icon }} mr-1"></i>{{ $role->display_name }}
+                                            </span>
+                                        @endforeach
+                                        @if($user->roles->count() > 2)
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                                +{{ $user->roles->count() - 2 }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                @elseif($user->is_admin)
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                                        <i class="fas fa-exclamation-triangle mr-1"></i> Legacy Admin
                                     </span>
                                 @else
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                        <i class="fas fa-user mr-1"></i> Игрок
+                                        <i class="fas fa-user mr-1"></i> Без роли
                                     </span>
                                 @endif
                             </td>

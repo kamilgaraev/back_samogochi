@@ -14,39 +14,63 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('login', [AdminWebController::class, 'login'])->name('login');
     Route::post('authenticate', [AdminWebController::class, 'authenticate'])->name('authenticate');
     
-    // Protected admin routes
-    Route::middleware(['auth', 'admin'])->group(function () {
+    // Protected admin routes - Base admin access required for all
+    Route::middleware(['auth', 'permission:admin.access'])->group(function () {
         
-        // Dashboard
+        // Dashboard - Basic admin access
         Route::get('/', [AdminWebController::class, 'dashboard'])->name('dashboard');
         Route::post('logout', [AdminWebController::class, 'logout'])->name('logout');
         
-        // User management
+        // User management - Specific permissions
         Route::prefix('users')->name('users.')->group(function () {
-            Route::get('/', [AdminWebController::class, 'users'])->name('index');
-            Route::get('{id}', [AdminWebController::class, 'userShow'])->name('show');
-            Route::patch('{id}/toggle-admin', [AdminWebController::class, 'userToggleAdmin'])->name('toggle-admin');
+            Route::middleware(['permission:users.view'])->group(function () {
+                Route::get('/', [AdminWebController::class, 'users'])->name('index');
+                Route::get('{id}', [AdminWebController::class, 'userShow'])->name('show');
+            });
+            
+            // Role management (Super Admin / Admin only)
+            Route::middleware(['permission:users.manage-roles'])->group(function () {
+                Route::patch('{id}/toggle-admin', [AdminWebController::class, 'userToggleAdmin'])->name('toggle-admin');
+                Route::post('{id}/assign-role', [AdminWebController::class, 'userAssignRole'])->name('assign-role');
+                Route::delete('{userId}/remove-role/{roleId}', [AdminWebController::class, 'userRemoveRole'])->name('remove-role');
+            });
         });
         
-        // Situations management
+        // Role & Permission Management (Super Admin only)
+        Route::prefix('roles')->name('roles.')->middleware(['permission:users.manage-roles'])->group(function () {
+            Route::get('/', [AdminWebController::class, 'roles'])->name('index');
+            Route::get('create', [AdminWebController::class, 'roleCreate'])->name('create');
+            Route::post('/', [AdminWebController::class, 'roleStore'])->name('store');
+        });
+        
+        // Situations management - Granular permissions
         Route::prefix('situations')->name('situations.')->group(function () {
-            Route::get('/', [AdminWebController::class, 'situations'])->name('index');
-            Route::get('create', [AdminWebController::class, 'situationCreate'])->name('create');
-            Route::post('/', [AdminWebController::class, 'situationStore'])->name('store');
-            Route::get('{id}/edit', [AdminWebController::class, 'situationEdit'])->name('edit');
-            Route::patch('{id}', [AdminWebController::class, 'situationUpdate'])->name('update');
-            Route::delete('{id}', [AdminWebController::class, 'situationDestroy'])->name('destroy');
+            Route::middleware(['permission:situations.view'])->get('/', [AdminWebController::class, 'situations'])->name('index');
+            Route::middleware(['permission:situations.create'])->get('create', [AdminWebController::class, 'situationCreate'])->name('create');
+            Route::middleware(['permission:situations.create'])->post('/', [AdminWebController::class, 'situationStore'])->name('store');
+            Route::middleware(['permission:situations.edit'])->get('{id}/edit', [AdminWebController::class, 'situationEdit'])->name('edit');
+            Route::middleware(['permission:situations.edit'])->patch('{id}', [AdminWebController::class, 'situationUpdate'])->name('update');
+            Route::middleware(['permission:situations.delete'])->delete('{id}', [AdminWebController::class, 'situationDestroy'])->name('destroy');
         });
         
-        // Micro-actions management (placeholder routes)
-        Route::prefix('micro-actions')->name('micro-actions.')->group(function () {
-            Route::get('/', function () { return redirect()->route('admin.dashboard')->with('info', 'Микро-действия скоро будут доступны'); })->name('index');
+        // Micro-actions management - Will be implemented later
+        Route::prefix('micro-actions')->name('micro-actions.')->middleware(['permission:situations.view'])->group(function () {
+            Route::get('/', function () { 
+                return redirect()->route('admin.dashboard')->with('info', 'Микро-действия скоро будут доступны. Требуется роль Admin или выше.'); 
+            })->name('index');
         });
         
-        // Game configurations
+        // Game configurations - View and Edit permissions
         Route::prefix('configs')->name('configs.')->group(function () {
-            Route::get('/', [AdminWebController::class, 'configs'])->name('index');
-            Route::patch('{key}', [AdminWebController::class, 'configUpdate'])->name('update');
+            Route::middleware(['permission:configs.view'])->get('/', [AdminWebController::class, 'configs'])->name('index');
+            Route::middleware(['permission:configs.edit'])->patch('{key}', [AdminWebController::class, 'configUpdate'])->name('update');
+        });
+        
+        // Analytics (if needed in future)
+        Route::prefix('analytics')->name('analytics.')->middleware(['permission:analytics.view'])->group(function () {
+            Route::get('/', function () { 
+                return redirect()->route('admin.dashboard')->with('info', 'Расширенная аналитика в разработке'); 
+            })->name('index');
         });
     });
 });

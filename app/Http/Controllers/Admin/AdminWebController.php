@@ -79,7 +79,7 @@ class AdminWebController extends Controller
     public function users(Request $request)
     {
         Gate::authorize('view-users');
-        $query = User::with('playerProfile');
+        $query = User::with(['playerProfile', 'roles']);
 
         if ($request->search) {
             $query->where('name', 'like', '%'.$request->search.'%')

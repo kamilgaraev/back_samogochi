@@ -46,32 +46,49 @@
                     </a>
 
                     <!-- Пользователи -->
-                    <a href="{{ route('admin.users.index') }}" 
-                       class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white {{ request()->routeIs('admin.users.*') ? 'bg-gray-700 text-white' : '' }}">
-                        <i class="fas fa-users w-5"></i>
-                        <span class="ml-3">Пользователи</span>
-                    </a>
+                    @can('users.view')
+                        <a href="{{ route('admin.users.index') }}" 
+                           class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white {{ request()->routeIs('admin.users.*') ? 'bg-gray-700 text-white' : '' }}">
+                            <i class="fas fa-users w-5"></i>
+                            <span class="ml-3">Пользователи</span>
+                        </a>
+                    @endcan
+
+                    <!-- Роли и права (только для Super Admin) -->
+                    @can('users.manage-roles')
+                        <a href="{{ route('admin.roles.index') }}" 
+                           class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white {{ request()->routeIs('admin.roles.*') ? 'bg-gray-700 text-white' : '' }}">
+                            <i class="fas fa-user-shield w-5"></i>
+                            <span class="ml-3">Роли и права</span>
+                        </a>
+                    @endcan
 
                     <!-- Ситуации -->
-                    <a href="{{ route('admin.situations.index') }}" 
-                       class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white {{ request()->routeIs('admin.situations.*') ? 'bg-gray-700 text-white' : '' }}">
-                        <i class="fas fa-puzzle-piece w-5"></i>
-                        <span class="ml-3">Ситуации</span>
-                    </a>
+                    @can('situations.view')
+                        <a href="{{ route('admin.situations.index') }}" 
+                           class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white {{ request()->routeIs('admin.situations.*') ? 'bg-gray-700 text-white' : '' }}">
+                            <i class="fas fa-puzzle-piece w-5"></i>
+                            <span class="ml-3">Ситуации</span>
+                        </a>
+                    @endcan
 
                     <!-- Микро-действия -->
-                    <a href="{{ route('admin.micro-actions.index') }}" 
-                       class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white {{ request()->routeIs('admin.micro-actions.*') ? 'bg-gray-700 text-white' : '' }}">
-                        <i class="fas fa-bolt w-5"></i>
-                        <span class="ml-3">Микро-действия</span>
-                    </a>
+                    @can('situations.view')
+                        <a href="{{ route('admin.micro-actions.index') }}" 
+                           class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white {{ request()->routeIs('admin.micro-actions.*') ? 'bg-gray-700 text-white' : '' }}">
+                            <i class="fas fa-bolt w-5"></i>
+                            <span class="ml-3">Микро-действия</span>
+                        </a>
+                    @endcan
 
                     <!-- Конфигурации -->
-                    <a href="{{ route('admin.configs.index') }}" 
-                       class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white {{ request()->routeIs('admin.configs.*') ? 'bg-gray-700 text-white' : '' }}">
-                        <i class="fas fa-cog w-5"></i>
-                        <span class="ml-3">Настройки</span>
-                    </a>
+                    @can('configs.view')
+                        <a href="{{ route('admin.configs.index') }}" 
+                           class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white {{ request()->routeIs('admin.configs.*') ? 'bg-gray-700 text-white' : '' }}">
+                            <i class="fas fa-cog w-5"></i>
+                            <span class="ml-3">Настройки</span>
+                        </a>
+                    @endcan
 
                     <!-- API Документация -->
                     <a href="/docs" target="_blank"

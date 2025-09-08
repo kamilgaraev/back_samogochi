@@ -51,12 +51,12 @@
                     <select name="category" id="category" required
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('category') border-red-500 @enderror">
                         <option value="">Выберите категорию</option>
-                        <option value="work" {{ old('category') == 'work' ? 'selected' : '' }}>Работа</option>
-                        <option value="relationships" {{ old('category') == 'relationships' ? 'selected' : '' }}>Отношения</option>
-                        <option value="health" {{ old('category') == 'health' ? 'selected' : '' }}>Здоровье</option>
-                        <option value="study" {{ old('category') == 'study' ? 'selected' : '' }}>Учеба</option>
-                        <option value="family" {{ old('category') == 'family' ? 'selected' : '' }}>Семья</option>
-                        <option value="financial" {{ old('category') == 'financial' ? 'selected' : '' }}>Финансы</option>
+                        @foreach(\App\Enums\SituationCategory::cases() as $categoryOption)
+                            <option value="{{ $categoryOption->value }}" 
+                                    {{ old('category') == $categoryOption->value ? 'selected' : '' }}>
+                                {{ $categoryOption->getIcon() }} {{ $categoryOption->getLabel() }}
+                            </option>
+                        @endforeach
                     </select>
                     @error('category')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -71,11 +71,12 @@
                     <select name="difficulty_level" id="difficulty_level" required
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('difficulty_level') border-red-500 @enderror">
                         <option value="">Выберите сложность</option>
-                        @for($i = 1; $i <= 5; $i++)
-                            <option value="{{ $i }}" {{ old('difficulty_level') == $i ? 'selected' : '' }}>
-                                Уровень {{ $i }} {{ $i == 1 ? '(Легко)' : ($i == 5 ? '(Очень сложно)' : '') }}
+                        @foreach(\App\Enums\DifficultyLevel::cases() as $difficultyOption)
+                            <option value="{{ $difficultyOption->value }}" 
+                                    {{ old('difficulty_level') == $difficultyOption->value ? 'selected' : '' }}>
+                                {{ $difficultyOption->getIcon() }} {{ $difficultyOption->getLabel() }}
                             </option>
-                        @endfor
+                        @endforeach
                     </select>
                     @error('difficulty_level')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>

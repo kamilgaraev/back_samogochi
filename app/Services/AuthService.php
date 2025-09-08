@@ -90,13 +90,20 @@ class AuthService
     public function refresh()
     {
         try {
+            \Log::info('Refresh attempt started');
+            $currentToken = JWTAuth::getToken();
+            \Log::info('Current token exists', ['has_token' => !!$currentToken]);
+            
             $token = JWTAuth::refresh();
+            \Log::info('Token refreshed successfully');
+            
             return [
                 'token' => $token,
                 'token_type' => 'bearer',
                 'expires_in' => (int)config('jwt.ttl') * 60
             ];
         } catch (JWTException $e) {
+            \Log::error('JWT Refresh failed', ['error' => $e->getMessage()]);
             return null;
         }
     }

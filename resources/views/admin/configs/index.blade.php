@@ -29,13 +29,13 @@
                                     'energy_settings' => 'fas fa-battery-three-quarters text-orange-600',
                                     'stress_settings' => 'fas fa-heartbeat text-red-600'
                                 ];
-                                $icon = $icons[$config->key] ?? 'fas fa-cog text-gray-600';
+                                $icon = $icons[$config['key']] ?? 'fas fa-cog text-gray-600';
                             @endphp
                             <i class="{{ $icon }} mr-2"></i>
-                            {{ ucwords(str_replace('_', ' ', $config->key)) }}
+                            {{ ucwords(str_replace('_', ' ', $config['key'])) }}
                         </h3>
                         
-                        @if($config->is_active)
+                        @if($config['is_active'])
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                 <i class="fas fa-check-circle mr-1"></i> Активно
                             </span>
@@ -46,14 +46,14 @@
                         @endif
                     </div>
                     
-                    @if($config->description)
-                        <p class="text-sm text-gray-600 mt-2">{{ $config->description }}</p>
+                    @if($config['description'])
+                        <p class="text-sm text-gray-600 mt-2">{{ $config['description'] }}</p>
                     @endif
                 </div>
                 
                 <div class="p-6">
-                    <form method="POST" action="{{ route('admin.configs.update', $config->key) }}" 
-                          x-data="configForm('{{ $config->key }}', {{ json_encode($config->value) }})" 
+                    <form method="POST" action="{{ route('admin.configs.update', $config['key']) }}" 
+                          x-data="configForm('{{ $config['key'] }}', {{ json_encode($config['value']) }})" 
                           @submit="updateConfig">
                         @csrf
                         @method('PATCH')
@@ -61,7 +61,7 @@
                         <!-- JSON Value Display/Edit -->
                         <div class="space-y-4">
                             
-                            @if($config->key == 'game_balance')
+                            @if($config['key'] == 'game_balance')
                                 <!-- Game Balance specific fields -->
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
@@ -113,7 +113,7 @@
                                     </div>
                                 </div>
                             
-                            @elseif($config->key == 'level_requirements')
+                            @elseif($config['key'] == 'level_requirements')
                                 <!-- Level Requirements -->
                                 <div class="space-y-3">
                                     <template x-for="(level, index) in config" :key="index">
@@ -164,13 +164,13 @@
                                 </label>
                                 <textarea name="description" rows="2" 
                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                          placeholder="Краткое описание настройки...">{{ $config->description }}</textarea>
+                                          placeholder="Краткое описание настройки...">{{ $config['description'] }}</textarea>
                             </div>
                             
                             <!-- Active status -->
                             <div>
                                 <label class="flex items-center">
-                                    <input type="checkbox" name="is_active" value="1" {{ $config->is_active ? 'checked' : '' }}
+                                    <input type="checkbox" name="is_active" value="1" {{ $config['is_active'] ? 'checked' : '' }}
                                            class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
                                     <span class="ml-2 text-sm font-medium text-gray-700">
                                         Активировать конфигурацию
@@ -192,11 +192,8 @@
                 <!-- Config meta info -->
                 <div class="px-6 pb-6">
                     <div class="text-xs text-gray-500 space-y-1">
-                        <p>Создано: {{ $config->created_at->format('d.m.Y H:i') }}</p>
-                        <p>Обновлено: {{ $config->updated_at->format('d.m.Y H:i') }}</p>
-                        @if($config->creator)
-                            <p>Автор: {{ $config->creator->name }}</p>
-                        @endif
+                        <p>Создано: {{ \Carbon\Carbon::parse($config['created_at'])->format('d.m.Y H:i') }}</p>
+                        <p>Обновлено: {{ \Carbon\Carbon::parse($config['updated_at'])->format('d.m.Y H:i') }}</p>
                     </div>
                 </div>
             </div>

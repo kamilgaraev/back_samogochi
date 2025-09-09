@@ -108,7 +108,7 @@
                         <div class="text-white/80 text-lg">API архитектура</div>
                     </div>
                     <div>
-                        <div class="text-4xl md:text-5xl font-bold text-white mb-2">Laravel</div>
+                        <div class="text-4xl md:text-5xl font-bold text-white mb-2">???????</div>
                         <div class="text-white/80 text-lg">Backend framework</div>
                     </div>
                     <div>

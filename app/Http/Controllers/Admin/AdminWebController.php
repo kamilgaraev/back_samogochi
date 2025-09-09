@@ -311,6 +311,105 @@ class AdminWebController extends Controller
         return redirect()->route('admin.situations.index')->with('success', $result['message']);
     }
 
+    // === МИКРО-ДЕЙСТВИЯ ===
+    public function microActions()
+    {
+        Gate::authorize('situations.view');
+        
+        $filters = request()->only(['category', 'is_active', 'unlock_level']);
+        $result = $this->adminService->getMicroActions($filters);
+        
+        $categories = collect(\App\Enums\MicroActionCategory::cases())
+            ->mapWithKeys(fn($category) => [$category->value => $category->getLabel()]);
+        
+        return view('admin.micro-actions.index', [
+            'microActions' => $result['data']['micro_actions'],
+            'pagination' => $result['data']['pagination'],
+            'categories' => $categories,
+            'filters' => $filters
+        ]);
+    }
+
+    public function microActionCreate()
+    {
+        Gate::authorize('situations.create');
+        
+        $categories = \App\Enums\MicroActionCategory::cases();
+        
+        return view('admin.micro-actions.create', compact('categories'));
+    }
+
+    public function microActionStore(Request $request)
+    {
+        Gate::authorize('situations.create');
+        
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'energy_reward' => 'required|integer|min:0|max:100',
+            'experience_reward' => 'required|integer|min:0|max:100',
+            'cooldown_minutes' => 'required|integer|min:1|max:1440',
+            'unlock_level' => 'required|integer|min:1|max:100',
+            'category' => 'required|in:' . \App\Enums\MicroActionCategory::getForValidation(),
+            'is_active' => 'sometimes|boolean',
+        ]);
+        
+        $result = $this->adminService->createMicroAction($request->all(), auth()->id());
+
+        if (!$result['success']) {
+            return back()->withErrors(['error' => $result['message']])->withInput();
+        }
+
+        return redirect()->route('admin.micro-actions.index')->with('success', $result['message']);
+    }
+
+    public function microActionEdit($id)
+    {
+        Gate::authorize('situations.edit');
+        
+        $microAction = \App\Models\MicroAction::findOrFail($id);
+        $categories = \App\Enums\MicroActionCategory::cases();
+        
+        return view('admin.micro-actions.edit', compact('microAction', 'categories'));
+    }
+
+    public function microActionUpdate(Request $request, $id)
+    {
+        Gate::authorize('situations.edit');
+        
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'energy_reward' => 'required|integer|min:0|max:100',
+            'experience_reward' => 'required|integer|min:0|max:100',
+            'cooldown_minutes' => 'required|integer|min:1|max:1440',
+            'unlock_level' => 'required|integer|min:1|max:100',
+            'category' => 'required|in:' . \App\Enums\MicroActionCategory::getForValidation(),
+            'is_active' => 'sometimes|boolean',
+        ]);
+        
+        $result = $this->adminService->updateMicroAction($id, $request->all(), auth()->id());
+
+        if (!$result['success']) {
+            return back()->withErrors(['error' => $result['message']])->withInput();
+        }
+
+        return back()->with('success', $result['message']);
+    }
+
+    public function microActionDestroy($id)
+    {
+        Gate::authorize('situations.delete');
+        
+        $result = $this->adminService->deleteMicroAction($id, auth()->id());
+
+        if (!$result['success']) {
+            return back()->withErrors(['error' => $result['message']]);
+        }
+
+        return redirect()->route('admin.micro-actions.index')->with('success', $result['message']);
+    }
+
     // === КОНФИГУРАЦИИ ИГРЫ ===
     public function configs()
     {

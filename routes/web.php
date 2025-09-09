@@ -58,11 +58,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::middleware(['permission:situations.delete'])->delete('{id}', [AdminWebController::class, 'situationDestroy'])->name('destroy');
         });
         
-        // Micro-actions management - Will be implemented later
-        Route::prefix('micro-actions')->name('micro-actions.')->middleware(['permission:situations.view'])->group(function () {
-            Route::get('/', function () { 
-                return redirect()->route('admin.dashboard')->with('info', 'Микро-действия скоро будут доступны. Требуется роль Admin или выше.'); 
-            })->name('index');
+        // Micro-actions management
+        Route::prefix('micro-actions')->name('micro-actions.')->group(function () {
+            Route::middleware(['permission:situations.view'])->get('/', [AdminWebController::class, 'microActions'])->name('index');
+            Route::middleware(['permission:situations.create'])->get('create', [AdminWebController::class, 'microActionCreate'])->name('create');
+            Route::middleware(['permission:situations.create'])->post('/', [AdminWebController::class, 'microActionStore'])->name('store');
+            Route::middleware(['permission:situations.view'])->get('{id}', [AdminWebController::class, 'microActionEdit'])->name('edit');
+            Route::middleware(['permission:situations.edit'])->patch('{id}', [AdminWebController::class, 'microActionUpdate'])->name('update');
+            Route::middleware(['permission:situations.delete'])->delete('{id}', [AdminWebController::class, 'microActionDestroy'])->name('destroy');
         });
         
         // Game configurations - View and Edit permissions

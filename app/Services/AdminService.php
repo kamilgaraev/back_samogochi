@@ -358,4 +358,166 @@ class AdminService
             \Log::error("Failed to update players energy: " . $e->getMessage());
         }
     }
+
+    // === МИКРО-ДЕЙСТВИЯ ===
+
+    public function getMicroActions(array $filters = []): array
+    {
+        $query = \App\Models\MicroAction::query();
+
+        if (isset($filters['category'])) {
+            $query->where('category', $filters['category']);
+        }
+
+        if (isset($filters['is_active'])) {
+            $query->where('is_active', $filters['is_active']);
+        }
+
+        if (isset($filters['unlock_level'])) {
+            $query->where('unlock_level', '<=', $filters['unlock_level']);
+        }
+
+        $microActions = $query->orderBy('category')->orderBy('name')->paginate(15);
+
+        return [
+            'success' => true,
+            'data' => [
+                'micro_actions' => $microActions->items(),
+                'pagination' => [
+                    'current_page' => $microActions->currentPage(),
+                    'total_pages' => $microActions->lastPage(),
+                    'per_page' => $microActions->perPage(),
+                    'total' => $microActions->total(),
+                ]
+            ]
+        ];
+    }
+
+    public function createMicroAction(array $data, int $userId): array
+    {
+        try {
+            DB::beginTransaction();
+
+            $microAction = \App\Models\MicroAction::create([
+                'name' => $data['name'],
+                'description' => $data['description'],
+                'energy_reward' => $data['energy_reward'] ?? 0,
+                'experience_reward' => $data['experience_reward'] ?? 0,
+                'cooldown_minutes' => $data['cooldown_minutes'] ?? 60,
+                'unlock_level' => $data['unlock_level'] ?? 1,
+                'category' => $data['category'],
+                'is_active' => $data['is_active'] ?? true,
+            ]);
+
+            ActivityLog::logEvent(\App\Enums\ActivityEventType::ADMIN_SITUATION_CREATED->value, [
+                'micro_action_id' => $microAction->id,
+                'name' => $microAction->name,
+                'category' => $microAction->category,
+            ], $userId);
+
+            DB::commit();
+
+            return [
+                'success' => true,
+                'message' => 'Микро-действие успешно создано',
+                'data' => $microAction
+            ];
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            return [
+                'success' => false,
+                'message' => 'Ошибка при создании микро-действия: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    public function updateMicroAction(int $id, array $data, int $userId): array
+    {
+        try {
+            DB::beginTransaction();
+
+            $microAction = \App\Models\MicroAction::find($id);
+            
+            if (!$microAction) {
+                return [
+                    'success' => false,
+                    'message' => 'Микро-действие не найдено'
+                ];
+            }
+
+            $microAction->update([
+                'name' => $data['name'] ?? $microAction->name,
+                'description' => $data['description'] ?? $microAction->description,
+                'energy_reward' => $data['energy_reward'] ?? $microAction->energy_reward,
+                'experience_reward' => $data['experience_reward'] ?? $microAction->experience_reward,
+                'cooldown_minutes' => $data['cooldown_minutes'] ?? $microAction->cooldown_minutes,
+                'unlock_level' => $data['unlock_level'] ?? $microAction->unlock_level,
+                'category' => $data['category'] ?? $microAction->category,
+                'is_active' => $data['is_active'] ?? $microAction->is_active,
+            ]);
+
+            ActivityLog::logEvent(\App\Enums\ActivityEventType::ADMIN_SITUATION_UPDATED->value, [
+                'micro_action_id' => $microAction->id,
+                'name' => $microAction->name,
+            ], $userId);
+
+            DB::commit();
+
+            return [
+                'success' => true,
+                'message' => 'Микро-действие успешно обновлено',
+                'data' => $microAction->fresh()
+            ];
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            return [
+                'success' => false,
+                'message' => 'Ошибка при обновлении микро-действия: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    public function deleteMicroAction(int $id, int $userId): array
+    {
+        try {
+            DB::beginTransaction();
+
+            $microAction = \App\Models\MicroAction::find($id);
+            
+            if (!$microAction) {
+                return [
+                    'success' => false,
+                    'message' => 'Микро-действие не найдено'
+                ];
+            }
+
+            $microActionName = $microAction->name;
+            
+            $microAction->delete();
+
+            ActivityLog::logEvent(\App\Enums\ActivityEventType::ADMIN_SITUATION_DELETED->value, [
+                'micro_action_id' => $id,
+                'name' => $microActionName,
+            ], $userId);
+
+            DB::commit();
+
+            return [
+                'success' => true,
+                'message' => 'Микро-действие успешно удалено'
+            ];
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            return [
+                'success' => false,
+                'message' => 'Ошибка при удалении микро-действия: ' . $e->getMessage()
+            ];
+        }
+    }
 }

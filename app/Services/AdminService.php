@@ -51,25 +51,31 @@ class AdminService
             
             // Обработка JSON значения
             $value = $data['value'];
+            
+            // Если строка - пытаемся распарсить JSON
             if (is_string($value)) {
                 try {
-                    $value = json_decode($value, true);
-                    
-                    // Приводим к правильным типам для игрового баланса
-                    if ($key === 'game_balance' && is_array($value)) {
-                        $value = $this->normalizeGameBalanceTypes($value);
+                    $decoded = json_decode($value, true);
+                    if (json_last_error() === JSON_ERROR_NONE) {
+                        $value = $decoded;
                     }
                 } catch (\Exception $e) {
                     // Если не JSON, оставляем как есть
                 }
             }
+            
+            // Приводим к правильным типам для игрового баланса
+            if ($key === 'game_balance' && is_array($value)) {
+                $value = $this->normalizeGameBalanceTypes($value);
+            }
 
-            // Логирование для отладки
-            \Log::info('AdminService: updateConfig', [
+            // Логирование для отладки (можно убрать после тестирования)
+            \Log::info('AdminService: updateConfig FIXED', [
                 'key' => $key,
                 'original_value' => $data['value'],
                 'parsed_value' => $value,
-                'value_type' => gettype($value)
+                'value_type' => gettype($value),
+                'max_energy_type' => is_array($value) && isset($value['max_energy']) ? gettype($value['max_energy']) : 'not_set'
             ]);
 
             $config->update([
@@ -85,16 +91,25 @@ class AdminService
                 'new_value' => $value,
             ], $userId);
 
-            // Очищаем кэш конфигураций
+            DB::commit();
+
+            // Очищаем все кэши после коммита
             \Artisan::call('cache:clear');
             \Artisan::call('config:clear');
+            \Artisan::call('view:clear');
 
-            DB::commit();
+            // Принудительно перезагружаем модель из базы
+            $config = $config->fresh();
+
+            // Обновляем энергию игроков при изменении max_energy
+            if ($key === 'game_balance' && is_array($value) && isset($value['max_energy'])) {
+                $this->updatePlayersMaxEnergy($value['max_energy']);
+            }
 
             return [
                 'success' => true,
                 'message' => 'Конфигурация успешно обновлена',
-                'data' => $config->fresh()
+                'data' => $config
             ];
 
         } catch (\Exception $e) {
@@ -327,5 +342,18 @@ class AdminService
         }
 
         return $data;
+    }
+
+    private function updatePlayersMaxEnergy(int $maxEnergy): void
+    {
+        try {
+            // Устанавливаем энергию = новому максимуму для всех игроков (для тестирования)
+            // В продакшене можно просто ограничить: where('energy', '>', $maxEnergy)->update(['energy' => $maxEnergy])
+            \App\Models\PlayerProfile::query()->update(['energy' => $maxEnergy]);
+            
+            \Log::info("Players energy updated to max_energy: {$maxEnergy}");
+        } catch (\Exception $e) {
+            \Log::error("Failed to update players energy: " . $e->getMessage());
+        }
     }
 }

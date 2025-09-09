@@ -803,6 +803,8 @@ paths:
     $ref: './paths/situations.yaml#/~1situations~1recommendations'
   /situations/{id}:
     $ref: './paths/situations.yaml#/~1situations~1{id}'
+  /situations/{id}/start:
+    $ref: './paths/situations.yaml#/~1situations~1{id}~1start'
   /situations/{id}/complete:
     $ref: './paths/situations.yaml#/~1situations~1{id}~1complete'
     

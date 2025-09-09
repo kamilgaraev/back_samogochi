@@ -106,6 +106,7 @@ class SituationService
                     'difficulty_level' => $situation->difficulty_level,
                     'stress_impact' => $situation->stress_impact,
                     'experience_reward' => $situation->experience_reward,
+                    'position' => $situation->position,
                 ],
                 'options' => $availableOptions->values(),
                 'player_info' => [
@@ -159,6 +160,7 @@ class SituationService
                     'difficulty_level' => $situation->difficulty_level,
                     'stress_impact' => $situation->stress_impact,
                     'experience_reward' => $situation->experience_reward,
+                    'position' => $situation->position,
                 ],
                 'options' => $situation->options->filter(function ($option) use ($player) {
                     return $option->min_level_required <= $player->level;
@@ -170,6 +172,105 @@ class SituationService
                 ]
             ]
         ];
+    }
+
+    public function startSituation(int $situationId, int $userId): array
+    {
+        try {
+            DB::beginTransaction();
+
+            $player = $this->playerRepository->findByUserId($userId);
+            
+            if (!$player) {
+                return [
+                    'success' => false,
+                    'message' => 'Профиль игрока не найден'
+                ];
+            }
+
+            if ($this->situationRepository->isOnCooldown($player->id)) {
+                $cooldownEndTime = $this->situationRepository->getCooldownEndTime($player->id);
+                return [
+                    'success' => false,
+                    'message' => 'Вы еще не можете начать новую ситуацию',
+                    'cooldown_ends_at' => $cooldownEndTime
+                ];
+            }
+
+            $situation = $this->situationRepository->findSituationById($situationId);
+            
+            if (!$situation) {
+                return [
+                    'success' => false,
+                    'message' => 'Ситуация не найдена'
+                ];
+            }
+
+            if ($situation->min_level_required > $player->level) {
+                return [
+                    'success' => false,
+                    'message' => 'Недостаточный уровень для этой ситуации'
+                ];
+            }
+
+            $existingPlayerSituation = $this->situationRepository->getActivePlayerSituation($player->id, $situationId);
+            if ($existingPlayerSituation) {
+                return [
+                    'success' => false,
+                    'message' => 'Данная ситуация уже начата'
+                ];
+            }
+
+            $oldStress = $player->stress;
+
+            $player->updateStress($situation->stress_impact);
+
+            $playerSituation = $this->situationRepository->createPlayerSituation($player->id, $situationId);
+
+            ActivityLog::logEvent('situation.started', [
+                'situation_id' => $situationId,
+                'situation_title' => $situation->title,
+                'stress_impact' => $situation->stress_impact,
+                'old_stress' => $oldStress,
+                'new_stress' => $player->fresh()->stress
+            ], $userId);
+
+            DB::commit();
+
+            return [
+                'success' => true,
+                'message' => 'Ситуация успешно начата!',
+                'data' => [
+                    'situation' => [
+                        'id' => $situation->id,
+                        'title' => $situation->title,
+                        'description' => $situation->description,
+                        'category' => $situation->category,
+                        'stress_impact' => $situation->stress_impact,
+                        'position' => $situation->position
+                    ],
+                    'options' => $situation->options->filter(function ($option) use ($player) {
+                        return $option->min_level_required <= $player->level;
+                    })->values(),
+                    'player_changes' => [
+                        'old_stress' => $oldStress,
+                        'new_stress' => $player->fresh()->stress,
+                        'stress_change' => $situation->stress_impact,
+                        'current_energy' => $player->energy,
+                        'current_level' => $player->level
+                    ],
+                    'player_situation_id' => $playerSituation->id
+                ]
+            ];
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            return [
+                'success' => false,
+                'message' => 'Ошибка при начале ситуации: ' . $e->getMessage()
+            ];
+        }
     }
 
     public function completeSituation(int $situationId, int $optionId, int $userId): array
@@ -186,19 +287,20 @@ class SituationService
                 ];
             }
 
-            if ($this->situationRepository->isOnCooldown($player->id)) {
-                return [
-                    'success' => false,
-                    'message' => 'Вы еще не можете завершить ситуацию. Подождите окончания перезарядки.'
-                ];
-            }
-
             $situation = $this->situationRepository->findSituationById($situationId);
             
             if (!$situation) {
                 return [
                     'success' => false,
                     'message' => 'Ситуация не найдена'
+                ];
+            }
+
+            $playerSituation = $this->situationRepository->getActivePlayerSituation($player->id, $situationId);
+            if (!$playerSituation) {
+                return [
+                    'success' => false,
+                    'message' => 'Ситуация не была начата. Сначала инициируйте ситуацию.'
                 ];
             }
 
@@ -225,7 +327,6 @@ class SituationService
                 ];
             }
 
-            $playerSituation = $this->situationRepository->createPlayerSituation($player->id, $situationId);
             $this->situationRepository->completeSituation($playerSituation->id, $optionId);
 
             $oldStress = $player->stress;

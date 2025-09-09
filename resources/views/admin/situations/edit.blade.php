@@ -128,6 +128,27 @@
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
+
+                    <!-- Position -->
+                    <div>
+                        <label for="position" class="block text-sm font-medium text-gray-700 mb-1">
+                            Место показа ситуации
+                        </label>
+                        <select id="position" 
+                                name="position" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 @error('position') border-red-500 @enderror">
+                        @foreach($positions as $position)
+                            <option value="{{ $position['value'] }}" 
+                                    {{ old('position', $situation->position ?? 'desktop') == $position['value'] ? 'selected' : '' }}
+                                    title="{{ $position['description'] }}">
+                                {{ $position['icon'] }} {{ $position['label'] }}
+                            </option>
+                        @endforeach
+                        </select>
+                        @error('position')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
                 
                 <!-- Game Parameters -->

@@ -31,6 +31,7 @@ Route::middleware(['auth:api', 'throttle.game:120,1'])->group(function () {
         Route::get('history', [\App\Http\Controllers\Api\SituationController::class, 'history']);
         Route::get('recommendations', [\App\Http\Controllers\Api\SituationController::class, 'recommendations']);
         Route::get('{id}', [\App\Http\Controllers\Api\SituationController::class, 'show']);
+        Route::post('{id}/start', [\App\Http\Controllers\Api\SituationController::class, 'start']);
         Route::post('{id}/complete', [\App\Http\Controllers\Api\SituationController::class, 'complete']);
     });
 

@@ -20,6 +20,7 @@ class Situation extends Model
         'stress_impact',
         'experience_reward',
         'is_active',
+        'position',
     ];
 
     protected function casts(): array

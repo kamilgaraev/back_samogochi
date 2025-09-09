@@ -126,6 +126,7 @@ class AdminService
                 'stress_impact' => $data['stress_impact'],
                 'experience_reward' => $data['experience_reward'],
                 'is_active' => $data['is_active'] ?? true,
+                'position' => $data['position'] ?? 'desktop',
             ]);
 
             if (isset($data['options'])) {
@@ -189,6 +190,7 @@ class AdminService
                 'stress_impact' => $data['stress_impact'] ?? $situation->stress_impact,
                 'experience_reward' => $data['experience_reward'] ?? $situation->experience_reward,
                 'is_active' => $data['is_active'] ?? $situation->is_active,
+                'position' => $data['position'] ?? $situation->position,
             ]);
 
             if (isset($data['options'])) {

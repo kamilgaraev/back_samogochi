@@ -124,6 +124,9 @@
                             Награды/Влияние
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Место показа
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Статус
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -184,6 +187,22 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
+                                @php
+                                    $positionData = [
+                                        'phone' => ['icon' => '📱', 'label' => 'Телефон', 'color' => 'blue'],
+                                        'tv' => ['icon' => '📺', 'label' => 'ТВ', 'color' => 'purple'],
+                                        'desktop' => ['icon' => '💻', 'label' => 'Компьютер', 'color' => 'gray'],
+                                        'tablet' => ['icon' => '📋', 'label' => 'Планшет', 'color' => 'green'],
+                                        'smartwatch' => ['icon' => '⌚', 'label' => 'Часы', 'color' => 'yellow'],
+                                        'notification' => ['icon' => '🔔', 'label' => 'Уведомление', 'color' => 'orange'],
+                                    ];
+                                    $position = $positionData[$situation->position ?? 'desktop'] ?? $positionData['desktop'];
+                                @endphp
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-{{ $position['color'] }}-100 text-{{ $position['color'] }}-800">
+                                    {{ $position['icon'] }} {{ $position['label'] }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
                                 @if($situation->is_active)
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                         <i class="fas fa-check-circle mr-1"></i> Активна
@@ -215,7 +234,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                            <td colspan="7" class="px-6 py-12 text-center text-gray-500">
                                 <i class="fas fa-puzzle-piece text-4xl mb-4 opacity-50"></i>
                                 <p class="text-lg font-medium mb-2">Ситуации не найдены</p>
                                 <p class="text-sm">

@@ -146,6 +146,47 @@ class SituationController extends Controller
         }
     }
 
+    public function start($id)
+    {
+        $validator = Validator::make(['id' => $id], [
+            'id' => 'required|integer|min:1'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Неверный ID ситуации'
+            ], 422);
+        }
+
+        try {
+            $userId = auth('api')->id();
+            
+            $result = $this->situationService->startSituation($id, $userId);
+
+            if (!$result['success']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $result['message'],
+                    'cooldown_ends_at' => $result['cooldown_ends_at'] ?? null
+                ], 400);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => $result['message'],
+                'data' => $result['data']
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при начале ситуации',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function complete(Request $request, $id)
     {
         $validator = Validator::make(array_merge($request->all(), ['situation_id' => $id]), [

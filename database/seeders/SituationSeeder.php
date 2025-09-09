@@ -19,6 +19,7 @@ class SituationSeeder extends Seeder
                 'min_level_required' => 1,
                 'stress_impact' => 15,
                 'experience_reward' => 20,
+                'position' => 'desktop',
                 'options' => [
                     [
                         'text' => 'Спокойно составить план действий и работать по приоритетам',
@@ -51,6 +52,7 @@ class SituationSeeder extends Seeder
                 'min_level_required' => 1,
                 'stress_impact' => 10,
                 'experience_reward' => 15,
+                'position' => 'tablet',
                 'options' => [
                     [
                         'text' => 'Составить подробный план подготовки и следовать ему',
@@ -83,6 +85,7 @@ class SituationSeeder extends Seeder
                 'min_level_required' => 1,
                 'stress_impact' => 12,
                 'experience_reward' => 18,
+                'position' => 'phone',
                 'options' => [
                     [
                         'text' => 'Искренне извиниться и объяснить свою позицию',
@@ -115,6 +118,7 @@ class SituationSeeder extends Seeder
                 'min_level_required' => 1,
                 'stress_impact' => 8,
                 'experience_reward' => 12,
+                'position' => 'smartwatch',
                 'options' => [
                     [
                         'text' => 'Выполнить дыхательные упражнения и медитацию',
@@ -181,6 +185,7 @@ class SituationSeeder extends Seeder
                 'min_level_required' => 2,
                 'stress_impact' => 18,
                 'experience_reward' => 25,
+                'position' => 'tv',
                 'options' => [
                     [
                         'text' => 'Организовать семейный совет для обсуждения',
@@ -215,6 +220,7 @@ class SituationSeeder extends Seeder
                 'min_level_required' => 1,
                 'stress_impact' => 10,
                 'experience_reward' => 16,
+                'position' => 'notification',
                 'options' => [
                     [
                         'text' => 'Проанализировать причины и устранить отвлекающие факторы',
@@ -247,6 +253,7 @@ class SituationSeeder extends Seeder
                 'min_level_required' => 2,
                 'stress_impact' => 16,
                 'experience_reward' => 28,
+                'position' => 'desktop',
                 'options' => [
                     [
                         'text' => 'Сосредоточиться на основных формулах и разобрать типовые задачи',

@@ -88,6 +88,16 @@ class SituationRepository
             ->first();
     }
 
+    public function getActivePlayerSituation(int $playerId, int $situationId): ?PlayerSituation
+    {
+        return PlayerSituation::where('player_id', $playerId)
+            ->where('situation_id', $situationId)
+            ->whereNull('completed_at')
+            ->whereNull('selected_option_id')
+            ->with(['situation.options'])
+            ->first();
+    }
+
     public function getCompletedSituationsCount(int $playerId): int
     {
         return PlayerSituation::where('player_id', $playerId)

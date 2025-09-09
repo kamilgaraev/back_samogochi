@@ -98,6 +98,26 @@
                     @enderror
                 </div>
                 
+                <!-- Position -->
+                <div>
+                    <label for="position" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-desktop mr-1"></i>Место показа ситуации
+                    </label>
+                    <select name="position" id="position"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('position') border-red-500 @enderror">
+                        @foreach($positions as $position)
+                            <option value="{{ $position['value'] }}" 
+                                    {{ old('position', 'desktop') == $position['value'] ? 'selected' : '' }}
+                                    title="{{ $position['description'] }}">
+                                {{ $position['icon'] }} {{ $position['label'] }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('position')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+                
                 <!-- Status -->
                 <div>
                     <label class="flex items-center">

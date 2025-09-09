@@ -251,6 +251,114 @@
       '401':
         description: Неавторизованный запрос
 
+/situations/{id}/start:
+  post:
+    tags:
+      - Situations
+    summary: Инициация ситуации
+    description: Начало ситуации с применением базового стресса (stress_impact). После инициации ситуацию можно завершить выбором опции.
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID ситуации
+        schema:
+          type: integer
+          example: 1
+    responses:
+      '200':
+        description: Ситуация успешно начата
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: "Ситуация успешно начата!"
+                data:
+                  type: object
+                  properties:
+                    situation:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        title:
+                          type: string
+                          example: "Горящий дедлайн на работе"
+                        description:
+                          type: string
+                          example: "Ваш руководитель просит срочно закончить проект..."
+                        category:
+                          type: string
+                          example: "work"
+                        stress_impact:
+                          type: integer
+                          example: 15
+                        position:
+                          type: string
+                          example: "phone"
+                          description: "Место отображения ситуации (phone, tv, desktop, etc.)"
+                    options:
+                      type: array
+                      items:
+                        $ref: '../openapi.yaml#/components/schemas/SituationOption'
+                    player_changes:
+                      type: object
+                      properties:
+                        old_stress:
+                          type: integer
+                          example: 30
+                        new_stress:
+                          type: integer
+                          example: 45
+                        stress_change:
+                          type: integer
+                          example: 15
+                        current_energy:
+                          type: integer
+                          example: 80
+                        current_level:
+                          type: integer
+                          example: 5
+                    player_situation_id:
+                      type: integer
+                      example: 123
+                      description: "ID записи начатой ситуации"
+      '400':
+        description: Ошибка при начале ситуации (кулдаун, низкий уровень, ситуация уже начата)
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Вы еще не можете начать новую ситуацию"
+                cooldown_ends_at:
+                  type: string
+                  format: date-time
+                  example: "2025-01-15T14:30:00Z"
+                  description: "Время окончания кулдауна (если применимо)"
+      '404':
+        description: Ситуация не найдена
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yaml#/components/responses/ErrorResponse'
+      '401':
+        description: Неавторизованный запрос
+
 /situations/{id}/complete:
   post:
     tags:

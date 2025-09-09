@@ -360,6 +360,15 @@ class AdminWebController extends Controller
             ];
         });
         
-        return compact('categories', 'difficulties');
+        $positions = [
+            ['value' => 'phone', 'label' => 'Телефон', 'icon' => '📱', 'description' => 'Отображение на мобильном устройстве'],
+            ['value' => 'tv', 'label' => 'Телевизор', 'icon' => '📺', 'description' => 'Отображение на большом экране'],
+            ['value' => 'desktop', 'label' => 'Рабочий стол', 'icon' => '💻', 'description' => 'Отображение на компьютере'],
+            ['value' => 'tablet', 'label' => 'Планшет', 'icon' => '📋', 'description' => 'Отображение на планшете'],
+            ['value' => 'smartwatch', 'label' => 'Умные часы', 'icon' => '⌚', 'description' => 'Краткое уведомление на часах'],
+            ['value' => 'notification', 'label' => 'Уведомление', 'icon' => '🔔', 'description' => 'Push-уведомление']
+        ];
+        
+        return compact('categories', 'difficulties', 'positions');
     }
 }

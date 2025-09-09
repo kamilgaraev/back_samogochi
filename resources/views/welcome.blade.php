@@ -156,7 +156,7 @@
                 
             </div>
             <div class="border-t border-white/20 mt-12 pt-8 text-center">
-                <p class="text-white/70">© 2024 AntiStress Tamagotchi API. Все права защищены.</p>
+                <p class="text-white/70">© 2025 AntiStress Tamagotchi API. Все права защищены.</p>
             </div>
         </div>
     </footer>

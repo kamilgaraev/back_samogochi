@@ -8,12 +8,11 @@
     <form method="GET" class="flex items-center space-x-2">
         <select name="category" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             <option value="">Все категории</option>
-            <option value="work" {{ request('category') == 'work' ? 'selected' : '' }}>Работа</option>
-            <option value="relationships" {{ request('category') == 'relationships' ? 'selected' : '' }}>Отношения</option>
-            <option value="health" {{ request('category') == 'health' ? 'selected' : '' }}>Здоровье</option>
-            <option value="study" {{ request('category') == 'study' ? 'selected' : '' }}>Учеба</option>
-            <option value="family" {{ request('category') == 'family' ? 'selected' : '' }}>Семья</option>
-            <option value="financial" {{ request('category') == 'financial' ? 'selected' : '' }}>Финансы</option>
+            @foreach(\App\Enums\SituationCategory::cases() as $category)
+                <option value="{{ $category->value }}" {{ request('category') == $category->value ? 'selected' : '' }}>
+                    {{ $category->getLabel() }}
+                </option>
+            @endforeach
         </select>
         
         <select name="difficulty_level" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
@@ -79,7 +78,10 @@
                     <i class="fas fa-star text-xl"></i>
                 </div>
                 <div class="ml-4">
-                    <p class="text-2xl font-bold text-gray-900">{{ collect($situations)->where('difficulty_level', '>=', 4)->count() }}</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ collect($situations)->filter(function($s) { 
+                        $level = is_int($s->difficulty_level) ? $s->difficulty_level : $s->difficulty_level->value; 
+                        return $level >= 4; 
+                    })->count() }}</p>
                     <p class="text-sm text-gray-600">Сложных (4-5)</p>
                 </div>
             </div>
@@ -151,24 +153,30 @@
                                 @php
                                     $categoryColors = [
                                         'work' => 'blue',
-                                        'relationships' => 'pink',
-                                        'health' => 'green',
                                         'study' => 'purple',
-                                        'family' => 'yellow',
-                                        'financial' => 'indigo'
+                                        'personal' => 'pink',
+                                        'health' => 'green'
                                     ];
-                                    $color = $categoryColors[$situation->category] ?? 'gray';
+                                    $categoryValue = is_string($situation->category) ? $situation->category : $situation->category->value;
+                                    $color = $categoryColors[$categoryValue] ?? 'gray';
                                 @endphp
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-{{ $color }}-100 text-{{ $color }}-800">
-                                    {{ ucfirst($situation->category) }}
+                                    @if(is_string($situation->category))
+                                        {{ ucfirst($situation->category) }}
+                                    @else
+                                        {{ $situation->category->getLabel() }}
+                                    @endif
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
+                                    @php
+                                        $difficultyValue = is_int($situation->difficulty_level) ? $situation->difficulty_level : $situation->difficulty_level->value;
+                                    @endphp
                                     @for($i = 1; $i <= 5; $i++)
-                                        <i class="fas fa-star {{ $i <= $situation->difficulty_level ? 'text-yellow-400' : 'text-gray-300' }} text-sm"></i>
+                                        <i class="fas fa-star {{ $i <= $difficultyValue ? 'text-yellow-400' : 'text-gray-300' }} text-sm"></i>
                                     @endfor
-                                    <span class="ml-2 text-sm text-gray-600">({{ $situation->difficulty_level }}/5)</span>
+                                    <span class="ml-2 text-sm text-gray-600">({{ $difficultyValue }}/5)</span>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">

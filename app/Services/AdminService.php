@@ -54,10 +54,23 @@ class AdminService
             if (is_string($value)) {
                 try {
                     $value = json_decode($value, true);
+                    
+                    // Приводим к правильным типам для игрового баланса
+                    if ($key === 'game_balance' && is_array($value)) {
+                        $value = $this->normalizeGameBalanceTypes($value);
+                    }
                 } catch (\Exception $e) {
                     // Если не JSON, оставляем как есть
                 }
             }
+
+            // Логирование для отладки
+            \Log::info('AdminService: updateConfig', [
+                'key' => $key,
+                'original_value' => $data['value'],
+                'parsed_value' => $value,
+                'value_type' => gettype($value)
+            ]);
 
             $config->update([
                 'value' => $value,
@@ -69,8 +82,12 @@ class AdminService
             ActivityLog::logEvent(\App\Enums\ActivityEventType::ADMIN_CONFIG_UPDATED->value, [
                 'config_key' => $key,
                 'old_value' => $oldValue,
-                'new_value' => $data['value'],
+                'new_value' => $value,
             ], $userId);
+
+            // Очищаем кэш конфигураций
+            \Artisan::call('cache:clear');
+            \Artisan::call('config:clear');
 
             DB::commit();
 
@@ -280,5 +297,35 @@ class AdminService
                 'message' => 'Ошибка при удалении ситуации: ' . $e->getMessage()
             ];
         }
+    }
+
+    private function normalizeGameBalanceTypes(array $data): array
+    {
+        $typeMap = [
+            'daily_login_experience' => 'int',
+            'max_energy' => 'int',
+            'energy_regen_per_hour' => 'int',
+            'stress_threshold_high' => 'int',
+            'stress_threshold_low' => 'int',
+            'situation_cooldown_hours' => 'int'
+        ];
+
+        foreach ($data as $key => $value) {
+            if (isset($typeMap[$key])) {
+                switch ($typeMap[$key]) {
+                    case 'int':
+                        $data[$key] = (int) $value;
+                        break;
+                    case 'float':
+                        $data[$key] = (float) $value;
+                        break;
+                    case 'bool':
+                        $data[$key] = (bool) $value;
+                        break;
+                }
+            }
+        }
+
+        return $data;
     }
 }

@@ -151,32 +151,9 @@
                         </div>
                         <span class="text-lg font-bold text-white">AntiStress API</span>
                     </div>
-                    <p class="text-white/70">Мощный API для приложений управления стрессом.</p>
+                    <p class="text-white/70">Мощный API для Tamagotchi.</p>
                 </div>
-                <div>
-                    <h4 class="font-semibold text-white mb-4">API</h4>
-                    <ul class="space-y-2 text-white/70">
-                        <li><a href="/docs" class="hover:text-white transition-colors">Документация</a></li>
-                        <li><a href="/admin" class="hover:text-white transition-colors">Админ-панель</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Статус</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-semibold text-white mb-4">Поддержка</h4>
-                    <ul class="space-y-2 text-white/70">
-                        <li><a href="#" class="hover:text-white transition-colors">Помощь</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Контакты</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Сообщить об ошибке</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-semibold text-white mb-4">Ресурсы</h4>
-                    <ul class="space-y-2 text-white/70">
-                        <li><a href="#" class="hover:text-white transition-colors">GitHub</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Примеры</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Постман коллекция</a></li>
-                    </ul>
-                </div>
+                
             </div>
             <div class="border-t border-white/20 mt-12 pt-8 text-center">
                 <p class="text-white/70">© 2024 AntiStress Tamagotchi API. Все права защищены.</p>

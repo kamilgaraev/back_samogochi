@@ -324,13 +324,7 @@ class AdminWebController extends Controller
     {
         Gate::authorize('configs.edit');
         
-        // Логирование для отладки контроллера
-        \Log::info('AdminWebController: configUpdate', [
-            'key' => $key,
-            'request_value' => $request->get('value'),
-            'request_value_type' => gettype($request->get('value')),
-            'all_request' => $request->all()
-        ]);
+        // Логирование убрано после успешного тестирования
         
         $result = $this->adminService->updateConfig($key, $request->all(), auth()->id());
 

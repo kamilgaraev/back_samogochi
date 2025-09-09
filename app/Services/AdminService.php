@@ -78,18 +78,7 @@ class AdminService
                 $value = $this->normalizeGameBalanceTypes($value);
             }
 
-            // Логирование для отладки (можно убрать после тестирования)
-            \Log::info('AdminService: updateConfig DOUBLE_DECODE', [
-                'key' => $key,
-                'original_value' => $data['value'],
-                'original_type' => gettype($data['value']),
-                'parsed_value' => $value,
-                'parsed_type' => gettype($value),
-                'is_array' => is_array($value),
-                'max_energy_exists' => is_array($value) && isset($value['max_energy']),
-                'max_energy_value' => is_array($value) && isset($value['max_energy']) ? $value['max_energy'] : 'not_set',
-                'max_energy_type' => is_array($value) && isset($value['max_energy']) ? gettype($value['max_energy']) : 'not_set'
-            ]);
+            // Отладочные логи убраны после успешного тестирования
 
             $config->update([
                 'value' => $value,
@@ -360,11 +349,11 @@ class AdminService
     private function updatePlayersMaxEnergy(int $maxEnergy): void
     {
         try {
-            // Устанавливаем энергию = новому максимуму для всех игроков (для тестирования)
-            // В продакшене можно просто ограничить: where('energy', '>', $maxEnergy)->update(['energy' => $maxEnergy])
+            // Обновляем энергию игроков при изменении max_energy
+            // Для тестирования: устанавливаем всем полную энергию
+            // Для продакшена: ограничиваем превышение ->where('energy', '>', $maxEnergy)->update(['energy' => $maxEnergy])
             \App\Models\PlayerProfile::query()->update(['energy' => $maxEnergy]);
             
-            \Log::info("Players energy updated to max_energy: {$maxEnergy}");
         } catch (\Exception $e) {
             \Log::error("Failed to update players energy: " . $e->getMessage());
         }

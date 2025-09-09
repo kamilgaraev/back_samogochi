@@ -215,6 +215,11 @@ components:
         is_active:
           type: boolean
           example: true
+        position:
+          type: string
+          enum: [phone, tv, desktop, tablet, smartwatch, notification]
+          example: "desktop"
+          description: "Место отображения ситуации"
         created_at:
           type: string
           format: date-time

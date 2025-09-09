@@ -228,6 +228,12 @@
                 type: boolean
                 default: true
                 example: true
+              position:
+                type: string
+                enum: [phone, tv, desktop, tablet, smartwatch, notification]
+                default: "desktop"
+                example: "desktop"
+                description: "Место отображения ситуации"
               options:
                 type: array
                 minItems: 2

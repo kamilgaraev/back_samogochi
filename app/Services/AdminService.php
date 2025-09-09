@@ -49,10 +49,20 @@ class AdminService
 
             $oldValue = $config->value;
             
+            // Обработка JSON значения
+            $value = $data['value'];
+            if (is_string($value)) {
+                try {
+                    $value = json_decode($value, true);
+                } catch (\Exception $e) {
+                    // Если не JSON, оставляем как есть
+                }
+            }
+
             $config->update([
-                'value' => $data['value'],
+                'value' => $value,
                 'description' => $data['description'] ?? $config->description,
-                'is_active' => $data['is_active'] ?? $config->is_active,
+                'is_active' => isset($data['is_active']) ? (bool)$data['is_active'] : $config->is_active,
                 'created_by' => $userId,
             ]);
 

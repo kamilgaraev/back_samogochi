@@ -22,16 +22,21 @@ class EnergyRegenJob implements ShouldQueue
         $processed = 0;
         $updated = 0;
 
-        PlayerProfile::chunk(1000, function ($players) use (&$processed, &$updated) {
+        // Получаем конфигурации энергии
+        $gameBalance = \App\Models\GameConfig::getGameBalance();
+        $maxEnergy = $gameBalance['max_energy'] ?? 200;
+        $energyRegenPerHour = $gameBalance['energy_regen_per_hour'] ?? 1;
+
+        PlayerProfile::chunk(1000, function ($players) use (&$processed, &$updated, $maxEnergy, $energyRegenPerHour) {
             foreach ($players as $player) {
                 $processed++;
                 
                 $hoursSinceUpdate = $player->updated_at->diffInHours(now());
                 
-                if ($hoursSinceUpdate >= 1 && $player->energy < 200) {
+                if ($hoursSinceUpdate >= 1 && $player->energy < $maxEnergy) {
                     $energyToAdd = min(
-                        1 * $hoursSinceUpdate, 
-                        200 - $player->energy
+                        $energyRegenPerHour * $hoursSinceUpdate, 
+                        $maxEnergy - $player->energy
                     );
                     
                     if ($energyToAdd > 0) {

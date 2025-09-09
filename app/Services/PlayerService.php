@@ -36,8 +36,8 @@ class PlayerService
             'experience_to_next_level' => $levelProgress['experience_to_next'],
             'level_progress_percentage' => $levelProgress['progress_percentage'],
             'energy' => $playerProfile->energy,
-            'max_energy' => 200,
-            'energy_percentage' => round(($playerProfile->energy / 200) * 100, 1),
+            'max_energy' => $this->getMaxEnergy(),
+            'energy_percentage' => round(($playerProfile->energy / $this->getMaxEnergy()) * 100, 1),
             'stress' => $playerProfile->stress,
             'stress_status' => $this->getStressStatus($playerProfile->stress),
             'anxiety' => $playerProfile->anxiety,
@@ -301,5 +301,11 @@ class PlayerService
     private function getStressStatus(int $stress): string
     {
         return \App\Enums\StressLevel::fromValue($stress)->value;
+    }
+
+    private function getMaxEnergy(): int
+    {
+        $gameBalance = \App\Models\GameConfig::getGameBalance();
+        return $gameBalance['max_energy'] ?? 200;
     }
 }

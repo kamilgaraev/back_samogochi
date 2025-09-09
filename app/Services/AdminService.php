@@ -49,15 +49,24 @@ class AdminService
 
             $oldValue = $config->value;
             
-            // Обработка JSON значения
+            // Обработка JSON значения (может быть двойной JSON!)
             $value = $data['value'];
             
-            // Если строка - пытаемся распарсить JSON
+            // Если строка - пытаемся распарсить JSON (возможно несколько раз)
             if (is_string($value)) {
+                // Первый парсинг
                 try {
                     $decoded = json_decode($value, true);
                     if (json_last_error() === JSON_ERROR_NONE) {
                         $value = $decoded;
+                        
+                        // Если результат все еще строка - парсим еще раз (двойной JSON)
+                        if (is_string($value)) {
+                            $doubleDecoded = json_decode($value, true);
+                            if (json_last_error() === JSON_ERROR_NONE) {
+                                $value = $doubleDecoded;
+                            }
+                        }
                     }
                 } catch (\Exception $e) {
                     // Если не JSON, оставляем как есть
@@ -70,11 +79,15 @@ class AdminService
             }
 
             // Логирование для отладки (можно убрать после тестирования)
-            \Log::info('AdminService: updateConfig FIXED', [
+            \Log::info('AdminService: updateConfig DOUBLE_DECODE', [
                 'key' => $key,
                 'original_value' => $data['value'],
+                'original_type' => gettype($data['value']),
                 'parsed_value' => $value,
-                'value_type' => gettype($value),
+                'parsed_type' => gettype($value),
+                'is_array' => is_array($value),
+                'max_energy_exists' => is_array($value) && isset($value['max_energy']),
+                'max_energy_value' => is_array($value) && isset($value['max_energy']) ? $value['max_energy'] : 'not_set',
                 'max_energy_type' => is_array($value) && isset($value['max_energy']) ? gettype($value['max_energy']) : 'not_set'
             ]);
 

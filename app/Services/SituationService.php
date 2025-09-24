@@ -474,4 +474,59 @@ class SituationService
             ]
         ];
     }
+
+    public function getRandomRecommendedSituation(int $userId): array
+    {
+        $player = $this->playerRepository->findByUserId($userId);
+        
+        if (!$player) {
+            return [
+                'success' => false,
+                'message' => 'Профиль игрока не найден'
+            ];
+        }
+
+        if ($this->situationRepository->isOnCooldown($player->id)) {
+            $cooldownEndTime = $this->situationRepository->getCooldownEndTime($player->id);
+            return [
+                'success' => false,
+                'message' => 'Вы еще не можете начать новую ситуацию',
+                'cooldown_ends_at' => $cooldownEndTime
+            ];
+        }
+
+        $situation = $this->situationRepository->getRandomRecommendedSituation($player->id);
+        
+        if (!$situation) {
+            return [
+                'success' => false,
+                'message' => 'Нет доступных рекомендованных ситуаций для вашего уровня'
+            ];
+        }
+
+        return [
+            'success' => true,
+            'data' => [
+                'situation' => [
+                    'id' => $situation->id,
+                    'title' => $situation->title,
+                    'description' => $situation->description,
+                    'category' => $situation->category,
+                    'difficulty_level' => $situation->difficulty_level,
+                    'stress_impact' => $situation->stress_impact,
+                    'experience_reward' => $situation->experience_reward,
+                    'position' => $situation->position,
+                ],
+                'options' => $situation->options->filter(function ($option) use ($player) {
+                    return $option->min_level_required <= $player->level;
+                })->values(),
+                'player_info' => [
+                    'current_stress' => $player->stress,
+                    'current_energy' => $player->energy,
+                    'level' => $player->level,
+                ],
+                'is_recommended' => true
+            ]
+        ];
+    }
 }

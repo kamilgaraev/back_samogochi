@@ -212,4 +212,15 @@ class SituationRepository
             ->limit($limit)
             ->get();
     }
+
+    public function getRandomRecommendedSituation(int $playerId): ?Situation
+    {
+        $recommendedSituations = $this->getRecommendedSituations($playerId, 50);
+        
+        if ($recommendedSituations->isEmpty()) {
+            return null;
+        }
+
+        return $recommendedSituations->random();
+    }
 }

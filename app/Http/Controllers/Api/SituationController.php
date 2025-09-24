@@ -302,4 +302,34 @@ class SituationController extends Controller
             ], 500);
         }
     }
+
+    public function randomRecommended()
+    {
+        try {
+            $userId = auth('api')->id();
+            
+            $result = $this->situationService->getRandomRecommendedSituation($userId);
+
+            if (!$result['success']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $result['message'],
+                    'cooldown_ends_at' => $result['cooldown_ends_at'] ?? null
+                ], 400);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Случайная рекомендованная ситуация успешно получена',
+                'data' => $result['data']
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при получении случайной рекомендованной ситуации',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

@@ -797,6 +797,10 @@ paths:
     $ref: './paths/situations.yaml#/~1situations'
   /situations/random:
     $ref: './paths/situations.yaml#/~1situations~1random'
+  /situations/random-recommended:
+    $ref: './paths/situations.yaml#/~1situations~1random-recommended'
+  /situations/active:
+    $ref: './paths/situations.yaml#/~1situations~1active'
   /situations/history:
     $ref: './paths/situations.yaml#/~1situations~1history'
   /situations/recommendations:

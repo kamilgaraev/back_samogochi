@@ -92,6 +92,103 @@
       '401':
         description: Неавторизованный запрос
 
+/situations/random-recommended:
+  get:
+    tags:
+      - Situations
+    summary: Случайная рекомендованная ситуация
+    description: |
+      Получение случайной ситуации из персонализированных рекомендаций.
+      
+      **Логика выбора:**
+      - Исключает уже завершенные ситуации
+      - Учитывает текущий уровень стресса игрока
+      - При высоком стрессе (>70) - только расслабляющие ситуации (stress_impact ≤ 0)
+      - При низком стрессе (<30) - вызовы для роста (stress_impact ≥ 0)
+      - При среднем стрессе - все доступные ситуации
+      - Фильтр по уровню игрока
+      
+      **Отличие от `/random`:** персонализация vs полная случайность
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Случайная рекомендованная ситуация получена
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: "Случайная рекомендованная ситуация успешно получена"
+                data:
+                  type: object
+                  properties:
+                    situation:
+                      allOf:
+                        - $ref: '../openapi.yaml#/components/schemas/Situation'
+                        - type: object
+                          example:
+                            id: 15
+                            title: "Медитация в парке"
+                            description: "Прекрасный солнечный день. Вы находите тихое место в парке..."
+                            category: "health"
+                            difficulty_level: 1
+                            stress_impact: -10
+                            experience_reward: 15
+                            position: "phone"
+                    options:
+                      type: array
+                      items:
+                        $ref: '../openapi.yaml#/components/schemas/SituationOption'
+                    player_info:
+                      type: object
+                      properties:
+                        current_stress:
+                          type: integer
+                          example: 85
+                          description: "Текущий уровень стресса игрока"
+                        current_energy:
+                          type: integer
+                          example: 120
+                        level:
+                          type: integer
+                          example: 1
+                    is_recommended:
+                      type: boolean
+                      example: true
+                      description: "Флаг, указывающий что ситуация из рекомендаций"
+      '400':
+        description: Нет доступных рекомендаций или действует кулдаун
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Нет доступных рекомендованных ситуаций для вашего уровня"
+                cooldown_ends_at:
+                  type: string
+                  format: date-time
+                  example: "2025-01-15T14:30:00Z"
+                  description: "Время окончания кулдауна (если применимо)"
+      '404':
+        description: Игрок не найден
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yaml#/components/responses/ErrorResponse'
+      '401':
+        description: Неавторизованный запрос
+
 /situations/history:
   get:
     tags:

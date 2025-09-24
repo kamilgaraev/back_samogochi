@@ -189,6 +189,101 @@
       '401':
         description: Неавторизованный запрос
 
+/situations/active:
+  get:
+    tags:
+      - Situations
+    summary: Просмотр активной ситуации
+    description: |
+      Получение информации о текущей активной ситуации игрока.
+      
+      **Активная ситуация** - это ситуация, которая была начата (POST /situations/{id}/start), 
+      но еще не завершена (POST /situations/{id}/complete).
+      
+      **Возможные состояния:**
+      - Есть активная ситуация - возвращает её детали с опциями для завершения
+      - Нет активной ситуации - возвращает ошибку 404
+      
+      Используется для восстановления состояния игры после перезапуска приложения.
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Активная ситуация найдена
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: "Активная ситуация успешно получена"
+                data:
+                  type: object
+                  properties:
+                    player_situation_id:
+                      type: integer
+                      example: 123
+                      description: "ID записи начатой ситуации для завершения"
+                    situation:
+                      allOf:
+                        - $ref: '../openapi.yaml#/components/schemas/Situation'
+                        - type: object
+                          example:
+                            id: 7
+                            title: "Горящий дедлайн на работе"
+                            description: "Ваш руководитель просит срочно закончить проект до конца дня..."
+                            category: "work"
+                            difficulty_level: 2
+                            stress_impact: 15
+                            experience_reward: 20
+                            position: "desktop"
+                    options:
+                      type: array
+                      items:
+                        $ref: '../openapi.yaml#/components/schemas/SituationOption'
+                      description: "Доступные варианты завершения ситуации"
+                    started_at:
+                      type: string
+                      format: date-time
+                      example: "2025-09-24T14:30:00Z"
+                      description: "Время начала ситуации"
+                    player_info:
+                      type: object
+                      properties:
+                        current_stress:
+                          type: integer
+                          example: 45
+                          description: "Текущий уровень стресса (уже с учетом stress_impact)"
+                        current_energy:
+                          type: integer
+                          example: 120
+                        level:
+                          type: integer
+                          example: 2
+                    can_complete:
+                      type: boolean
+                      example: true
+                      description: "Можно ли завершить ситуацию (всегда true для активных)"
+      '404':
+        description: Нет активных ситуаций
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "У вас нет активных ситуаций"
+      '401':
+        description: Неавторизованный запрос
+
 /situations/history:
   get:
     tags:

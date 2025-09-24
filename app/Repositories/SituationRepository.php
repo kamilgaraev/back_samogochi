@@ -223,4 +223,19 @@ class SituationRepository
 
         return $recommendedSituations->random();
     }
+
+    public function getActiveSituation(int $playerId): ?PlayerSituation
+    {
+        return PlayerSituation::where('player_id', $playerId)
+            ->whereNull('completed_at')
+            ->whereNull('selected_option_id')
+            ->with(['situation.options' => function ($query) use ($playerId) {
+                $player = PlayerProfile::find($playerId);
+                if ($player) {
+                    $query->where('min_level_required', '<=', $player->level)
+                          ->orderBy('order');
+                }
+            }])
+            ->first();
+    }
 }

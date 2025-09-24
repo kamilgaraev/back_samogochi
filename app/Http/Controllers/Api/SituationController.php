@@ -332,4 +332,33 @@ class SituationController extends Controller
             ], 500);
         }
     }
+
+    public function active()
+    {
+        try {
+            $userId = auth('api')->id();
+            
+            $result = $this->situationService->getActiveSituation($userId);
+
+            if (!$result['success']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $result['message']
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Активная ситуация успешно получена',
+                'data' => $result['data']
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при получении активной ситуации',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

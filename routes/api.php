@@ -29,6 +29,7 @@ Route::middleware(['auth:api', 'throttle.game:120,1'])->group(function () {
         Route::get('/', [\App\Http\Controllers\Api\SituationController::class, 'index']);
         Route::get('random', [\App\Http\Controllers\Api\SituationController::class, 'random']);
         Route::get('random-recommended', [\App\Http\Controllers\Api\SituationController::class, 'randomRecommended']);
+        Route::get('active', [\App\Http\Controllers\Api\SituationController::class, 'active']);
         Route::get('history', [\App\Http\Controllers\Api\SituationController::class, 'history']);
         Route::get('recommendations', [\App\Http\Controllers\Api\SituationController::class, 'recommendations']);
         Route::get('{id}', [\App\Http\Controllers\Api\SituationController::class, 'show']);

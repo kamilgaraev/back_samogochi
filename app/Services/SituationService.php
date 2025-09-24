@@ -486,15 +486,6 @@ class SituationService
             ];
         }
 
-        if ($this->situationRepository->isOnCooldown($player->id)) {
-            $cooldownEndTime = $this->situationRepository->getCooldownEndTime($player->id);
-            return [
-                'success' => false,
-                'message' => 'Вы еще не можете начать новую ситуацию',
-                'cooldown_ends_at' => $cooldownEndTime
-            ];
-        }
-
         $situation = $this->situationRepository->getRandomRecommendedSituation($player->id);
         
         if (!$situation) {
@@ -525,7 +516,11 @@ class SituationService
                     'current_energy' => $player->energy,
                     'level' => $player->level,
                 ],
-                'is_recommended' => true
+                'is_recommended' => true,
+                'cooldown_info' => [
+                    'on_cooldown' => $this->situationRepository->isOnCooldown($player->id),
+                    'cooldown_ends_at' => $this->situationRepository->getCooldownEndTime($player->id)
+                ]
             ]
         ];
     }
@@ -544,9 +539,17 @@ class SituationService
         $activeSituation = $this->situationRepository->getActiveSituation($player->id);
         
         if (!$activeSituation) {
+            $isOnCooldown = $this->situationRepository->isOnCooldown($player->id);
+            $cooldownEndTime = $this->situationRepository->getCooldownEndTime($player->id);
+            
             return [
                 'success' => false,
-                'message' => 'У вас нет активных ситуаций'
+                'message' => 'У вас нет активных ситуаций',
+                'cooldown_info' => [
+                    'on_cooldown' => $isOnCooldown,
+                    'cooldown_ends_at' => $cooldownEndTime,
+                    'can_start_new' => !$isOnCooldown
+                ]
             ];
         }
 

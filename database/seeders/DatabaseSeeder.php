@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             // Game content seeders
             GameConfigSeeder::class,
             SituationSeeder::class,
+            RelaxingSituationSeeder::class,
             MicroActionSeeder::class,
         ]);
     }

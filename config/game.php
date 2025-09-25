@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'situation_cooldown_hours' => (int) env('GAME_SITUATION_COOLDOWN_HOURS', 2),
+    'situation_cooldown_hours' => (int) env('GAME_SITUATION_COOLDOWN_HOURS', 0),
     'micro_action_cooldown_minutes' => (int) env('GAME_MICRO_ACTION_COOLDOWN_MINUTES', 30),
     'daily_login_experience' => (int) env('GAME_DAILY_LOGIN_EXPERIENCE', 10),
     'max_energy' => (int) env('GAME_MAX_ENERGY', 200),

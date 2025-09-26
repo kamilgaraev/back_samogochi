@@ -172,15 +172,28 @@ class RealtimeMetricsService
                 }
 
                 $memoryUsage = memory_get_usage(true);
-                $memoryLimit = ini_get('memory_limit');
-                $health['memory_usage'] = round(($memoryUsage / $this->parseBytes($memoryLimit)) * 100, 1);
+                $memoryLimit = $this->parseBytes(ini_get('memory_limit'));
+                if ($memoryLimit > 0) {
+                    $health['memory_usage'] = round(($memoryUsage / $memoryLimit) * 100, 1);
+                } else {
+                    $health['memory_usage'] = 0;
+                }
 
-                $health['db_connections'] = DB::select("SHOW STATUS LIKE 'Threads_connected'")[0]->Value ?? 0;
+                try {
+                    $result = DB::select("SHOW STATUS LIKE 'Threads_connected'");
+                    $health['db_connections'] = $result[0]->Value ?? 0;
+                } catch (\Exception $e) {
+                    $health['db_connections'] = 'N/A';
+                }
 
-                Redis::ping();
-                $health['redis_status'] = true;
+                try {
+                    Redis::ping();
+                    $health['redis_status'] = true;
+                } catch (\Exception $e) {
+                    $health['redis_status'] = false;
+                }
 
-                if ($health['cpu_usage'] > 80 || $health['memory_usage'] > 85) {
+                if ($health['cpu_usage'] > 80 || $health['memory_usage'] > 85 || !$health['redis_status']) {
                     $health['status'] = 'warning';
                 }
 
@@ -258,19 +271,26 @@ class RealtimeMetricsService
     private function parseBytes(string $val): int
     {
         $val = trim($val);
-        $last = strtolower($val[strlen($val) - 1]);
+        if ($val === '-1') {
+            return PHP_INT_MAX; // Unlimited memory
+        }
+        
+        $unit = strtolower(substr($val, -1));
         $val = (int) $val;
 
-        switch ($last) {
+        switch ($unit) {
             case 'g':
-                $val *= 1024;
+                $val *= 1024 * 1024 * 1024;
+                break;
             case 'm':
-                $val *= 1024;
+                $val *= 1024 * 1024;
+                break;
             case 'k':
                 $val *= 1024;
+                break;
         }
 
-        return $val;
+        return max(1, $val); // Avoid division by zero
     }
 
     public function getMetricTrend(string $metric, int $periods = 5): array

@@ -106,9 +106,25 @@
                                     
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">
-                                            Откат ситуаций (часы)
+                                            Откат ситуаций (секунды)
                                         </label>
-                                        <input type="number" x-model="config.situation_cooldown_hours" 
+                                        <input type="number" x-model="config.situation_cooldown_seconds" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                                            Откат микроакций (минуты)
+                                        </label>
+                                        <input type="number" x-model="config.micro_action_cooldown_minutes" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                                            Опыт за уровень
+                                        </label>
+                                        <input type="number" x-model="config.experience_per_level" 
                                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                     </div>
                                 </div>

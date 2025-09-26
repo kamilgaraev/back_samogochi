@@ -47,7 +47,9 @@ class GameConfig extends Model
             'energy_regen_per_hour' => 1,
             'stress_threshold_high' => 80,
             'stress_threshold_low' => 20,
-            'situation_cooldown_hours' => 2
+            'situation_cooldown_seconds' => 0,
+            'micro_action_cooldown_minutes' => 30,
+            'experience_per_level' => 100
         ]);
     }
 

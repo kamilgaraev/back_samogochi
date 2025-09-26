@@ -7,6 +7,8 @@ use App\Models\Situation;
 use App\Models\SituationOption;
 use App\Models\ActivityLog;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 
 class AdminService
 {
@@ -324,7 +326,9 @@ class AdminService
             'energy_regen_per_hour' => 'int',
             'stress_threshold_high' => 'int',
             'stress_threshold_low' => 'int',
-            'situation_cooldown_hours' => 'int'
+            'situation_cooldown_seconds' => 'int',
+            'micro_action_cooldown_minutes' => 'int',
+            'experience_per_level' => 'int'
         ];
 
         foreach ($data as $key => $value) {

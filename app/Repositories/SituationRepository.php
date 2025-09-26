@@ -163,8 +163,8 @@ class SituationRepository
             return null;
         }
 
-        $cooldownHours = config('game.situation_cooldown_hours', 2);
-        return $lastCompleted->completed_at->addHours($cooldownHours);
+        $cooldownSeconds = config('game.situation_cooldown_seconds', 0);
+        return $lastCompleted->completed_at->addSeconds($cooldownSeconds);
     }
 
     public function isOnCooldown(int $playerId): bool

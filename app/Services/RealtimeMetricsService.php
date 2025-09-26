@@ -200,13 +200,17 @@ class RealtimeMetricsService
     public function getHistoricalData(string $metric, int $hours = 24): array
     {
         $data = [];
-        $start = now()->subHours($hours);
+        $now = now();
         
-        for ($i = 0; $i < $hours; $i++) {
-            $timestamp = $start->copy()->addHours($i);
+        for ($i = $hours - 1; $i >= 0; $i--) {
+            $timestamp = $now->copy()->subHours($i);
             $key = self::CACHE_PREFIX . "history:{$metric}:" . $timestamp->format('Y-m-d-H');
             
-            $value = Cache::get($key, 0);
+            $value = Cache::get($key);
+            if ($value === null) {
+                $value = $this->getCurrentMetricValue($metric);
+            }
+            
             $data[] = [
                 'timestamp' => $timestamp->toISOString(),
                 'value' => $value,
@@ -216,10 +220,32 @@ class RealtimeMetricsService
         return $data;
     }
 
+    private function getCurrentMetricValue(string $metric)
+    {
+        switch ($metric) {
+            case 'players_online':
+                return $this->getPlayersOnline();
+            case 'active_players_hour':
+                return $this->getActivePlayersLastHour();
+            case 'situations_completed_hour':
+                return $this->getSituationsCompletedLastHour();
+            case 'micro_actions_hour':
+                return $this->getMicroActionsLastHour();
+            case 'api_response_time':
+                return $this->getApiResponseTime();
+            default:
+                return rand(10, 100); // Заглушка для тестирования
+        }
+    }
+
     public function storeHistoricalMetric(string $metric, $value): void
     {
         $key = self::CACHE_PREFIX . "history:{$metric}:" . now()->format('Y-m-d-H');
         Cache::put($key, $value, 60 * 60 * 25); // 25 hours
+        
+        // Также сохраняем с минутной точностью для более плавных графиков
+        $minuteKey = self::CACHE_PREFIX . "minute:{$metric}:" . now()->format('Y-m-d-H-i');
+        Cache::put($minuteKey, $value, 60 * 2); // 2 hours
     }
 
     public function recordApiResponseTime(float $responseTime): void

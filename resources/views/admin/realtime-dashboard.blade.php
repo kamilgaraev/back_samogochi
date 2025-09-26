@@ -203,7 +203,9 @@
                 <i class="fas fa-chart-area text-blue-600 mr-2"></i>
                 Активность игроков (12 часов)
             </h3>
-            <canvas id="players-activity-chart" width="400" height="200"></canvas>
+            <div style="height: 300px;">
+                <canvas id="players-activity-chart"></canvas>
+            </div>
         </div>
 
         <!-- System Performance Chart -->
@@ -212,7 +214,9 @@
                 <i class="fas fa-server text-green-600 mr-2"></i>
                 Производительность системы
             </h3>
-            <canvas id="system-performance-chart" width="400" height="200"></canvas>
+            <div style="height: 300px;">
+                <canvas id="system-performance-chart"></canvas>
+            </div>
         </div>
 
     </div>
@@ -297,6 +301,15 @@ class RealtimeMetrics {
             scales: {
                 y: {
                     beginAtZero: true
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
+            elements: {
+                point: {
+                    radius: 3
                 }
             }
         };
@@ -452,23 +465,23 @@ class RealtimeMetrics {
     }
 
     updateCharts(charts) {
-        if (charts.players_activity) {
+        if (charts.players_activity && charts.players_activity.length > 0) {
             const labels = charts.players_activity.map(item => 
                 new Date(item.timestamp).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
             );
-            const data = charts.players_activity.map(item => item.value);
+            const data = charts.players_activity.map(item => Math.max(0, parseInt(item.value) || 0));
             
             this.charts.playersActivity.data.labels = labels;
             this.charts.playersActivity.data.datasets[0].data = data;
             this.charts.playersActivity.update('none');
         }
         
-        if (charts.system_performance) {
+        if (charts.system_performance && charts.system_performance.length > 0) {
             const labels = charts.system_performance.map(item => 
                 new Date(item.timestamp).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
             );
-            const responseData = charts.system_performance.map(item => item.response_time);
-            const cpuData = charts.system_performance.map(item => item.cpu_usage);
+            const responseData = charts.system_performance.map(item => Math.max(0, parseFloat(item.response_time) || 0));
+            const cpuData = charts.system_performance.map(item => Math.max(0, Math.min(100, parseFloat(item.cpu_usage) || 0)));
             
             this.charts.systemPerformance.data.labels = labels;
             this.charts.systemPerformance.data.datasets[0].data = responseData;

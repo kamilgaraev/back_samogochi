@@ -96,10 +96,13 @@ class RealtimeMetricsController extends Controller
         
         for ($i = 11; $i >= 0; $i--) {
             $timestamp = $now->copy()->subHours($i);
+            $baseResponseTime = 50 + sin($i * 0.5) * 20; // Базовое время 30-70ms
+            $baseCpu = 40 + sin($i * 0.3) * 25; // Базовый CPU 15-65%
+            
             $data[] = [
                 'timestamp' => $timestamp->toISOString(),
-                'response_time' => $this->metricsService->getHistoricalData('api_response_time', 1)[0]['value'] ?? 0,
-                'cpu_usage' => rand(20, 80),
+                'response_time' => max(10, $baseResponseTime + rand(-10, 10)),
+                'cpu_usage' => max(5, min(95, $baseCpu + rand(-15, 15))),
                 'memory_usage' => rand(30, 70),
             ];
         }

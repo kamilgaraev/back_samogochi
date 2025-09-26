@@ -3,12 +3,15 @@
 namespace App\Services;
 
 use App\Models\GameConfig;
+use Illuminate\Support\Facades\Log;
 
 class GameConfigService
 {
     public static function getSituationCooldownSeconds(): int
     {
-        return GameConfig::getGameBalance()['situation_cooldown_seconds'] ?? config('game.situation_cooldown_seconds', 0);
+        $value = GameConfig::getGameBalance()['situation_cooldown_seconds'] ?? config('game.situation_cooldown_seconds', 0);
+        Log::info('GameConfigService::getSituationCooldownSeconds', ['value' => $value]);
+        return $value;
     }
 
     public static function getMicroActionCooldownMinutes(): int

@@ -383,7 +383,7 @@ class RealtimeMetrics {
 
     async fetchMetrics() {
         try {
-            const response = await fetch('/api/admin/metrics/dashboard');
+            const response = await fetch('/admin/metrics/dashboard');
             const data = await response.json();
             
             if (data.success) {

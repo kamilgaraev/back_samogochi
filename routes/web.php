@@ -27,6 +27,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/realtime', function () {
             return view('admin.realtime-dashboard');
         })->name('realtime');
+        
+        // Metrics API для веб-админки
+        Route::prefix('metrics')->name('metrics.')->group(function () {
+            Route::get('dashboard', [\App\Http\Controllers\Admin\RealtimeMetricsController::class, 'getDashboardData'])->name('dashboard');
+            Route::get('current', [\App\Http\Controllers\Admin\RealtimeMetricsController::class, 'getCurrentMetrics'])->name('current');
+        });
+        
         Route::post('logout', [AdminWebController::class, 'logout'])->name('logout');
         
         // User management - Specific permissions

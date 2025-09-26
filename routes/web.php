@@ -24,6 +24,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         
         // Dashboard - Basic admin access
         Route::get('/', [AdminWebController::class, 'dashboard'])->name('dashboard');
+        Route::get('/realtime', function () {
+            return view('admin.realtime-dashboard');
+        })->name('realtime');
         Route::post('logout', [AdminWebController::class, 'logout'])->name('logout');
         
         // User management - Specific permissions

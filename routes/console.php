@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
 use App\Jobs\EnergyRegenJob;
 use App\Jobs\DailyRewardJob;
+use App\Jobs\UpdateRealtimeMetrics;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
@@ -25,3 +26,5 @@ Artisan::command('game:daily-rewards', function () {
 Schedule::job(new EnergyRegenJob)->hourly();
 
 Schedule::job(new DailyRewardJob)->daily();
+
+Schedule::job(new UpdateRealtimeMetrics)->everyMinute();

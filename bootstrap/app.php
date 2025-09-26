@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Глобальные middleware
         $middleware->api(prepend: [
             \App\Http\Middleware\ForceJsonResponse::class,
+            \App\Http\Middleware\ApiMetricsMiddleware::class,
         ]);
         
         // Алиасы middleware
@@ -27,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \App\Http\Middleware\PermissionMiddleware::class,
             'throttle.game' => \App\Http\Middleware\RateLimitMiddleware::class,
             'force.json' => \App\Http\Middleware\ForceJsonResponse::class,
+            'metrics' => \App\Http\Middleware\ApiMetricsMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -90,6 +90,14 @@
                         </a>
                     @endcan
 
+                    <!-- Real-time мониторинг -->
+                    <a href="{{ route('admin.realtime') }}" 
+                       class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white {{ request()->routeIs('admin.realtime') ? 'bg-gray-700 text-white' : '' }}">
+                        <i class="fas fa-chart-line w-5"></i>
+                        <span class="ml-3">Real-time метрики</span>
+                        <span class="ml-auto w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                    </a>
+
                     <!-- API Документация -->
                     <a href="/docs" target="_blank"
                        class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white">

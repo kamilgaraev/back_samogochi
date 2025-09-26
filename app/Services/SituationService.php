@@ -372,7 +372,7 @@ class SituationService
                         'new_level' => $newLevel,
                         'level_up' => $levelUp,
                     ],
-                    'cooldown_until' => now()->addSeconds(config('game.situation_cooldown_seconds', 0)),
+                    'cooldown_until' => now()->addSeconds(\App\Services\GameConfigService::getSituationCooldownSeconds()),
                 ]
             ];
 

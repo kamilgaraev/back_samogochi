@@ -163,7 +163,7 @@ class SituationRepository
             return null;
         }
 
-        $cooldownSeconds = config('game.situation_cooldown_seconds', 0);
+        $cooldownSeconds = \App\Services\GameConfigService::getSituationCooldownSeconds();
         return $lastCompleted->completed_at->addSeconds($cooldownSeconds);
     }
 

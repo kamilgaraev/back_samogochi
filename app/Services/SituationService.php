@@ -536,45 +536,42 @@ class SituationService
             ];
         }
 
-        $activeSituation = $this->situationRepository->getActiveSituation($player->id);
+        $activeSituations = $this->situationRepository->getAllActiveSituations($player->id);
         
-        if (!$activeSituation) {
-            $isOnCooldown = $this->situationRepository->isOnCooldown($player->id);
-            $cooldownEndTime = $this->situationRepository->getCooldownEndTime($player->id);
-            
-            return [
-                'success' => false,
-                'message' => 'У вас нет активных ситуаций',
-                'cooldown_info' => [
-                    'on_cooldown' => $isOnCooldown,
-                    'cooldown_ends_at' => $cooldownEndTime,
-                    'can_start_new' => !$isOnCooldown
-                ]
-            ];
-        }
-
+        $isOnCooldown = $this->situationRepository->isOnCooldown($player->id);
+        $cooldownEndTime = $this->situationRepository->getCooldownEndTime($player->id);
+        
         return [
             'success' => true,
             'data' => [
-                'player_situation_id' => $activeSituation->id,
-                'situation' => [
-                    'id' => $activeSituation->situation->id,
-                    'title' => $activeSituation->situation->title,
-                    'description' => $activeSituation->situation->description,
-                    'category' => $activeSituation->situation->category,
-                    'difficulty_level' => $activeSituation->situation->difficulty_level,
-                    'stress_impact' => $activeSituation->situation->stress_impact,
-                    'experience_reward' => $activeSituation->situation->experience_reward,
-                    'position' => $activeSituation->situation->position,
-                ],
-                'options' => $activeSituation->situation->options->values(),
-                'started_at' => $activeSituation->created_at,
+                'situations' => $activeSituations->map(function ($activeSituation) {
+                    return [
+                        'player_situation_id' => $activeSituation->id,
+                        'situation' => [
+                            'id' => $activeSituation->situation->id,
+                            'title' => $activeSituation->situation->title,
+                            'description' => $activeSituation->situation->description,
+                            'category' => $activeSituation->situation->category,
+                            'difficulty_level' => $activeSituation->situation->difficulty_level,
+                            'stress_impact' => $activeSituation->situation->stress_impact,
+                            'experience_reward' => $activeSituation->situation->experience_reward,
+                            'position' => $activeSituation->situation->position,
+                        ],
+                        'options' => $activeSituation->situation->options->values(),
+                        'started_at' => $activeSituation->created_at,
+                    ];
+                })->values(),
+                'count' => $activeSituations->count(),
                 'player_info' => [
                     'current_stress' => $player->stress,
                     'current_energy' => $player->energy,
                     'level' => $player->level,
                 ],
-                'can_complete' => true
+                'cooldown_info' => [
+                    'on_cooldown' => $isOnCooldown,
+                    'cooldown_ends_at' => $cooldownEndTime,
+                    'can_start_new' => !$isOnCooldown
+                ]
             ]
         ];
     }

@@ -347,16 +347,21 @@ class SituationController extends Controller
                 ], 404);
             }
 
+            $count = $result['data']['count'] ?? 0;
+            $message = $count > 0 
+                ? "Активные ситуации успешно получены (найдено: {$count})"
+                : 'Активные ситуации получены (нет активных ситуаций)';
+
             return response()->json([
                 'success' => true,
-                'message' => 'Активная ситуация успешно получена',
+                'message' => $message,
                 'data' => $result['data']
             ]);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Ошибка при получении активной ситуации',
+                'message' => 'Ошибка при получении активных ситуаций',
                 'error' => $e->getMessage()
             ], 500);
         }

@@ -5,15 +5,18 @@ namespace App\Services;
 use App\Models\PlayerProfile;
 use App\Models\ActivityLog;
 use App\Repositories\PlayerRepository;
+use App\Services\PlayerStateService;
 use Illuminate\Support\Facades\DB;
 
 class PlayerService
 {
     protected PlayerRepository $playerRepository;
+    protected PlayerStateService $playerStateService;
 
-    public function __construct(PlayerRepository $playerRepository)
+    public function __construct(PlayerRepository $playerRepository, PlayerStateService $playerStateService)
     {
         $this->playerRepository = $playerRepository;
+        $this->playerStateService = $playerStateService;
     }
 
     public function getPlayerProfile(int $userId): ?array

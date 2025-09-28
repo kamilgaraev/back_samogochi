@@ -11,7 +11,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(\App\Services\PlayerStateService::class, function ($app) {
+            return new \App\Services\PlayerStateService(
+                $app->make(\App\Repositories\PlayerRepository::class)
+            );
+        });
     }
 
     /**

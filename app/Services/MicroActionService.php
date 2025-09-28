@@ -6,6 +6,7 @@ use App\Models\ActivityLog;
 use App\Repositories\MicroActionRepository;
 use App\Repositories\PlayerRepository;
 use App\Services\PlayerService;
+use App\Services\PlayerStateService;
 use Illuminate\Support\Facades\DB;
 
 class MicroActionService
@@ -13,15 +14,18 @@ class MicroActionService
     protected MicroActionRepository $microActionRepository;
     protected PlayerRepository $playerRepository;
     protected PlayerService $playerService;
+    protected PlayerStateService $playerStateService;
 
     public function __construct(
         MicroActionRepository $microActionRepository,
         PlayerRepository $playerRepository,
-        PlayerService $playerService
+        PlayerService $playerService,
+        PlayerStateService $playerStateService
     ) {
         $this->microActionRepository = $microActionRepository;
         $this->playerRepository = $playerRepository;
         $this->playerService = $playerService;
+        $this->playerStateService = $playerStateService;
     }
 
     public function getAvailableMicroActions(int $userId): array
@@ -72,6 +76,7 @@ class MicroActionService
                     'current_energy' => $player->energy,
                     'level' => $player->level,
                 ],
+                'player_state' => $this->playerStateService->getPlayerStateByProfile($player),
                 'stats' => [
                     'total_performed' => $this->microActionRepository->getPerformedCount($player->id),
                     'today_performed' => $this->microActionRepository->getTodayCount($player->id),
@@ -143,6 +148,8 @@ class MicroActionService
 
             DB::commit();
 
+            $updatedPlayer = $this->playerRepository->findByUserId($userId);
+
             return [
                 'success' => true,
                 'message' => $levelUp ? 'Поздравляем! Вы достигли нового уровня!' : 'Микродействие успешно выполнено!',
@@ -159,6 +166,7 @@ class MicroActionService
                         'new_level' => $newLevel,
                         'level_up' => $levelUp,
                     ],
+                    'player_state' => $this->playerStateService->getPlayerStateByProfile($updatedPlayer),
                     'cooldown_until' => $microAction->cooldown_minutes > 0 
                         ? now()->addMinutes($microAction->cooldown_minutes)
                         : null,

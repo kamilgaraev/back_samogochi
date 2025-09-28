@@ -7,6 +7,7 @@ use App\Models\PlayerProfile;
 use App\Repositories\SituationRepository;
 use App\Repositories\PlayerRepository;
 use App\Services\PlayerService;
+use App\Services\PlayerStateService;
 use Illuminate\Support\Facades\DB;
 
 class SituationService
@@ -14,15 +15,18 @@ class SituationService
     protected SituationRepository $situationRepository;
     protected PlayerRepository $playerRepository;
     protected PlayerService $playerService;
+    protected PlayerStateService $playerStateService;
 
     public function __construct(
         SituationRepository $situationRepository,
         PlayerRepository $playerRepository,
-        PlayerService $playerService
+        PlayerService $playerService,
+        PlayerStateService $playerStateService
     ) {
         $this->situationRepository = $situationRepository;
         $this->playerRepository = $playerRepository;
         $this->playerService = $playerService;
+        $this->playerStateService = $playerStateService;
     }
 
     public function getAvailableSituations(int $userId, int $perPage = 15): array
@@ -567,6 +571,7 @@ class SituationService
                     'current_energy' => $player->energy,
                     'level' => $player->level,
                 ],
+                'player_state' => $this->playerStateService->getPlayerStateByProfile($player),
                 'cooldown_info' => [
                     'on_cooldown' => $isOnCooldown,
                     'cooldown_ends_at' => $cooldownEndTime,

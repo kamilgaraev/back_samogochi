@@ -2,7 +2,7 @@
 
 return [
     'situation_cooldown_seconds' => 0,
-    'micro_action_cooldown_minutes' => 30,
+    'micro_action_cooldown_minutes' => 0,
     'daily_login_experience' => 10,
     'max_energy' => 200,
     'energy_regen_per_hour' => 1,

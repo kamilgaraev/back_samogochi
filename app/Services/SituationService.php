@@ -64,7 +64,8 @@ class SituationService
                     'cooldown_ends_at' => $cooldownEndTime,
                 ],
                 'player_level' => $player->level,
-            ]
+            ],
+            'player_state' => $this->playerStateService->getPlayerStateByProfile($player)
         ];
     }
 
@@ -266,7 +267,8 @@ class SituationService
                         'current_level' => $player->level
                     ],
                     'player_situation_id' => $playerSituation->id
-                ]
+                ],
+                'player_state' => $this->playerStateService->getPlayerStateByProfile($player->fresh())
             ];
 
         } catch (\Exception $e) {
@@ -379,7 +381,8 @@ class SituationService
                         'level_up' => $levelUp,
                     ],
                     'cooldown_until' => now()->addSeconds(\App\Services\GameConfigService::getSituationCooldownSeconds()),
-                ]
+                ],
+                'player_state' => $this->playerStateService->getPlayerStateByProfile($player->fresh())
             ];
 
         } catch (\Exception $e) {
@@ -420,7 +423,8 @@ class SituationService
                 'category' => $category,
                 'situations' => $situations,
                 'count' => $situations->count()
-            ]
+            ],
+            'player_state' => $this->playerStateService->getPlayerStateByProfile($player)
         ];
     }
 
@@ -451,7 +455,8 @@ class SituationService
                     ];
                 }),
                 'total_completed' => $this->situationRepository->getCompletedSituationsCount($player->id)
-            ]
+            ],
+            'player_state' => $this->playerStateService->getPlayerStateByProfile($player)
         ];
     }
 
@@ -477,7 +482,8 @@ class SituationService
                     'player_level' => $player->level,
                     'completed_situations' => $this->situationRepository->getCompletedSituationsCount($player->id)
                 ]
-            ]
+            ],
+            'player_state' => $this->playerStateService->getPlayerStateByProfile($player)
         ];
     }
 

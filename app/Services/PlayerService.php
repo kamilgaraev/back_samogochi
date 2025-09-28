@@ -79,10 +79,15 @@ class PlayerService
 
             DB::commit();
 
+            $updatedPlayer = $this->playerRepository->findByUserId($userId);
+
             return [
                 'success' => true,
                 'message' => 'Профиль успешно обновлен',
-                'updated_fields' => array_keys($updateData)
+                'data' => [
+                    'updated_fields' => array_keys($updateData)
+                ],
+                'player_state' => $this->playerStateService->getPlayerStateByProfile($updatedPlayer)
             ];
 
         } catch (\Exception $e) {
@@ -110,7 +115,8 @@ class PlayerService
 
         return [
             'success' => true,
-            'data' => $stats
+            'data' => $stats,
+            'player_state' => $this->playerStateService->getPlayerStateByProfile($playerProfile)
         ];
     }
 
@@ -129,7 +135,8 @@ class PlayerService
 
         return [
             'success' => true,
-            'data' => $progress
+            'data' => $progress,
+            'player_state' => $this->playerStateService->getPlayerStateByProfile($playerProfile->fresh())
         ];
     }
 
@@ -158,6 +165,12 @@ class PlayerService
             }
 
             DB::commit();
+
+            $updatedPlayer = $playerProfile->fresh();
+            
+            if ($reward['success']) {
+                $reward['player_state'] = $this->playerStateService->getPlayerStateByProfile($updatedPlayer);
+            }
             
             return $reward;
 
@@ -201,12 +214,17 @@ class PlayerService
 
             DB::commit();
 
+            $updatedPlayer = $playerProfile->fresh();
+
             return [
                 'success' => true,
-                'experience_added' => $amount,
-                'level_up' => $levelUp,
-                'old_level' => $oldLevel,
-                'new_level' => $newLevel
+                'data' => [
+                    'experience_added' => $amount,
+                    'level_up' => $levelUp,
+                    'old_level' => $oldLevel,
+                    'new_level' => $newLevel
+                ],
+                'player_state' => $this->playerStateService->getPlayerStateByProfile($updatedPlayer)
             ];
 
         } catch (\Exception $e) {
@@ -240,11 +258,16 @@ class PlayerService
             'new_energy' => $newEnergy
         ]);
 
+        $updatedPlayer = $playerProfile->fresh();
+
         return [
             'success' => true,
-            'old_energy' => $oldEnergy,
-            'new_energy' => $newEnergy,
-            'change' => $amount
+            'data' => [
+                'old_energy' => $oldEnergy,
+                'new_energy' => $newEnergy,
+                'change' => $amount
+            ],
+            'player_state' => $this->playerStateService->getPlayerStateByProfile($updatedPlayer)
         ];
     }
 
@@ -270,12 +293,17 @@ class PlayerService
             'stress_status' => $this->getStressStatus($newStress)
         ]);
 
+        $updatedPlayer = $playerProfile->fresh();
+
         return [
             'success' => true,
-            'old_stress' => $oldStress,
-            'new_stress' => $newStress,
-            'change' => $amount,
-            'stress_status' => $this->getStressStatus($newStress)
+            'data' => [
+                'old_stress' => $oldStress,
+                'new_stress' => $newStress,
+                'change' => $amount,
+                'stress_status' => $this->getStressStatus($newStress)
+            ],
+            'player_state' => $this->playerStateService->getPlayerStateByProfile($updatedPlayer)
         ];
     }
 

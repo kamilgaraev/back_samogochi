@@ -216,7 +216,8 @@ class MicroActionService
                     'total_performed' => $this->microActionRepository->getPerformedCount($player->id),
                     'today_performed' => $this->microActionRepository->getTodayCount($player->id),
                 ]
-            ]
+            ],
+            'player_state' => $this->playerStateService->getPlayerStateByProfile($player)
         ];
     }
 
@@ -256,7 +257,8 @@ class MicroActionService
                     'stress_level' => $player->stress,
                     'player_level' => $player->level,
                 ]
-            ]
+            ],
+            'player_state' => $this->playerStateService->getPlayerStateByProfile($player)
         ];
     }
 }

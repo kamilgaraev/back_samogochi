@@ -54,6 +54,29 @@ info:
     }
     ```
     
+    ## 🎮 PlayerState - ВАЖНО!
+    
+    **Объект `player_state` присутствует во ВСЕХ API ответах** (кроме auth). Фронтенд получает полное состояние игрока в каждом запросе:
+    
+    ```json
+    {
+      "success": true,
+      "data": { ... },
+      "player_state": {
+        "level": 5,
+        "energy": { "current": 120, "percentage": 60.0, "status": {"color": "#2196F3"} },
+        "stress": { "current": 35, "level": {"value": "normal", "color": "#2196F3"} },
+        "capabilities": { "can_perform_micro_actions": true, "can_start_situations": true }
+      }
+    }
+    ```
+    
+    **🎯 Для фронтендеров:** Используйте `player_state` для:
+    - 🎨 Цветовых индикаторов (energy.status.color, stress.level.color)
+    - 🚫 Блокировки кнопок (capabilities.can_perform_micro_actions)
+    - 📊 Прогресс баров (experience.progress_percentage)
+    - 💡 Рекомендаций (stress.level.recommended_actions)
+    
     ## 🚀 Быстрый старт
     
     1. **Зарегистрируйтесь**: `POST /auth/register`

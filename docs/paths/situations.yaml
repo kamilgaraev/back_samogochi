@@ -650,6 +650,9 @@
                         stress:
                           type: integer
                           example: 20
+                player_state:
+                  $ref: '../openapi.yaml#/components/schemas/PlayerState'
+                  description: "🎮 Актуальное состояние игрока ПОСЛЕ завершения ситуации"
       '400':
         description: Недостаточно энергии или другие ограничения
         content:

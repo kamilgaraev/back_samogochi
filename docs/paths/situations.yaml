@@ -59,6 +59,21 @@
                         total:
                           type: integer
                           example: 45
+                    player_info:
+                      type: object
+                      description: "🔗 Старый объект (обратная совместимость)"
+                      properties:
+                        current_stress:
+                          type: integer
+                          example: 35
+                        current_energy:  
+                          type: integer
+                          example: 120
+                        level:
+                          type: integer
+                          example: 5
+                    player_state:
+                      $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '401':
         description: Неавторизованный запрос
 
@@ -162,6 +177,8 @@
                       type: boolean
                       example: true
                       description: "Флаг, указывающий что ситуация из рекомендаций"
+                    player_state:
+                      $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '400':
         description: Нет доступных рекомендаций или действует кулдаун
         content:
@@ -274,6 +291,8 @@
                         level:
                           type: integer
                           example: 2
+                    player_state:
+                      $ref: '../openapi.yaml#/components/schemas/PlayerState'
                     cooldown_info:
                       type: object
                       properties:

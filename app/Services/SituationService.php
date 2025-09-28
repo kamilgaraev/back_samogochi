@@ -118,6 +118,7 @@ class SituationService
                     'current_energy' => $player->energy,
                     'level' => $player->level,
                 ],
+                'player_state' => $this->playerStateService->getPlayerStateByProfile($player),
                 'can_start' => $this->situationRepository->canStartNewSituation($player->id) && 
                                !$this->situationRepository->isOnCooldown($player->id)
             ]
@@ -173,7 +174,8 @@ class SituationService
                     'current_stress' => $player->stress,
                     'current_energy' => $player->energy,
                     'level' => $player->level,
-                ]
+                ],
+                'player_state' => $this->playerStateService->getPlayerStateByProfile($player)
             ]
         ];
     }
@@ -520,6 +522,7 @@ class SituationService
                     'current_energy' => $player->energy,
                     'level' => $player->level,
                 ],
+                'player_state' => $this->playerStateService->getPlayerStateByProfile($player),
                 'is_recommended' => true,
                 'cooldown_info' => [
                     'on_cooldown' => $this->situationRepository->isOnCooldown($player->id),

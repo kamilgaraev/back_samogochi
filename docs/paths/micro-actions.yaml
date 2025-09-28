@@ -42,9 +42,33 @@
                   type: boolean
                   example: true
                 data:
-                  type: array
-                  items:
-                    $ref: '../openapi.yaml#/components/schemas/MicroAction'
+                  type: object
+                  properties:
+                    micro_actions:
+                      type: array
+                      items:
+                        $ref: '../openapi.yaml#/components/schemas/MicroAction'
+                    player_info:
+                      type: object
+                      description: "🔗 Старый объект (обратная совместимость)"
+                      properties:
+                        current_energy:
+                          type: integer
+                          example: 120
+                        level:
+                          type: integer
+                          example: 5
+                    stats:
+                      type: object
+                      properties:
+                        total_performed:
+                          type: integer
+                          example: 89
+                        today_performed:
+                          type: integer
+                          example: 3
+                player_state:
+                  $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '401':
         description: Неавторизованный запрос
 
@@ -86,6 +110,8 @@
                                 minimum: 0
                                 maximum: 1
                                 example: 0.92
+                player_state:
+                  $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '401':
         description: Неавторизованный запрос
 
@@ -199,6 +225,8 @@
                           type: number
                           format: float
                           example: 4.2
+                player_state:
+                  $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '401':
         description: Неавторизованный запрос
 
@@ -270,6 +298,8 @@
                           category:
                             type: string
                             example: "mental"
+                player_state:
+                  $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '400':
         description: Недостаточно энергии для выполнения действия
         content:

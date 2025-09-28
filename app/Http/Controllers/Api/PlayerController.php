@@ -4,16 +4,19 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\PlayerService;
+use App\Services\PlayerStateService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class PlayerController extends Controller
 {
     protected PlayerService $playerService;
+    protected PlayerStateService $playerStateService;
 
-    public function __construct(PlayerService $playerService)
+    public function __construct(PlayerService $playerService, PlayerStateService $playerStateService)
     {
         $this->playerService = $playerService;
+        $this->playerStateService = $playerStateService;
     }
 
     public function profile()
@@ -32,7 +35,8 @@ class PlayerController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Профиль игрока успешно получен',
-                'data' => $profile
+                'data' => $profile,
+                'player_state' => $this->playerStateService->getPlayerState($userId)
             ]);
 
         } catch (\Exception $e) {
@@ -76,7 +80,8 @@ class PlayerController extends Controller
                 'success' => true,
                 'message' => $result['message'],
                 'data' => $profile,
-                'updated_fields' => $result['updated_fields']
+                'updated_fields' => $result['updated_fields'],
+                'player_state' => $this->playerStateService->getPlayerState($userId)
             ]);
 
         } catch (\Exception $e) {
@@ -104,7 +109,8 @@ class PlayerController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Статистика игрока успешно получена',
-                'data' => $result['data']
+                'data' => $result['data'],
+                'player_state' => $this->playerStateService->getPlayerState($userId)
             ]);
 
         } catch (\Exception $e) {
@@ -132,7 +138,8 @@ class PlayerController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Прогресс игрока успешно получен',
-                'data' => $result['data']
+                'data' => $result['data'],
+                'player_state' => $this->playerStateService->getPlayerState($userId)
             ]);
 
         } catch (\Exception $e) {
@@ -164,7 +171,8 @@ class PlayerController extends Controller
                     'experience_gained' => $result['experience_gained'],
                     'bonus_experience' => $result['bonus_experience'],
                     'consecutive_days' => $result['consecutive_days']
-                ]
+                ],
+                'player_state' => $this->playerStateService->getPlayerState($userId)
             ]);
 
         } catch (\Exception $e) {
@@ -212,7 +220,8 @@ class PlayerController extends Controller
                     'experience_added' => $result['experience_added'],
                     'old_level' => $result['old_level'],
                     'new_level' => $result['new_level']
-                ]
+                ],
+                'player_state' => $this->playerStateService->getPlayerState($userId)
             ];
 
             if ($result['level_up']) {
@@ -265,7 +274,8 @@ class PlayerController extends Controller
                     'old_energy' => $result['old_energy'],
                     'new_energy' => $result['new_energy'],
                     'change' => $result['change']
-                ]
+                ],
+                'player_state' => $this->playerStateService->getPlayerState($userId)
             ]);
 
         } catch (\Exception $e) {
@@ -312,7 +322,8 @@ class PlayerController extends Controller
                     'new_stress' => $result['new_stress'],
                     'change' => $result['change'],
                     'stress_status' => $result['stress_status']
-                ]
+                ],
+                'player_state' => $this->playerStateService->getPlayerState($userId)
             ]);
 
         } catch (\Exception $e) {

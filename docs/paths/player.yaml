@@ -17,8 +17,13 @@
                 success:
                   type: boolean
                   example: true
+                message:
+                  type: string
+                  example: "Профиль игрока успешно получен"
                 data:
                   $ref: '../openapi.yaml#/components/schemas/PlayerProfile'
+                player_state:
+                  $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '401':
         description: Неавторизованный запрос
         
@@ -54,12 +59,24 @@
         content:
           application/json:
             schema:
-              allOf:
-                - $ref: '../openapi.yaml#/components/responses/SuccessResponse'
-                - type: object
-                  properties:
-                    message:
-                      example: "Профиль успешно обновлен"
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: "Профиль успешно обновлен"
+                data:
+                  $ref: '../openapi.yaml#/components/schemas/PlayerProfile'
+                updated_fields:
+                  type: array
+                  description: "Список обновленных полей"
+                  items:
+                    type: string
+                  example: ["stress", "anxiety"]
+                player_state:
+                  $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '401':
         description: Неавторизованный запрос
 
@@ -112,6 +129,8 @@
                           unlocked_at:
                             type: string
                             format: date-time
+                player_state:
+                  $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '401':
         description: Неавторизованный запрос
 
@@ -149,6 +168,8 @@
                     consecutive_days:
                       type: integer
                       example: 5
+                player_state:
+                  $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '400':
         description: Награда уже получена сегодня
         content:
@@ -211,6 +232,8 @@
                     new_level:
                       type: integer
                       example: 5
+                player_state:
+                  $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '401':
         description: Неавторизованный запрос
 
@@ -260,6 +283,8 @@
                     change:
                       type: integer
                       example: -20
+                player_state:
+                  $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '401':
         description: Неавторизованный запрос
 
@@ -309,5 +334,7 @@
                     change:
                       type: integer
                       example: -10
+                player_state:
+                  $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '401':
         description: Неавторизованный запрос

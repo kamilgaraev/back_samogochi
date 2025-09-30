@@ -267,10 +267,9 @@ class SituationService
                         'current_level' => $player->level
                     ],
                     'player_situation_id' => $playerSituation->id
-                ]
-            ],
-            'player_state' => $this->playerStateService->getPlayerStateByProfile($player->fresh())
-        ];
+                ],
+                'player_state' => $this->playerStateService->getPlayerStateByProfile($player->fresh())
+            ];
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -382,10 +381,9 @@ class SituationService
                         'level_up' => $levelUp,
                     ],
                     'cooldown_until' => now()->addSeconds(\App\Services\GameConfigService::getSituationCooldownSeconds()),
-                ]
-            ],
-            'player_state' => $this->playerStateService->getPlayerStateByProfile($player->fresh())
-        ];
+                ],
+                'player_state' => $this->playerStateService->getPlayerStateByProfile($player->fresh())
+            ];
 
         } catch (\Exception $e) {
             DB::rollBack();

@@ -268,8 +268,7 @@ class SituationService
                     ],
                     'player_situation_id' => $playerSituation->id
                 ],
-                'player_state' => $this->getPlayerStateWithDebug($player->fresh()),
-                'debug_fresh_player' => $player->fresh() ? 'OK' : 'NULL'
+                'player_state' => $this->playerStateService->getPlayerStateByProfile($player->fresh())
             ];
 
         } catch (\Exception $e) {
@@ -591,16 +590,4 @@ class SituationService
         ];
     }
 
-    private function getPlayerStateWithDebug(?PlayerProfile $player)
-    {
-        if (!$player) {
-            return ['error' => 'Player is null'];
-        }
-
-        try {
-            return $this->playerStateService->getPlayerStateByProfile($player);
-        } catch (\Exception $e) {
-            return ['error' => 'PlayerStateService failed: ' . $e->getMessage()];
-        }
-    }
 }

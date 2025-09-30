@@ -52,7 +52,8 @@ class SituationController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Список ситуаций успешно получен',
-                'data' => $result['data']
+                'data' => $result['data'],
+                'player_state' => $result['player_state']
             ]);
 
         } catch (\Exception $e) {
@@ -91,7 +92,8 @@ class SituationController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Детали ситуации успешно получены',
-                'data' => $result['data']
+                'data' => $result['data'],
+                'player_state' => $result['player_state']
             ]);
 
         } catch (\Exception $e) {
@@ -134,7 +136,8 @@ class SituationController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Случайная ситуация успешно получена',
-                'data' => $result['data']
+                'data' => $result['data'],
+                'player_state' => $result['player_state']
             ]);
 
         } catch (\Exception $e) {
@@ -175,7 +178,8 @@ class SituationController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => $result['message'],
-                'data' => $result['data']
+                'data' => $result['data'],
+                'player_state' => $result['player_state']
             ]);
 
         } catch (\Exception $e) {
@@ -220,7 +224,8 @@ class SituationController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => $result['message'],
-                'data' => $result['data']
+                'data' => $result['data'],
+                'player_state' => $result['player_state']
             ], $statusCode);
 
         } catch (\Exception $e) {
@@ -262,7 +267,8 @@ class SituationController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'История ситуаций успешно получена',
-                'data' => $result['data']
+                'data' => $result['data'],
+                'player_state' => $result['player_state']
             ]);
 
         } catch (\Exception $e) {
@@ -291,7 +297,8 @@ class SituationController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Рекомендованные ситуации успешно получены',
-                'data' => $result['data']
+                'data' => $result['data'],
+                'player_state' => $result['player_state']
             ]);
 
         } catch (\Exception $e) {
@@ -321,7 +328,8 @@ class SituationController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Случайная рекомендованная ситуация успешно получена',
-                'data' => $result['data']
+                'data' => $result['data'],
+                'player_state' => $result['player_state']
             ]);
 
         } catch (\Exception $e) {
@@ -355,7 +363,8 @@ class SituationController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => $message,
-                'data' => $result['data']
+                'data' => $result['data'],
+                'player_state' => $result['player_state']
             ]);
 
         } catch (\Exception $e) {

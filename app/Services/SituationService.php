@@ -119,10 +119,10 @@ class SituationService
                     'current_energy' => $player->energy,
                     'level' => $player->level,
                 ],
-                'player_state' => $this->playerStateService->getPlayerStateByProfile($player),
                 'can_start' => $this->situationRepository->canStartNewSituation($player->id) && 
                                !$this->situationRepository->isOnCooldown($player->id)
-            ]
+            ],
+            'player_state' => $this->playerStateService->getPlayerStateByProfile($player)
         ];
     }
 
@@ -175,9 +175,9 @@ class SituationService
                     'current_stress' => $player->stress,
                     'current_energy' => $player->energy,
                     'level' => $player->level,
-                ],
-                'player_state' => $this->playerStateService->getPlayerStateByProfile($player)
-            ]
+                ]
+            ],
+            'player_state' => $this->playerStateService->getPlayerStateByProfile($player)
         ];
     }
 
@@ -267,9 +267,10 @@ class SituationService
                         'current_level' => $player->level
                     ],
                     'player_situation_id' => $playerSituation->id
-                ],
-                'player_state' => $this->playerStateService->getPlayerStateByProfile($player->fresh())
-            ];
+                ]
+            ],
+            'player_state' => $this->playerStateService->getPlayerStateByProfile($player->fresh())
+        ];
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -381,9 +382,10 @@ class SituationService
                         'level_up' => $levelUp,
                     ],
                     'cooldown_until' => now()->addSeconds(\App\Services\GameConfigService::getSituationCooldownSeconds()),
-                ],
-                'player_state' => $this->playerStateService->getPlayerStateByProfile($player->fresh())
-            ];
+                ]
+            ],
+            'player_state' => $this->playerStateService->getPlayerStateByProfile($player->fresh())
+        ];
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -528,13 +530,13 @@ class SituationService
                     'current_energy' => $player->energy,
                     'level' => $player->level,
                 ],
-                'player_state' => $this->playerStateService->getPlayerStateByProfile($player),
                 'is_recommended' => true,
                 'cooldown_info' => [
                     'on_cooldown' => $this->situationRepository->isOnCooldown($player->id),
                     'cooldown_ends_at' => $this->situationRepository->getCooldownEndTime($player->id)
                 ]
-            ]
+            ],
+            'player_state' => $this->playerStateService->getPlayerStateByProfile($player)
         ];
     }
 
@@ -580,13 +582,13 @@ class SituationService
                     'current_energy' => $player->energy,
                     'level' => $player->level,
                 ],
-                'player_state' => $this->playerStateService->getPlayerStateByProfile($player),
                 'cooldown_info' => [
                     'on_cooldown' => $isOnCooldown,
                     'cooldown_ends_at' => $cooldownEndTime,
                     'can_start_new' => !$isOnCooldown
                 ]
-            ]
+            ],
+            'player_state' => $this->playerStateService->getPlayerStateByProfile($player)
         ];
     }
 

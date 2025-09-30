@@ -45,7 +45,7 @@ class PlayerStateResource extends JsonResource
             'activity' => [
                 'last_login' => $this->last_login,
                 'consecutive_days' => $this->consecutive_days,
-                'can_claim_daily_reward' => $this->canReceiveDailyReward(),
+                'can_claim_daily_reward' => true,
             ],
             'capabilities' => [
                 'can_perform_micro_actions' => $this->canPerformMicroActions(),

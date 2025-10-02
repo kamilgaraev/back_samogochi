@@ -19,6 +19,7 @@ class MicroAction extends Model
         'unlock_level',
         'category',
         'is_active',
+        'position',
     ];
 
     protected function casts(): array

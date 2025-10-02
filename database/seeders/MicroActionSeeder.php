@@ -19,6 +19,7 @@ class MicroActionSeeder extends Seeder
                 'experience_reward' => 8,
                 'cooldown_minutes' => 30,
                 'unlock_level' => 1,
+                'position' => 'phone',
             ],
             [
                 'name' => 'Прогрессивная мышечная релаксация',
@@ -28,6 +29,7 @@ class MicroActionSeeder extends Seeder
                 'experience_reward' => 12,
                 'cooldown_minutes' => 60,
                 'unlock_level' => 2,
+                'position' => 'desktop',
             ],
             [
                 'name' => 'Медитация осознанности',
@@ -37,6 +39,7 @@ class MicroActionSeeder extends Seeder
                 'experience_reward' => 15,
                 'cooldown_minutes' => 120,
                 'unlock_level' => 3,
+                'position' => 'tablet',
             ],
             [
                 'name' => 'Визуализация спокойного места',
@@ -46,6 +49,7 @@ class MicroActionSeeder extends Seeder
                 'experience_reward' => 10,
                 'cooldown_minutes' => 45,
                 'unlock_level' => 2,
+                'position' => 'phone',
             ],
             
             // Exercise (Физические упражнения)
@@ -57,6 +61,7 @@ class MicroActionSeeder extends Seeder
                 'experience_reward' => 6,
                 'cooldown_minutes' => 15,
                 'unlock_level' => 1,
+                'position' => 'desktop',
             ],
             [
                 'name' => 'Прогулка на свежем воздухе',
@@ -66,6 +71,7 @@ class MicroActionSeeder extends Seeder
                 'experience_reward' => 14,
                 'cooldown_minutes' => 60,
                 'unlock_level' => 1,
+                'position' => 'phone',
             ],
             [
                 'name' => 'Йога для начинающих',
@@ -75,6 +81,7 @@ class MicroActionSeeder extends Seeder
                 'experience_reward' => 18,
                 'cooldown_minutes' => 120,
                 'unlock_level' => 3,
+                'position' => 'tablet',
             ],
             [
                 'name' => 'Легкие приседания',
@@ -84,6 +91,7 @@ class MicroActionSeeder extends Seeder
                 'experience_reward' => 8,
                 'cooldown_minutes' => 30,
                 'unlock_level' => 2,
+                'position' => 'phone',
             ],
             [
                 'name' => 'Танцы под любимую музыку',
@@ -93,6 +101,7 @@ class MicroActionSeeder extends Seeder
                 'experience_reward' => 12,
                 'cooldown_minutes' => 45,
                 'unlock_level' => 2,
+                'position' => 'desktop',
             ],
             
             // Creativity (Творчество)
@@ -104,6 +113,7 @@ class MicroActionSeeder extends Seeder
                 'experience_reward' => 10,
                 'cooldown_minutes' => 60,
                 'unlock_level' => 1,
+                'position' => 'tablet',
             ],
             [
                 'name' => 'Письмо благодарности',
@@ -113,6 +123,7 @@ class MicroActionSeeder extends Seeder
                 'experience_reward' => 12,
                 'cooldown_minutes' => 120,
                 'unlock_level' => 1,
+                'position' => 'desktop',
             ],
             [
                 'name' => 'Ведение дневника',
@@ -120,8 +131,9 @@ class MicroActionSeeder extends Seeder
                 'category' => 'creativity',
                 'energy_reward' => 12,
                 'experience_reward' => 8,
-                'cooldown_minutes' => 480, // 8 часов
+                'cooldown_minutes' => 480,
                 'unlock_level' => 1,
+                'position' => 'desktop',
             ],
             [
                 'name' => 'Создание музыкального плейлиста',
@@ -131,6 +143,7 @@ class MicroActionSeeder extends Seeder
                 'experience_reward' => 6,
                 'cooldown_minutes' => 180,
                 'unlock_level' => 1,
+                'position' => 'phone',
             ],
             [
                 'name' => 'Мозговой штурм идей',
@@ -140,6 +153,7 @@ class MicroActionSeeder extends Seeder
                 'experience_reward' => 14,
                 'cooldown_minutes' => 120,
                 'unlock_level' => 3,
+                'position' => 'tablet',
             ],
             
             // Social (Социальные активности)
@@ -151,6 +165,7 @@ class MicroActionSeeder extends Seeder
                 'experience_reward' => 15,
                 'cooldown_minutes' => 180,
                 'unlock_level' => 1,
+                'position' => 'phone',
             ],
             [
                 'name' => 'Отправить поддерживающее сообщение',
@@ -160,6 +175,7 @@ class MicroActionSeeder extends Seeder
                 'experience_reward' => 8,
                 'cooldown_minutes' => 60,
                 'unlock_level' => 1,
+                'position' => 'phone',
             ],
             [
                 'name' => 'Поделиться своими чувствами',
@@ -169,6 +185,7 @@ class MicroActionSeeder extends Seeder
                 'experience_reward' => 18,
                 'cooldown_minutes' => 240,
                 'unlock_level' => 2,
+                'position' => 'desktop',
             ],
             [
                 'name' => 'Сделать комплимент незнакомцу',
@@ -178,6 +195,7 @@ class MicroActionSeeder extends Seeder
                 'experience_reward' => 12,
                 'cooldown_minutes' => 120,
                 'unlock_level' => 3,
+                'position' => 'phone',
             ],
             [
                 'name' => 'Активное слушание',
@@ -187,11 +205,15 @@ class MicroActionSeeder extends Seeder
                 'experience_reward' => 14,
                 'cooldown_minutes' => 180,
                 'unlock_level' => 2,
+                'position' => 'tablet',
             ],
         ];
 
         foreach ($microActions as $microActionData) {
-            MicroAction::create($microActionData);
+            MicroAction::updateOrCreate(
+                ['name' => $microActionData['name']],
+                $microActionData
+            );
         }
     }
 }

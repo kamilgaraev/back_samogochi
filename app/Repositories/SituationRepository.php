@@ -169,13 +169,15 @@ class SituationRepository
 
     public function isOnCooldown(int $playerId): bool
     {
-        $cooldownEndTime = $this->getCooldownEndTime($playerId);
+        return false;
         
-        if (!$cooldownEndTime) {
-            return false;
-        }
+        // $cooldownEndTime = $this->getCooldownEndTime($playerId);
+        
+        // if (!$cooldownEndTime) {
+        //     return false;
+        // }
 
-        return now() < $cooldownEndTime;
+        // return now() < $cooldownEndTime;
     }
 
     public function getRecommendedSituations(int $playerId, int $limit = 5): Collection

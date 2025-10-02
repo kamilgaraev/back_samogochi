@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdatePersonalInfoRequest;
 use App\Services\PlayerService;
 use App\Services\PlayerStateService;
 use Illuminate\Http\Request;
@@ -330,6 +331,37 @@ class PlayerController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Ошибка при обновлении стресса',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function updatePersonalInfo(UpdatePersonalInfoRequest $request)
+    {
+        try {
+            $userId = auth('api')->id();
+            $result = $this->playerService->updatePersonalInfo($userId, $request->validated());
+
+            if (!$result['success']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $result['message']
+                ], 400);
+            }
+
+            $profile = $this->playerService->getPlayerProfile($userId);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Персональная информация успешно обновлена',
+                'data' => $profile,
+                'updated_fields' => $result['updated_fields']
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при обновлении персональной информации',
                 'error' => $e->getMessage()
             ], 500);
         }

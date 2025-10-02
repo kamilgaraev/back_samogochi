@@ -44,6 +44,13 @@ class PlayerProfileResource extends JsonResource
             'last_login' => $this->last_login,
             'consecutive_days' => $this->consecutive_days,
             'can_receive_daily_reward' => $this->canReceiveDailyReward(),
+            'personal_info' => [
+                'favorite_song' => $this->favorite_song,
+                'favorite_movie' => $this->favorite_movie,
+                'favorite_book' => $this->favorite_book,
+                'favorite_dish' => $this->favorite_dish,
+                'best_friend_name' => $this->best_friend_name,
+            ],
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

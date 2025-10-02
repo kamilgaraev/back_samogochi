@@ -15,8 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Глобальные middleware
         $middleware->api(prepend: [
+            \Illuminate\Http\Middleware\HandleCors::class,
             \App\Http\Middleware\ForceJsonResponse::class,
             \App\Http\Middleware\ApiMetricsMiddleware::class,
         ]);

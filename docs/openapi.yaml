@@ -262,6 +262,35 @@ components:
           type: integer
           minimum: 0
           example: 3
+        personal_info:
+          type: object
+          description: "Персональная информация игрока"
+          properties:
+            favorite_song:
+              type: string
+              nullable: true
+              example: "Bohemian Rhapsody"
+              description: "Любимая песня"
+            favorite_movie:
+              type: string
+              nullable: true
+              example: "Inception"
+              description: "Любимый фильм"
+            favorite_book:
+              type: string
+              nullable: true
+              example: "1984"
+              description: "Любимая книга"
+            favorite_dish:
+              type: string
+              nullable: true
+              example: "Пицца"
+              description: "Любимое блюдо"
+            best_friend_name:
+              type: string
+              nullable: true
+              example: "Александр"
+              description: "Имя лучшего друга"
         created_at:
           type: string
           format: date-time

@@ -80,6 +80,110 @@
       '401':
         description: Неавторизованный запрос
 
+/player/personal-info:
+  put:
+    tags:
+      - Player
+    summary: Обновление персональной информации
+    description: Обновление персональных данных профиля игрока (любимая песня, фильм, книга, блюдо, имя лучшего друга)
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              favorite_song:
+                type: string
+                maxLength: 255
+                example: "Bohemian Rhapsody"
+                description: "Любимая песня"
+              favorite_movie:
+                type: string
+                maxLength: 255
+                example: "Inception"
+                description: "Любимый фильм"
+              favorite_book:
+                type: string
+                maxLength: 255
+                example: "1984"
+                description: "Любимая книга"
+              favorite_dish:
+                type: string
+                maxLength: 255
+                example: "Пицца"
+                description: "Любимое блюдо"
+              best_friend_name:
+                type: string
+                maxLength: 255
+                example: "Александр"
+                description: "Имя лучшего друга"
+          examples:
+            full_update:
+              summary: Полное обновление всех полей
+              value:
+                favorite_song: "Bohemian Rhapsody"
+                favorite_movie: "Inception"
+                favorite_book: "1984"
+                favorite_dish: "Пицца"
+                best_friend_name: "Александр"
+            partial_update:
+              summary: Частичное обновление
+              value:
+                favorite_song: "Imagine"
+                favorite_movie: "The Matrix"
+    responses:
+      '200':
+        description: Персональная информация успешно обновлена
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: "Персональная информация успешно обновлена"
+                data:
+                  $ref: '../openapi.yaml#/components/schemas/PlayerProfile'
+                updated_fields:
+                  type: array
+                  description: "Список обновленных полей"
+                  items:
+                    type: string
+                  example: ["favorite_song", "favorite_movie"]
+      '400':
+        description: Ошибка при обновлении данных
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yaml#/components/responses/ErrorResponse'
+      '401':
+        description: Неавторизованный запрос
+      '422':
+        description: Ошибки валидации
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Ошибки валидации"
+                errors:
+                  type: object
+                  additionalProperties:
+                    type: array
+                    items:
+                      type: string
+
 /player/stats:
   get:
     tags:

@@ -42,19 +42,21 @@ class MicroActionRepository
 
     public function canPerform(int $playerId, int $microActionId): bool
     {
-        $microAction = $this->findMicroActionById($microActionId);
+        return true;
         
-        if (!$microAction || $microAction->cooldown_minutes == 0) {
-            return true;
-        }
-
-        $lastPerformed = $this->getLastPerformed($playerId, $microActionId);
+        // $microAction = $this->findMicroActionById($microActionId);
         
-        if (!$lastPerformed) {
-            return true;
-        }
+        // if (!$microAction || $microAction->cooldown_minutes == 0) {
+        //     return true;
+        // }
 
-        return $lastPerformed->completed_at->addMinutes($microAction->cooldown_minutes) <= now();
+        // $lastPerformed = $this->getLastPerformed($playerId, $microActionId);
+        
+        // if (!$lastPerformed) {
+        //     return true;
+        // }
+
+        // return $lastPerformed->completed_at->addMinutes($microAction->cooldown_minutes) <= now();
     }
 
     public function getCooldownEndTime(int $playerId, int $microActionId): ?\Carbon\Carbon

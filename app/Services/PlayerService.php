@@ -47,6 +47,13 @@ class PlayerService
             'last_login' => $playerProfile->last_login,
             'consecutive_days' => $playerProfile->consecutive_days,
             'can_receive_daily_reward' => $canReceiveDailyReward,
+            'personal_info' => [
+                'favorite_song' => $playerProfile->favorite_song,
+                'favorite_movie' => $playerProfile->favorite_movie,
+                'favorite_book' => $playerProfile->favorite_book,
+                'favorite_dish' => $playerProfile->favorite_dish,
+                'best_friend_name' => $playerProfile->best_friend_name,
+            ],
             'created_at' => $playerProfile->created_at,
             'updated_at' => $playerProfile->updated_at,
         ];
@@ -338,5 +345,44 @@ class PlayerService
     {
         $gameBalance = \App\Models\GameConfig::getGameBalance();
         return $gameBalance['max_energy'] ?? 200;
+    }
+
+    public function updatePersonalInfo(int $userId, array $data): array
+    {
+        try {
+            DB::beginTransaction();
+
+            $allowedFields = ['favorite_song', 'favorite_movie', 'favorite_book', 'favorite_dish', 'best_friend_name'];
+            $updateData = array_intersect_key($data, array_flip($allowedFields));
+
+            if (empty($updateData)) {
+                return [
+                    'success' => false,
+                    'message' => 'Нет данных для обновления'
+                ];
+            }
+
+            $this->playerRepository->updateProfile($userId, $updateData);
+
+            ActivityLog::logEvent('player.personal_info_updated', [
+                'updated_fields' => array_keys($updateData)
+            ]);
+
+            DB::commit();
+
+            return [
+                'success' => true,
+                'message' => 'Персональная информация успешно обновлена',
+                'updated_fields' => array_keys($updateData)
+            ];
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            return [
+                'success' => false,
+                'message' => 'Ошибка при обновлении персональной информации: ' . $e->getMessage()
+            ];
+        }
     }
 }

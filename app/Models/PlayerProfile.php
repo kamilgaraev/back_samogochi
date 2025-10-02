@@ -19,6 +19,11 @@ class PlayerProfile extends Model
         'last_login',
         'last_daily_reward',
         'consecutive_days',
+        'favorite_song',
+        'favorite_movie',
+        'favorite_book',
+        'favorite_dish',
+        'best_friend_name',
     ];
 
     protected function casts(): array

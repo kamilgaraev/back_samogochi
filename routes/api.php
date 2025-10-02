@@ -17,6 +17,7 @@ Route::middleware(['auth:api', 'throttle.game:120,1'])->group(function () {
     Route::prefix('player')->group(function () {
         Route::get('profile', [\App\Http\Controllers\Api\PlayerController::class, 'profile']);
         Route::put('profile', [\App\Http\Controllers\Api\PlayerController::class, 'updateProfile']);
+        Route::put('personal-info', [\App\Http\Controllers\Api\PlayerController::class, 'updatePersonalInfo']);
         Route::get('stats', [\App\Http\Controllers\Api\PlayerController::class, 'stats']);
         Route::get('progress', [\App\Http\Controllers\Api\PlayerController::class, 'progress']);
         Route::post('daily-reward', [\App\Http\Controllers\Api\PlayerController::class, 'claimDailyReward']);

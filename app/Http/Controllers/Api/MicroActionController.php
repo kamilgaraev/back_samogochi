@@ -83,10 +83,14 @@ class MicroActionController extends Controller
 
             $statusCode = $result['data']['player_changes']['level_up'] ? 201 : 200;
 
+            $playerState = $result['data']['player_state'] ?? null;
+            unset($result['data']['player_state']);
+
             return response()->json([
                 'success' => true,
                 'message' => $result['message'],
-                'data' => $result['data']
+                'data' => $result['data'],
+                'player_state' => $playerState
             ], $statusCode);
 
         } catch (\Exception $e) {

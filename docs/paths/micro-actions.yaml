@@ -3,7 +3,7 @@
     tags:
       - Micro Actions
     summary: Список доступных микродействий
-    description: Получение списка микродействий для управления стрессом и восстановления энергии
+    description: Получение списка микродействий для восстановления энергии и получения опыта
     security:
       - bearerAuth: []
     parameters:
@@ -13,26 +13,11 @@
         required: false
         schema:
           type: string
-          enum: [breathing, physical, mental, social]
-      - name: max_energy_cost
-        in: query
-        description: Максимальная стоимость энергии
-        required: false
-        schema:
-          type: integer
-          minimum: 0
-          maximum: 50
-      - name: min_stress_reduction
-        in: query
-        description: Минимальное снижение стресса
-        required: false
-        schema:
-          type: integer
-          minimum: 0
-          maximum: 30
+          enum: [relaxation, exercise, creativity, social]
+          example: "relaxation"
     responses:
       '200':
-        description: Список микродействий получен
+        description: Список микродействий получен успешно
         content:
           application/json:
             schema:
@@ -41,6 +26,9 @@
                 success:
                   type: boolean
                   example: true
+                message:
+                  type: string
+                  example: "Список микродействий успешно получен"
                 data:
                   type: object
                   properties:
@@ -50,34 +38,55 @@
                         $ref: '../openapi.yaml#/components/schemas/MicroAction'
                     player_info:
                       type: object
-                      description: "🔗 Старый объект (обратная совместимость)"
+                      description: "Информация об игроке (для обратной совместимости)"
                       properties:
                         current_energy:
                           type: integer
-                          example: 120
+                          example: 85
                         level:
                           type: integer
-                          example: 5
+                          example: 3
+                    player_state:
+                      $ref: '../openapi.yaml#/components/schemas/PlayerState'
                     stats:
                       type: object
                       properties:
                         total_performed:
                           type: integer
                           example: 89
+                          description: "Всего выполнено микродействий"
                         today_performed:
                           type: integer
                           example: 3
-                player_state:
-                  $ref: '../openapi.yaml#/components/schemas/PlayerState'
+                          description: "Выполнено сегодня"
       '401':
         description: Неавторизованный запрос
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yaml#/components/responses/ErrorResponse'
+      '422':
+        description: Ошибка валидации
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Ошибки валидации"
+                errors:
+                  type: object
 
 /micro-actions/recommendations:
   get:
     tags:
       - Micro Actions
     summary: Рекомендованные микродействия
-    description: Получение микродействий, рекомендованных для текущего состояния игрока
+    description: Получение микродействий, рекомендованных на основе текущего состояния игрока (уровень энергии, стресс, уровень)
     security:
       - bearerAuth: []
     responses:
@@ -91,29 +100,70 @@
                 success:
                   type: boolean
                   example: true
+                message:
+                  type: string
+                  example: "Рекомендованные микродействия успешно получены"
                 data:
                   type: object
                   properties:
-                    recommended_actions:
+                    recommendations:
                       type: array
                       items:
-                        allOf:
-                          - $ref: '../openapi.yaml#/components/schemas/MicroAction'
-                          - type: object
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          name:
+                            type: string
+                            example: "Глубокое дыхание 4-7-8"
+                          description:
+                            type: string
+                            example: "Техника дыхания: вдох на 4 счета, задержка на 7, выдох на 8."
+                          category:
+                            type: object
                             properties:
-                              recommendation_reason:
+                              value:
                                 type: string
-                                example: "Эффективно для снижения стресса при текущем уровне энергии"
-                              effectiveness_score:
-                                type: number
-                                format: float
-                                minimum: 0
-                                maximum: 1
-                                example: 0.92
-                player_state:
-                  $ref: '../openapi.yaml#/components/schemas/PlayerState'
+                                example: "relaxation"
+                              label:
+                                type: string
+                                example: "Релаксация"
+                              icon:
+                                type: string
+                                example: "🧘"
+                          energy_reward:
+                            type: integer
+                            example: 15
+                          experience_reward:
+                            type: integer
+                            example: 8
+                          can_perform:
+                            type: boolean
+                            example: true
+                    based_on:
+                      type: object
+                      description: "Параметры, на основе которых сделаны рекомендации"
+                      properties:
+                        energy_level:
+                          type: integer
+                          example: 85
+                        stress_level:
+                          type: integer
+                          example: 45
+                        player_level:
+                          type: integer
+                          example: 3
+                    player_state:
+                      $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '401':
         description: Неавторизованный запрос
+      '404':
+        description: Профиль игрока не найден
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yaml#/components/responses/ErrorResponse'
 
 /micro-actions/history:
   get:
@@ -124,39 +174,15 @@
     security:
       - bearerAuth: []
     parameters:
-      - name: page
-        in: query
-        description: Номер страницы для пагинации
-        required: false
-        schema:
-          type: integer
-          minimum: 1
-          default: 1
       - name: limit
         in: query
-        description: Количество записей на страницу
+        description: Количество записей для возврата
         required: false
         schema:
           type: integer
           minimum: 1
           maximum: 100
-          default: 50
-      - name: date_from
-        in: query
-        description: Начальная дата фильтра (ISO 8601)
-        required: false
-        schema:
-          type: string
-          format: date
-          example: "2025-09-01"
-      - name: date_to
-        in: query
-        description: Конечная дата фильтра (ISO 8601)
-        required: false
-        schema:
-          type: string
-          format: date
-          example: "2025-09-30"
+          default: 20
     responses:
       '200':
         description: История получена успешно
@@ -168,6 +194,9 @@
                 success:
                   type: boolean
                   example: true
+                message:
+                  type: string
+                  example: "История микродействий успешно получена"
                 data:
                   type: object
                   properties:
@@ -176,66 +205,70 @@
                       items:
                         type: object
                         properties:
-                          id:
-                            type: integer
-                            example: 1
-                          micro_action:
-                            $ref: '../openapi.yaml#/components/schemas/MicroAction'
-                          performed_at:
+                          micro_action_name:
                             type: string
-                            format: date-time
-                            example: "2025-09-04T14:30:00Z"
-                          results:
+                            example: "Глубокое дыхание 4-7-8"
+                          category:
                             type: object
                             properties:
-                              stress_reduced:
-                                type: integer
-                                example: 10
-                              energy_spent:
-                                type: integer
-                                example: 5
-                              experience_gained:
-                                type: integer
-                                example: 3
-                    pagination:
+                              value:
+                                type: string
+                                example: "relaxation"
+                              label:
+                                type: string
+                                example: "Релаксация"
+                              icon:
+                                type: string
+                                example: "🧘"
+                          completed_at:
+                            type: string
+                            format: date-time
+                            example: "2025-10-02T08:15:00.000000Z"
+                          energy_gained:
+                            type: integer
+                            example: 15
+                            nullable: true
+                          experience_gained:
+                            type: integer
+                            example: 8
+                            nullable: true
+                    stats:
                       type: object
                       properties:
-                        current_page:
+                        total_performed:
                           type: integer
-                          example: 1
-                        total_pages:
+                          example: 89
+                        today_performed:
                           type: integer
-                          example: 5
-                        total:
-                          type: integer
-                          example: 120
-                    statistics:
-                      type: object
-                      properties:
-                        total_actions_performed:
-                          type: integer
-                          example: 120
-                        total_stress_reduced:
-                          type: integer
-                          example: 850
-                        favorite_category:
-                          type: string
-                          example: "breathing"
-                        average_daily_actions:
-                          type: number
-                          format: float
-                          example: 4.2
-                player_state:
-                  $ref: '../openapi.yaml#/components/schemas/PlayerState'
+                          example: 3
+                    player_state:
+                      $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '401':
         description: Неавторизованный запрос
+      '404':
+        description: Профиль игрока не найден
+      '422':
+        description: Ошибка валидации
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Ошибки валидации"
+                errors:
+                  type: object
 
 /micro-actions/{id}/perform:
   post:
     tags:
       - Micro Actions
     summary: Выполнение микродействия
-    description: Выполнение выбранного микродействия для снижения стресса
+    description: Выполнение выбранного микродействия для получения энергии и опыта
     security:
       - bearerAuth: []
     parameters:
@@ -259,73 +292,149 @@
                   example: true
                 message:
                   type: string
-                  example: "Микродействие выполнено успешно"
+                  example: "Микродействие успешно выполнено!"
                 data:
                   type: object
                   properties:
-                    stress_reduced:
-                      type: integer
-                      example: 10
-                    energy_spent:
-                      type: integer
-                      example: 5
-                    experience_gained:
-                      type: integer
-                      example: 3
-                    new_stats:
+                    micro_action:
+                      type: string
+                      example: "Глубокое дыхание 4-7-8"
+                      description: "Название выполненного микродействия"
+                    rewards:
                       type: object
                       properties:
-                        stress:
+                        energy_gained:
                           type: integer
-                          example: 25
-                        energy:
+                          example: 15
+                          description: "Полученная энергия"
+                        experience_gained:
                           type: integer
-                          example: 95
-                        experience:
+                          example: 8
+                          description: "Полученный опыт"
+                    player_changes:
+                      type: object
+                      properties:
+                        old_energy:
                           type: integer
-                          example: 458
-                    next_recommended_actions:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          id:
-                            type: integer
-                            example: 3
-                          name:
-                            type: string
-                            example: "Медитация"
-                          category:
-                            type: string
-                            example: "mental"
-                player_state:
-                  $ref: '../openapi.yaml#/components/schemas/PlayerState'
-                  description: "🎮 Актуальное состояние игрока ПОСЛЕ выполнения микродействия"
-      '400':
-        description: Недостаточно энергии для выполнения действия
+                          example: 70
+                        new_energy:
+                          type: integer
+                          example: 85
+                        old_level:
+                          type: integer
+                          example: 3
+                        new_level:
+                          type: integer
+                          example: 3
+                        level_up:
+                          type: boolean
+                          example: false
+                          description: "Получил ли игрок новый уровень"
+                    player_state:
+                      $ref: '../openapi.yaml#/components/schemas/PlayerState'
+                      description: "Актуальное состояние игрока после выполнения"
+                    cooldown_until:
+                      type: string
+                      format: date-time
+                      nullable: true
+                      example: "2025-10-02T09:45:00.000000Z"
+                      description: "Время, до которого действие недоступно"
+      '201':
+        description: Микродействие выполнено и игрок получил новый уровень
         content:
           application/json:
             schema:
-              allOf:
-                - $ref: '../openapi.yaml#/components/responses/ErrorResponse'
-                - type: object
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: "Поздравляем! Вы достигли нового уровня!"
+                data:
+                  type: object
                   properties:
-                    message:
-                      example: "Недостаточно энергии для выполнения этого действия"
-                    data:
+                    micro_action:
+                      type: string
+                      example: "Глубокое дыхание 4-7-8"
+                    rewards:
                       type: object
                       properties:
-                        required_energy:
+                        energy_gained:
                           type: integer
-                          example: 10
-                        current_energy:
+                          example: 15
+                        experience_gained:
                           type: integer
-                          example: 5
-      '404':
-        description: Микродействие не найдено
+                          example: 8
+                    player_changes:
+                      type: object
+                      properties:
+                        old_energy:
+                          type: integer
+                          example: 85
+                        new_energy:
+                          type: integer
+                          example: 100
+                        old_level:
+                          type: integer
+                          example: 3
+                        new_level:
+                          type: integer
+                          example: 4
+                        level_up:
+                          type: boolean
+                          example: true
+                    player_state:
+                      $ref: '../openapi.yaml#/components/schemas/PlayerState'
+                    cooldown_until:
+                      type: string
+                      format: date-time
+                      nullable: true
+                      example: "2025-10-02T09:45:00.000000Z"
+      '400':
+        description: Действие недоступно (кулдаун, недостаточный уровень)
         content:
           application/json:
             schema:
-              $ref: '../openapi.yaml#/components/responses/ErrorResponse'
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Действие еще не доступно"
+                cooldown_ends_at:
+                  type: string
+                  format: date-time
+                  nullable: true
+                  example: "2025-10-02T09:45:00.000000Z"
+      '404':
+        description: Микродействие не найдено или профиль игрока не найден
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Микродействие не найдено"
       '401':
         description: Неавторизованный запрос
+      '422':
+        description: Неверный ID микродействия
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Неверный ID микродействия"

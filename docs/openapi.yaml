@@ -639,44 +639,61 @@ components:
           example: 1
         name:
           type: string
-          example: "Глубокое дыхание"
+          example: "Глубокое дыхание 4-7-8"
         description:
           type: string
-          example: "5 минут дыхательных упражнений для снижения стресса"
+          example: "Техника дыхания: вдох на 4 счета, задержка на 7, выдох на 8. Повторить 4 раза."
         category:
-          type: string
-          enum: [breathing, physical, mental, social]
-          example: "breathing"
-        stress_reduction:
+          type: object
+          properties:
+            value:
+              type: string
+              enum: [relaxation, exercise, creativity, social]
+              example: "relaxation"
+            label:
+              type: string
+              example: "Релаксация"
+            icon:
+              type: string
+              example: "🧘"
+            color:
+              type: string
+              example: "#9C27B0"
+        energy_reward:
           type: integer
           minimum: 0
-          maximum: 30
-          example: 10
-        energy_cost:
-          type: integer
-          minimum: 0
-          example: 5
-        duration_minutes:
-          type: integer
-          minimum: 1
-          example: 5
+          example: 15
+          description: "Количество энергии, которое игрок получает при выполнении"
         experience_reward:
           type: integer
           minimum: 0
-          example: 3
-        min_level_required:
+          example: 8
+          description: "Количество опыта за выполнение"
+        cooldown_minutes:
+          type: integer
+          minimum: 0
+          example: 30
+          description: "Время в минутах до повторного выполнения"
+        unlock_level:
           type: integer
           minimum: 1
           example: 1
-        is_active:
+          description: "Минимальный уровень игрока для доступа"
+        position:
+          type: string
+          enum: [desktop, phone, tablet]
+          example: "phone"
+          description: "Предпочтительная платформа для выполнения"
+        can_perform:
           type: boolean
           example: true
-        created_at:
+          description: "Доступно ли действие для выполнения (не на кулдауне)"
+        cooldown_ends_at:
           type: string
           format: date-time
-        updated_at:
-          type: string
-          format: date-time
+          nullable: true
+          example: "2025-10-02T10:30:00.000000Z"
+          description: "Время окончания кулдауна (если действие недоступно)"
 
     ActivityLog:
       type: object

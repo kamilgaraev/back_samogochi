@@ -163,13 +163,15 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @php
                                     $categoryColor = $microAction->category->getColor();
+                                    $categoryLabel = $microAction->category->getLabel();
+                                    $categoryHtml = sprintf(
+                                        '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" style="background-color: %s20; color: %s;">%s</span>',
+                                        $categoryColor,
+                                        $categoryColor,
+                                        $categoryLabel
+                                    );
                                 @endphp
-                                {{-- blade-formatter-disable --}}
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                                      style="background-color: {{ $categoryColor }}20; color: {{ $categoryColor }}">
-                                {{-- blade-formatter-enable --}}
-                                    {{ $microAction->category->getLabel() }}
-                                </span>
+                                {!! $categoryHtml !!}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">

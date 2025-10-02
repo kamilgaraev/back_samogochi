@@ -1201,6 +1201,8 @@ paths:
     $ref: './paths/micro-actions.yaml#/~1micro-actions'
   /micro-actions/recommendations:
     $ref: './paths/micro-actions.yaml#/~1micro-actions~1recommendations'
+  /micro-actions/recommendations/random:
+    $ref: './paths/micro-actions.yaml#/~1micro-actions~1recommendations~1random'
   /micro-actions/history:
     $ref: './paths/micro-actions.yaml#/~1micro-actions~1history'
   /micro-actions/{id}/perform:

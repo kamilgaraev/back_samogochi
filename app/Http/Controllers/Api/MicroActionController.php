@@ -168,4 +168,33 @@ class MicroActionController extends Controller
             ], 500);
         }
     }
+
+    public function randomRecommendation()
+    {
+        try {
+            $userId = auth('api')->id();
+            
+            $result = $this->microActionService->getRandomRecommendedMicroAction($userId);
+
+            if (!$result['success']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $result['message']
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Случайное рекомендованное микродействие получено',
+                'data' => $result['data']
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при получении случайной рекомендации',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

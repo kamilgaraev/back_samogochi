@@ -351,6 +351,7 @@ class AdminWebController extends Controller
             'cooldown_minutes' => 'required|integer|min:1|max:1440',
             'unlock_level' => 'required|integer|min:1|max:100',
             'category' => 'required|in:' . \App\Enums\MicroActionCategory::getForValidation(),
+            'position' => 'required|in:desktop,phone,tablet',
             'is_active' => 'sometimes|boolean',
         ]);
         
@@ -385,6 +386,7 @@ class AdminWebController extends Controller
             'cooldown_minutes' => 'required|integer|min:1|max:1440',
             'unlock_level' => 'required|integer|min:1|max:100',
             'category' => 'required|in:' . \App\Enums\MicroActionCategory::getForValidation(),
+            'position' => 'required|in:desktop,phone,tablet',
             'is_active' => 'sometimes|boolean',
         ]);
         

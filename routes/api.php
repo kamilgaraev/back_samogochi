@@ -40,6 +40,7 @@ Route::middleware(['auth:api', 'throttle.game:120,1'])->group(function () {
     Route::prefix('micro-actions')->group(function () {
         Route::get('/', [\App\Http\Controllers\Api\MicroActionController::class, 'index']);
         Route::get('recommendations', [\App\Http\Controllers\Api\MicroActionController::class, 'recommendations']);
+        Route::get('recommendations/random', [\App\Http\Controllers\Api\MicroActionController::class, 'randomRecommendation']);
         Route::get('history', [\App\Http\Controllers\Api\MicroActionController::class, 'history']);
         Route::post('{id}/perform', [\App\Http\Controllers\Api\MicroActionController::class, 'perform']);
     });

@@ -261,4 +261,59 @@ class MicroActionService
             'player_state' => $this->playerStateService->getPlayerStateByProfile($player)
         ];
     }
+
+    public function getRandomRecommendedMicroAction(int $userId): array
+    {
+        $player = $this->playerRepository->findByUserId($userId);
+        
+        if (!$player) {
+            return [
+                'success' => false,
+                'message' => 'Профиль игрока не найден'
+            ];
+        }
+
+        $recommendations = $this->microActionRepository->getRecommendedMicroActions($player->id);
+
+        if ($recommendations->isEmpty()) {
+            return [
+                'success' => false,
+                'message' => 'Нет доступных рекомендаций'
+            ];
+        }
+
+        $randomMicroAction = $recommendations->random();
+
+        return [
+            'success' => true,
+            'data' => [
+                'micro_action' => [
+                    'id' => $randomMicroAction->id,
+                    'name' => $randomMicroAction->name,
+                    'description' => $randomMicroAction->description,
+                    'category' => [
+                        'value' => $randomMicroAction->category->value,
+                        'label' => $randomMicroAction->category->getLabel(),
+                        'icon' => $randomMicroAction->category->getIcon(),
+                        'color' => $randomMicroAction->category->getColor(),
+                    ],
+                    'energy_reward' => $randomMicroAction->energy_reward,
+                    'experience_reward' => $randomMicroAction->experience_reward,
+                    'cooldown_minutes' => $randomMicroAction->cooldown_minutes,
+                    'unlock_level' => $randomMicroAction->unlock_level,
+                    'position' => $randomMicroAction->position,
+                    'can_perform' => $this->microActionRepository->canPerform($player->id, $randomMicroAction->id),
+                    'cooldown_ends_at' => $this->microActionRepository->canPerform($player->id, $randomMicroAction->id) 
+                        ? null 
+                        : $this->microActionRepository->getCooldownEndTime($player->id, $randomMicroAction->id),
+                ],
+                'based_on' => [
+                    'energy_level' => $player->energy,
+                    'stress_level' => $player->stress,
+                    'player_level' => $player->level,
+                ]
+            ],
+            'player_state' => $this->playerStateService->getPlayerStateByProfile($player)
+        ];
+    }
 }

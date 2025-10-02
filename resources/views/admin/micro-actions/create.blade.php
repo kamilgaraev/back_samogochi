@@ -96,6 +96,25 @@
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
+                    
+                    <div>
+                        <label for="position" class="block text-sm font-medium text-gray-700 mb-2">
+                            Платформа <span class="text-red-500">*</span>
+                        </label>
+                        <select id="position" 
+                                name="position"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('position') border-red-500 @enderror"
+                                required>
+                            <option value="">Выберите платформу</option>
+                            <option value="phone" {{ old('position') === 'phone' ? 'selected' : '' }}>📱 Phone (Телефон)</option>
+                            <option value="tablet" {{ old('position') === 'tablet' ? 'selected' : '' }}>📊 Tablet (Планшет)</option>
+                            <option value="desktop" {{ old('position', 'desktop') === 'desktop' ? 'selected' : '' }}>💻 Desktop (Компьютер)</option>
+                        </select>
+                        <p class="text-xs text-gray-500 mt-1">Рекомендуемая платформа для выполнения действия</p>
+                        @error('position')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
             </div>
             

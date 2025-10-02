@@ -410,6 +410,7 @@ class AdminService
                 'cooldown_minutes' => $data['cooldown_minutes'] ?? 60,
                 'unlock_level' => $data['unlock_level'] ?? 1,
                 'category' => $data['category'],
+                'position' => $data['position'] ?? 'desktop',
                 'is_active' => $data['is_active'] ?? true,
             ]);
 
@@ -459,6 +460,7 @@ class AdminService
                 'cooldown_minutes' => $data['cooldown_minutes'] ?? $microAction->cooldown_minutes,
                 'unlock_level' => $data['unlock_level'] ?? $microAction->unlock_level,
                 'category' => $data['category'] ?? $microAction->category,
+                'position' => $data['position'] ?? $microAction->position,
                 'is_active' => $data['is_active'] ?? $microAction->is_active,
             ]);
 

@@ -85,8 +85,8 @@
   get:
     tags:
       - Micro Actions
-    summary: Рекомендованные микродействия
-    description: Получение микродействий, рекомендованных на основе текущего состояния игрока (уровень энергии, стресс, уровень)
+    summary: Список рекомендованных микродействий
+    description: Получение списка микродействий, рекомендованных на основе текущего состояния игрока (уровень энергии, стресс, уровень)
     security:
       - bearerAuth: []
     responses:
@@ -164,6 +164,67 @@
           application/json:
             schema:
               $ref: '../openapi.yaml#/components/responses/ErrorResponse'
+
+/micro-actions/recommendations/random:
+  get:
+    tags:
+      - Micro Actions
+    summary: Случайное рекомендованное микродействие
+    description: Получение одного случайного микродействия из рекомендаций, подходящих для текущего состояния игрока
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Случайное рекомендованное микродействие получено
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: "Случайное рекомендованное микродействие получено"
+                data:
+                  type: object
+                  properties:
+                    micro_action:
+                      allOf:
+                        - $ref: '../openapi.yaml#/components/schemas/MicroAction'
+                        - type: object
+                          description: "Полная информация о рекомендованном микродействии"
+                    based_on:
+                      type: object
+                      description: "Параметры, на основе которых сделана рекомендация"
+                      properties:
+                        energy_level:
+                          type: integer
+                          example: 85
+                        stress_level:
+                          type: integer
+                          example: 45
+                        player_level:
+                          type: integer
+                          example: 3
+                    player_state:
+                      $ref: '../openapi.yaml#/components/schemas/PlayerState'
+      '401':
+        description: Неавторизованный запрос
+      '404':
+        description: Профиль игрока не найден или нет доступных рекомендаций
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: "Нет доступных рекомендаций"
 
 /micro-actions/history:
   get:

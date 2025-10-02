@@ -63,6 +63,7 @@ class MicroActionService
                 'experience_reward' => $microAction->experience_reward,
                 'cooldown_minutes' => $microAction->cooldown_minutes,
                 'unlock_level' => $microAction->unlock_level,
+                'position' => $microAction->position,
                 'can_perform' => $canPerform,
                 'cooldown_ends_at' => $cooldownEndTime,
             ];
@@ -249,6 +250,9 @@ class MicroActionService
                         ],
                         'energy_reward' => $microAction->energy_reward,
                         'experience_reward' => $microAction->experience_reward,
+                        'cooldown_minutes' => $microAction->cooldown_minutes,
+                        'unlock_level' => $microAction->unlock_level,
+                        'position' => $microAction->position,
                         'can_perform' => $this->microActionRepository->canPerform($player->id, $microAction->id),
                     ];
                 }),

@@ -105,10 +105,14 @@
                                 name="position"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('position') border-red-500 @enderror"
                                 required>
-                            <option value="">Выберите платформу</option>
-                            <option value="phone" {{ old('position') === 'phone' ? 'selected' : '' }}>📱 Phone (Телефон)</option>
-                            <option value="tablet" {{ old('position') === 'tablet' ? 'selected' : '' }}>📊 Tablet (Планшет)</option>
-                            <option value="desktop" {{ old('position', 'desktop') === 'desktop' ? 'selected' : '' }}>💻 Desktop (Компьютер)</option>
+                            <option value="">Выберите позицию</option>
+                            <option value="phone" {{ old('position') === 'phone' ? 'selected' : '' }}>📱 Телефон</option>
+                            <option value="tablet" {{ old('position') === 'tablet' ? 'selected' : '' }}>📊 Планшет</option>
+                            <option value="desktop" {{ old('position', 'desktop') === 'desktop' ? 'selected' : '' }}>💻 Компьютер</option>
+                            <option value="tv" {{ old('position') === 'tv' ? 'selected' : '' }}>📺 Телевизор</option>
+                            <option value="speaker" {{ old('position') === 'speaker' ? 'selected' : '' }}>🔊 Колонка</option>
+                            <option value="bookshelf" {{ old('position') === 'bookshelf' ? 'selected' : '' }}>📚 Книжная полка</option>
+                            <option value="kitchen" {{ old('position') === 'kitchen' ? 'selected' : '' }}>🍳 Кухня</option>
                         </select>
                         <p class="text-xs text-gray-500 mt-1">Рекомендуемая платформа для выполнения действия</p>
                         @error('position')

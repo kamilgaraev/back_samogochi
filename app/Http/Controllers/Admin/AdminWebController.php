@@ -351,7 +351,7 @@ class AdminWebController extends Controller
             'cooldown_minutes' => 'required|integer|min:1|max:1440',
             'unlock_level' => 'required|integer|min:1|max:100',
             'category' => 'required|in:' . \App\Enums\MicroActionCategory::getForValidation(),
-            'position' => 'required|in:desktop,phone,tablet',
+            'position' => 'required|in:desktop,phone,tablet,tv,speaker,bookshelf,kitchen',
             'is_active' => 'sometimes|boolean',
         ]);
         
@@ -386,7 +386,7 @@ class AdminWebController extends Controller
             'cooldown_minutes' => 'required|integer|min:1|max:1440',
             'unlock_level' => 'required|integer|min:1|max:100',
             'category' => 'required|in:' . \App\Enums\MicroActionCategory::getForValidation(),
-            'position' => 'required|in:desktop,phone,tablet',
+            'position' => 'required|in:desktop,phone,tablet,tv,speaker,bookshelf,kitchen',
             'is_active' => 'sometimes|boolean',
         ]);
         
@@ -465,11 +465,12 @@ class AdminWebController extends Controller
         
         $positions = [
             ['value' => 'phone', 'label' => 'Телефон', 'icon' => '📱', 'description' => 'Отображение на мобильном устройстве'],
+            ['value' => 'tablet', 'label' => 'Планшет', 'icon' => '📊', 'description' => 'Отображение на планшете'],
+            ['value' => 'desktop', 'label' => 'Компьютер', 'icon' => '💻', 'description' => 'Отображение на компьютере'],
             ['value' => 'tv', 'label' => 'Телевизор', 'icon' => '📺', 'description' => 'Отображение на большом экране'],
-            ['value' => 'desktop', 'label' => 'Рабочий стол', 'icon' => '💻', 'description' => 'Отображение на компьютере'],
-            ['value' => 'tablet', 'label' => 'Планшет', 'icon' => '📋', 'description' => 'Отображение на планшете'],
-            ['value' => 'smartwatch', 'label' => 'Умные часы', 'icon' => '⌚', 'description' => 'Краткое уведомление на часах'],
-            ['value' => 'notification', 'label' => 'Уведомление', 'icon' => '🔔', 'description' => 'Push-уведомление']
+            ['value' => 'speaker', 'label' => 'Колонка', 'icon' => '🔊', 'description' => 'Голосовое взаимодействие через колонку'],
+            ['value' => 'bookshelf', 'label' => 'Книжная полка', 'icon' => '📚', 'description' => 'Действие связанное с чтением'],
+            ['value' => 'kitchen', 'label' => 'Кухня', 'icon' => '🍳', 'description' => 'Действие на кухне']
         ];
         
         return compact('categories', 'difficulties', 'positions');

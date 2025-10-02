@@ -176,11 +176,19 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                                     @if($microAction->position === 'phone')
-                                        📱 Phone
+                                        📱 Телефон
                                     @elseif($microAction->position === 'tablet')
-                                        📊 Tablet
+                                        📊 Планшет
+                                    @elseif($microAction->position === 'tv')
+                                        📺 Телевизор
+                                    @elseif($microAction->position === 'speaker')
+                                        🔊 Колонка
+                                    @elseif($microAction->position === 'bookshelf')
+                                        📚 Полка
+                                    @elseif($microAction->position === 'kitchen')
+                                        🍳 Кухня
                                     @else
-                                        💻 Desktop
+                                        💻 Компьютер
                                     @endif
                                 </span>
                             </td>

@@ -198,11 +198,12 @@
                                 @php
                                     $positionData = [
                                         'phone' => ['icon' => '📱', 'label' => 'Телефон', 'color' => 'blue'],
-                                        'tv' => ['icon' => '📺', 'label' => 'ТВ', 'color' => 'purple'],
+                                        'tablet' => ['icon' => '📊', 'label' => 'Планшет', 'color' => 'green'],
                                         'desktop' => ['icon' => '💻', 'label' => 'Компьютер', 'color' => 'gray'],
-                                        'tablet' => ['icon' => '📋', 'label' => 'Планшет', 'color' => 'green'],
-                                        'smartwatch' => ['icon' => '⌚', 'label' => 'Часы', 'color' => 'yellow'],
-                                        'notification' => ['icon' => '🔔', 'label' => 'Уведомление', 'color' => 'orange'],
+                                        'tv' => ['icon' => '📺', 'label' => 'Телевизор', 'color' => 'purple'],
+                                        'speaker' => ['icon' => '🔊', 'label' => 'Колонка', 'color' => 'orange'],
+                                        'bookshelf' => ['icon' => '📚', 'label' => 'Полка', 'color' => 'yellow'],
+                                        'kitchen' => ['icon' => '🍳', 'label' => 'Кухня', 'color' => 'red'],
                                     ];
                                     $position = $positionData[$situation->position ?? 'desktop'] ?? $positionData['desktop'];
                                 @endphp

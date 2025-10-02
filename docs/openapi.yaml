@@ -584,9 +584,9 @@ components:
           example: true
         position:
           type: string
-          enum: [phone, tv, desktop, tablet, smartwatch, notification]
+          enum: [phone, tablet, desktop, tv, speaker, bookshelf, kitchen]
           example: "desktop"
-          description: "Место отображения ситуации"
+          description: "Позиция/место где показывается ситуация"
         created_at:
           type: string
           format: date-time
@@ -681,9 +681,9 @@ components:
           description: "Минимальный уровень игрока для доступа"
         position:
           type: string
-          enum: [desktop, phone, tablet]
+          enum: [phone, tablet, desktop, tv, speaker, bookshelf, kitchen]
           example: "phone"
-          description: "Предпочтительная платформа для выполнения"
+          description: "Предпочтительная позиция/место для выполнения действия"
         can_perform:
           type: boolean
           example: true

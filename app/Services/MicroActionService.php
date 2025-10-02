@@ -155,7 +155,16 @@ class MicroActionService
                 'success' => true,
                 'message' => $levelUp ? 'Поздравляем! Вы достигли нового уровня!' : 'Микродействие успешно выполнено!',
                 'data' => [
-                    'micro_action' => $microAction->name,
+                    'micro_action' => [
+                        'id' => $microAction->id,
+                        'name' => $microAction->name,
+                        'category' => [
+                            'value' => $microAction->category->value,
+                            'label' => $microAction->category->getLabel(),
+                            'icon' => $microAction->category->getIcon(),
+                        ],
+                        'position' => $microAction->position,
+                    ],
                     'rewards' => [
                         'energy_gained' => $microAction->energy_reward,
                         'experience_gained' => $microAction->experience_reward,

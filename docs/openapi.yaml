@@ -164,7 +164,7 @@ info:
   termsOfService: https://your-domain.com/terms
     
 servers:
-  - url: http://31.130.149.164/api
+  - url: https://stressapi.ru/api
     description: Production server
   - url: http://localhost:8000/api
     description: Development server

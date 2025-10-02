@@ -1194,6 +1194,8 @@ paths:
   # Player endpoints
   /player/profile:
     $ref: './paths/player.yaml#/~1player~1profile'
+  /player/personal-info:
+    $ref: './paths/player.yaml#/~1player~1personal-info'
   /player/stats:
     $ref: './paths/player.yaml#/~1player~1stats'
   /player/daily-reward:

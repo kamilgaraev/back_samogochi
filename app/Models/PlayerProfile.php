@@ -19,6 +19,8 @@ class PlayerProfile extends Model
         'last_login',
         'last_daily_reward',
         'consecutive_days',
+        'completed_situations_since_sleep',
+        'sleeping_until',
         'favorite_song',
         'favorite_movie',
         'favorite_book',
@@ -31,6 +33,7 @@ class PlayerProfile extends Model
         return [
             'last_login' => 'datetime',
             'last_daily_reward' => 'datetime',
+            'sleeping_until' => 'datetime',
         ];
     }
 
@@ -98,5 +101,72 @@ class PlayerProfile extends Model
         $newEnergy = max(0, min(200, $this->energy + $amount));
         $this->update(['energy' => $newEnergy]);
         return $this;
+    }
+
+    public function isSleeping(): bool
+    {
+        if (!$this->sleeping_until) {
+            return false;
+        }
+
+        if (now()->greaterThanOrEqualTo($this->sleeping_until)) {
+            $this->wakeUp();
+            return false;
+        }
+
+        return true;
+    }
+
+    public function putToSleep(): void
+    {
+        $sleepConfig = GameConfig::getGameBalance();
+        $sleepDurationHours = $sleepConfig['sleep_duration_hours'] ?? 8;
+
+        $this->update([
+            'sleeping_until' => now()->addHours($sleepDurationHours),
+            'completed_situations_since_sleep' => 0,
+        ]);
+    }
+
+    public function wakeUp(): void
+    {
+        $this->update([
+            'sleeping_until' => null,
+        ]);
+    }
+
+    public function incrementSituationsCounter(): void
+    {
+        $this->increment('completed_situations_since_sleep');
+
+        $sleepConfig = GameConfig::getGameBalance();
+        $situationsBeforeSleep = $sleepConfig['situations_before_sleep'] ?? 10;
+
+        if ($this->completed_situations_since_sleep >= $situationsBeforeSleep) {
+            $this->putToSleep();
+        }
+    }
+
+    public function getSleepInfo(): array
+    {
+        if (!$this->isSleeping()) {
+            $sleepConfig = GameConfig::getGameBalance();
+            $situationsBeforeSleep = $sleepConfig['situations_before_sleep'] ?? 10;
+            
+            return [
+                'is_sleeping' => false,
+                'sleeping_until' => null,
+                'situations_until_sleep' => $situationsBeforeSleep - $this->completed_situations_since_sleep,
+                'completed_situations' => $this->completed_situations_since_sleep,
+                'situations_limit' => $situationsBeforeSleep,
+            ];
+        }
+
+        return [
+            'is_sleeping' => true,
+            'sleeping_until' => $this->sleeping_until,
+            'time_remaining_seconds' => now()->diffInSeconds($this->sleeping_until, false),
+            'time_remaining_minutes' => now()->diffInMinutes($this->sleeping_until, false),
+        ];
     }
 }

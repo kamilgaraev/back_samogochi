@@ -100,6 +100,15 @@ class MicroActionService
                 ];
             }
 
+            if (GameConfigService::isMicroActionsDisabledDuringSleep() && $player->isSleeping()) {
+                $sleepInfo = $player->getSleepInfo();
+                return [
+                    'success' => false,
+                    'message' => 'Персонаж спит. Микродействия недоступны.',
+                    'sleep_info' => $sleepInfo
+                ];
+            }
+
             $microAction = $this->microActionRepository->findMicroActionById($microActionId);
             
             if (!$microAction) {

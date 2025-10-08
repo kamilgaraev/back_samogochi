@@ -48,4 +48,19 @@ class GameConfigService
     {
         return GameConfig::getGameBalance()['experience_per_level'] ?? config('game.experience_per_level', 100);
     }
+
+    public static function getSituationsBeforeSleep(): int
+    {
+        return GameConfig::getGameBalance()['situations_before_sleep'] ?? config('game.situations_before_sleep', 10);
+    }
+
+    public static function getSleepDurationHours(): int
+    {
+        return GameConfig::getGameBalance()['sleep_duration_hours'] ?? config('game.sleep_duration_hours', 8);
+    }
+
+    public static function isMicroActionsDisabledDuringSleep(): bool
+    {
+        return GameConfig::getGameBalance()['disable_micro_actions_during_sleep'] ?? config('game.disable_micro_actions_during_sleep', true);
+    }
 }

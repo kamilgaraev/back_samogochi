@@ -127,6 +127,32 @@
                                         <input type="number" x-model="config.experience_per_level" 
                                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                     </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                                            Ситуаций до сна
+                                        </label>
+                                        <input type="number" x-model="config.situations_before_sleep" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                                            Длительность сна (часы)
+                                        </label>
+                                        <input type="number" x-model="config.sleep_duration_hours" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    </div>
+                                    
+                                    <div class="md:col-span-2">
+                                        <label class="flex items-center">
+                                            <input type="checkbox" x-model="config.disable_micro_actions_during_sleep"
+                                                   class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                                            <span class="ml-2 text-sm font-medium text-gray-700">
+                                                Блокировать микродействия во время сна
+                                            </span>
+                                        </label>
+                                    </div>
                                 </div>
                             
                             @elseif($config['key'] == 'level_requirements')

@@ -20,7 +20,10 @@ class GameConfigSeeder extends Seeder
                     'stress_threshold_low' => 20,
                     'situation_cooldown_seconds' => 0,
                     'micro_action_cooldown_minutes' => 30,
-                    'experience_per_level' => 100
+                    'experience_per_level' => 100,
+                    'situations_before_sleep' => 10,
+                    'sleep_duration_hours' => 8,
+                    'disable_micro_actions_during_sleep' => true
                 ],
                 'description' => 'Основные игровые константы для баланса',
                 'is_active' => true,

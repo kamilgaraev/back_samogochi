@@ -195,6 +195,15 @@ class SituationService
                 ];
             }
 
+            if ($player->isSleeping()) {
+                $sleepInfo = $player->getSleepInfo();
+                return [
+                    'success' => false,
+                    'message' => 'Персонаж спит. Подождите пока он проснется.',
+                    'sleep_info' => $sleepInfo
+                ];
+            }
+
             if ($this->situationRepository->isOnCooldown($player->id)) {
                 $cooldownEndTime = $this->situationRepository->getCooldownEndTime($player->id);
                 return [
@@ -344,6 +353,7 @@ class SituationService
             $player->updateStress($option->stress_change);
             $player->updateEnergy(-$option->energy_cost);
             $player->addExperience($option->experience_reward);
+            $player->incrementSituationsCounter();
 
             $newLevel = $player->fresh()->level;
             $levelUp = $newLevel > $oldLevel;

@@ -117,6 +117,23 @@ info:
     - **`consecutive_days`** - Количество дней подряд в игре (integer, min: 0)
     - **`can_claim_daily_reward`** - Можно ли получить ежедневную награду (boolean)
     
+    ### 😴 Система сна (`sleep`)
+    Персонаж засыпает после прохождения определенного количества ситуаций. Во время сна блокируются действия.
+    
+    **Когда персонаж НЕ спит:**
+    - **`is_sleeping`** - `false` (boolean)
+    - **`sleeping_until`** - `null`
+    - **`situations_until_sleep`** - Сколько ситуаций осталось до сна (integer, min: 0)
+    - **`completed_situations`** - Сколько пройдено с последнего сна (integer, min: 0)
+    - **`situations_limit`** - Лимит ситуаций до сна из конфига (integer, min: 1)
+    
+    **Когда персонаж СПИТ:**
+    - **`is_sleeping`** - `true` (boolean)
+    - **`sleeping_until`** - Время пробуждения (ISO 8601 datetime)
+    - **`time_remaining_seconds`** - Секунд до пробуждения (integer)
+    - **`time_remaining_minutes`** - Минут до пробуждения (integer)
+    - **Для UI:** показать таймер обратного отсчета, заблокировать кнопки действий
+    
     ### 🎮 Возможности игрока (`capabilities`)
     - **`can_perform_micro_actions`** - Может ли выполнять микродействия (boolean)
       - `true` если `energy >= 10`
@@ -492,6 +509,60 @@ components:
               type: boolean
               description: "🎁 Можно ли получить ежедневную награду"
               example: true
+        sleep:
+          type: object
+          description: |
+            😴 **Система сна персонажа**
+            
+            Персонаж засыпает после прохождения определенного количества ситуаций.
+            Во время сна блокируются ситуации и микродействия (настраивается).
+          oneOf:
+            - type: object
+              description: "Персонаж НЕ спит"
+              properties:
+                is_sleeping:
+                  type: boolean
+                  description: "Спит ли персонаж"
+                  example: false
+                sleeping_until:
+                  type: null
+                  description: "Время пробуждения (null если не спит)"
+                  example: null
+                situations_until_sleep:
+                  type: integer
+                  description: "Сколько ситуаций осталось до сна"
+                  minimum: 0
+                  example: 3
+                completed_situations:
+                  type: integer
+                  description: "Сколько ситуаций пройдено с последнего сна"
+                  minimum: 0
+                  example: 7
+                situations_limit:
+                  type: integer
+                  description: "Лимит ситуаций до сна (из конфига)"
+                  minimum: 1
+                  example: 10
+            - type: object
+              description: "Персонаж СПИТ"
+              properties:
+                is_sleeping:
+                  type: boolean
+                  description: "Спит ли персонаж"
+                  example: true
+                sleeping_until:
+                  type: string
+                  format: date-time
+                  description: "Время когда персонаж проснется"
+                  example: "2025-09-28T18:30:00Z"
+                time_remaining_seconds:
+                  type: integer
+                  description: "Сколько секунд осталось до пробуждения"
+                  example: 3600
+                time_remaining_minutes:
+                  type: integer
+                  description: "Сколько минут осталось до пробуждения"
+                  example: 60
         capabilities:
           type: object
           description: "🎮 Что может делать игрок в данный момент"
@@ -568,6 +639,12 @@ components:
           last_login: "2025-09-28T10:30:00Z"
           consecutive_days: 7
           can_claim_daily_reward: true
+        sleep:
+          is_sleeping: false
+          sleeping_until: null
+          situations_until_sleep: 3
+          completed_situations: 7
+          situations_limit: 10
         capabilities:
           can_perform_micro_actions: true
           can_start_situations: true

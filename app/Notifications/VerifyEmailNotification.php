@@ -26,13 +26,15 @@ class VerifyEmailNotification extends Notification
 
     public function toMail($notifiable): MailMessage
     {
+        $verificationUrl = config('app.frontend_url') . '/verify-email?token=' . $this->token . '&email=' . urlencode($this->email);
+
         return (new MailMessage)
             ->subject('Подтверждение email адреса')
             ->greeting('Здравствуйте, ' . $notifiable->name . '!')
             ->line('Благодарим вас за регистрацию в ' . config('app.name') . '!')
-            ->line('Для подтверждения вашего email адреса используйте следующий код верификации:')
-            ->line('**Код: ' . $this->token . '**')
-            ->line('Этот код действителен в течение 24 часов.')
+            ->line('Для подтверждения вашего email адреса нажмите на кнопку ниже:')
+            ->action('Подтвердить Email', $verificationUrl)
+            ->line('Эта ссылка действительна в течение 24 часов.')
             ->line('Если вы не регистрировались, просто проигнорируйте это письмо.')
             ->salutation('С уважением, команда ' . config('app.name'));
     }

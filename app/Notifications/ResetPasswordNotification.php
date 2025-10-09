@@ -26,13 +26,15 @@ class ResetPasswordNotification extends Notification
 
     public function toMail($notifiable): MailMessage
     {
+        $resetUrl = config('app.frontend_url') . '/reset-password?token=' . $this->token . '&email=' . urlencode($this->email);
+
         return (new MailMessage)
             ->subject('Восстановление пароля')
             ->greeting('Здравствуйте, ' . $notifiable->name . '!')
             ->line('Мы получили запрос на восстановление пароля для вашей учетной записи.')
-            ->line('Используйте следующий код для сброса пароля:')
-            ->line('**Код: ' . $this->token . '**')
-            ->line('Этот код действителен в течение 60 минут.')
+            ->line('Для сброса пароля нажмите на кнопку ниже:')
+            ->action('Сбросить пароль', $resetUrl)
+            ->line('Эта ссылка действительна в течение 60 минут.')
             ->line('Если вы не запрашивали восстановление пароля, просто проигнорируйте это письмо.')
             ->salutation('С уважением, команда ' . config('app.name'));
     }

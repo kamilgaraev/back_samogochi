@@ -143,7 +143,7 @@ class AuthController extends Controller
 
     public function verifyEmail(VerifyEmailRequest $request)
     {
-        $success = $this->authService->verifyEmail($request->token);
+        $success = $this->authService->verifyEmail($request->email, $request->token);
 
         if ($success) {
             return response()->json([
@@ -155,6 +155,27 @@ class AuthController extends Controller
         return response()->json([
             'success' => false,
             'message' => 'Недействительный токен'
+        ], 400);
+    }
+
+    public function resendVerification(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email'
+        ]);
+
+        $success = $this->authService->resendEmailVerification($request->email);
+
+        if ($success) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Письмо с подтверждением отправлено повторно'
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Пользователь не найден или email уже подтвержден'
         ], 400);
     }
 }

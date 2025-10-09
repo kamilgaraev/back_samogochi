@@ -297,7 +297,9 @@
     tags:
       - Authentication
     summary: Подтверждение email
-    description: Верификация email адреса пользователя
+    description: |
+      Верификация email адреса пользователя с помощью кода из письма.
+      Код отправляется на email при регистрации и действителен 24 часа.
     requestBody:
       required: true
       content:
@@ -305,11 +307,18 @@
           schema:
             type: object
             required:
+              - email
               - token
             properties:
+              email:
+                type: string
+                format: email
+                example: "ivan@example.com"
+                description: "Email адрес пользователя"
               token:
                 type: string
-                example: "verification_token_here"
+                example: "abc123def456ghi789jkl012mno345pqr678stu901vwx234yz5678901"
+                description: "Код верификации из письма"
     responses:
       '200':
         description: Email успешно подтвержден
@@ -323,7 +332,7 @@
                     message:
                       example: "Email успешно подтвержден"
       '400':
-        description: Недействительный токен
+        description: Недействительный токен или истек срок действия
         content:
           application/json:
             schema:
@@ -333,6 +342,55 @@
                   properties:
                     message:
                       example: "Недействительный токен"
+      '422':
+        description: Ошибки валидации
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yaml#/components/responses/ValidationErrorResponse'
+
+/auth/resend-verification:
+  post:
+    tags:
+      - Authentication
+    summary: Повторная отправка кода верификации
+    description: Отправка нового кода верификации email на указанный адрес
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - email
+            properties:
+              email:
+                type: string
+                format: email
+                example: "ivan@example.com"
+    responses:
+      '200':
+        description: Письмо отправлено
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../openapi.yaml#/components/responses/SuccessResponse'
+                - type: object
+                  properties:
+                    message:
+                      example: "Письмо с подтверждением отправлено повторно"
+      '400':
+        description: Email уже подтвержден или пользователь не найден
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../openapi.yaml#/components/responses/ErrorResponse'
+                - type: object
+                  properties:
+                    message:
+                      example: "Пользователь не найден или email уже подтвержден"
       '422':
         description: Ошибки валидации
         content:

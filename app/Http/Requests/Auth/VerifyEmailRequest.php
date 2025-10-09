@@ -22,6 +22,7 @@ class VerifyEmailRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'email' => 'required|email',
             'token' => 'required|string',
         ];
     }
@@ -34,6 +35,8 @@ class VerifyEmailRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'email.required' => 'Email обязателен',
+            'email.email' => 'Некорректный формат email',
             'token.required' => 'Токен верификации email обязателен',
             'token.string' => 'Некорректный токен верификации',
         ];
@@ -47,6 +50,7 @@ class VerifyEmailRequest extends FormRequest
     public function attributes(): array
     {
         return [
+            'email' => 'email',
             'token' => 'токен',
         ];
     }

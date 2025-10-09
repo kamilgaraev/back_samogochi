@@ -5,11 +5,14 @@ namespace App\Services;
 use App\Models\User;
 use App\Models\PlayerProfile;
 use App\Models\ActivityLog;
+use App\Notifications\VerifyEmailNotification;
+use App\Notifications\ResetPasswordNotification;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use Carbon\Carbon;
 
 class AuthService
 {
@@ -35,6 +38,8 @@ class AuthService
 
         ActivityLog::logRegistration($user->id);
 
+        $this->sendEmailVerification($user);
+
         $token = JWTAuth::fromUser($user);
 
         return [
@@ -42,7 +47,8 @@ class AuthService
             'player' => $playerProfile,
             'token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => (int)config('jwt.ttl') * 60
+            'expires_in' => (int)config('jwt.ttl') * 60,
+            'email_verification_sent' => true
         ];
     }
 
@@ -117,6 +123,74 @@ class AuthService
         ];
     }
 
+    public function sendEmailVerification(User $user)
+    {
+        $token = Str::random(60);
+        
+        DB::table('email_verification_tokens')->updateOrInsert(
+            ['email' => $user->email],
+            [
+                'token' => Hash::make($token),
+                'created_at' => Carbon::now()
+            ]
+        );
+
+        $user->notify(new VerifyEmailNotification($token, $user->email));
+
+        ActivityLog::logEvent('user.email_verification_sent', ['email' => $user->email], $user->id);
+
+        return true;
+    }
+
+    public function verifyEmail(string $email, string $token)
+    {
+        $record = DB::table('email_verification_tokens')
+            ->where('email', $email)
+            ->first();
+
+        if (!$record) {
+            return false;
+        }
+
+        if (!Hash::check($token, $record->token)) {
+            return false;
+        }
+
+        if (Carbon::parse($record->created_at)->addHours(24)->isPast()) {
+            DB::table('email_verification_tokens')->where('email', $email)->delete();
+            return false;
+        }
+
+        $user = User::where('email', $email)->first();
+        
+        if (!$user) {
+            return false;
+        }
+
+        $user->update(['email_verified_at' => Carbon::now()]);
+        
+        DB::table('email_verification_tokens')->where('email', $email)->delete();
+
+        ActivityLog::logEvent('user.email_verified', ['email' => $email], $user->id);
+
+        return true;
+    }
+
+    public function resendEmailVerification(string $email)
+    {
+        $user = User::where('email', $email)->first();
+        
+        if (!$user) {
+            return false;
+        }
+
+        if ($user->email_verified_at) {
+            return false;
+        }
+
+        return $this->sendEmailVerification($user);
+    }
+
     public function forgotPassword(string $email)
     {
         $user = User::where('email', $email)->first();
@@ -127,13 +201,40 @@ class AuthService
 
         $token = Str::random(60);
         
-        ActivityLog::logEvent('user.password_reset_requested', ['email' => $email]);
+        DB::table('password_reset_tokens')->updateOrInsert(
+            ['email' => $email],
+            [
+                'token' => Hash::make($token),
+                'created_at' => Carbon::now()
+            ]
+        );
+
+        $user->notify(new ResetPasswordNotification($token, $email));
+
+        ActivityLog::logEvent('user.password_reset_requested', ['email' => $email], $user->id);
 
         return true;
     }
 
     public function resetPassword(string $email, string $token, string $password)
     {
+        $record = DB::table('password_reset_tokens')
+            ->where('email', $email)
+            ->first();
+        
+        if (!$record) {
+            return false;
+        }
+
+        if (!Hash::check($token, $record->token)) {
+            return false;
+        }
+
+        if (Carbon::parse($record->created_at)->addHours(1)->isPast()) {
+            DB::table('password_reset_tokens')->where('email', $email)->delete();
+            return false;
+        }
+
         $user = User::where('email', $email)->first();
         
         if (!$user) {
@@ -144,13 +245,10 @@ class AuthService
             'password' => Hash::make($password)
         ]);
 
+        DB::table('password_reset_tokens')->where('email', $email)->delete();
+
         ActivityLog::logEvent('user.password_reset', null, $user->id);
 
-        return true;
-    }
-
-    public function verifyEmail(string $token)
-    {
         return true;
     }
 }

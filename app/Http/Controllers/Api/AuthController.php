@@ -187,4 +187,22 @@ class AuthController extends Controller
             'message' => 'Пользователь не найден или email уже подтвержден'
         ], 400);
     }
+
+    public function verifyEmailLink(Request $request, string $token)
+    {
+        $email = $request->query('email');
+
+        if (!$email) {
+            return redirect(config('app.frontend_url') . '/auth/verification-failed?error=invalid_link');
+        }
+
+        $result = $this->authService->verifyEmail($email, $token);
+
+        if ($result) {
+            $redirectUrl = config('app.frontend_url') . '/auth/verified?token=' . $result['token'];
+            return redirect($redirectUrl);
+        }
+
+        return redirect(config('app.frontend_url') . '/auth/verification-failed?error=invalid_token');
+    }
 }

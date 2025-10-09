@@ -200,16 +200,16 @@ class AuthController extends Controller
         $email = $request->query('email');
 
         if (!$email) {
-            return redirect(config('app.frontend_url') . '/auth/verification-failed?error=invalid_link');
+            return redirect(config('app.frontend_url') . '/#/auth/verification-failed?error=invalid_link');
         }
 
         $result = $this->authService->verifyEmail($email, $token);
 
         if ($result) {
-            $redirectUrl = config('app.frontend_url') . '/auth/verified?token=' . $result['token'];
+            $redirectUrl = config('app.frontend_url') . '/#/auth/verified?token=' . $result['token'];
             return redirect($redirectUrl);
         }
 
-        return redirect(config('app.frontend_url') . '/auth/verification-failed?error=invalid_token');
+        return redirect(config('app.frontend_url') . '/#/auth/verification-failed?error=invalid_token');
     }
 }

@@ -199,17 +199,22 @@ class AuthController extends Controller
     {
         $email = $request->query('email');
 
+        \Log::info('Email verification link clicked', ['email' => $email, 'token' => $token]);
+
         if (!$email) {
+            \Log::warning('Email verification failed - no email provided');
             return redirect(config('app.frontend_url') . '/#/auth/verification-failed?error=invalid_link');
         }
 
         $result = $this->authService->verifyEmail($email, $token);
 
         if ($result) {
+            \Log::info('Email verified successfully', ['email' => $email]);
             $redirectUrl = config('app.frontend_url') . '/#/auth/verified?token=' . $result['token'];
             return redirect($redirectUrl);
         }
 
+        \Log::error('Email verification failed', ['email' => $email, 'token' => $token]);
         return redirect(config('app.frontend_url') . '/#/auth/verification-failed?error=invalid_token');
     }
 }

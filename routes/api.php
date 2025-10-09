@@ -3,13 +3,14 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+Route::get('auth/verify-email/{token}', [\App\Http\Controllers\Api\AuthController::class, 'verifyEmailLink']);
+
 Route::prefix('auth')->middleware('throttle.game:10,1')->group(function () {
     Route::post('register', [\App\Http\Controllers\Api\AuthController::class, 'register']);
     Route::post('login', [\App\Http\Controllers\Api\AuthController::class, 'login']);
     Route::post('refresh', [\App\Http\Controllers\Api\AuthController::class, 'refresh']);
     Route::post('logout', [\App\Http\Controllers\Api\AuthController::class, 'logout'])->middleware('auth:api');
     Route::get('me', [\App\Http\Controllers\Api\AuthController::class, 'me'])->middleware('auth:api');
-    Route::get('verify-email/{token}', [\App\Http\Controllers\Api\AuthController::class, 'verifyEmailLink']);
     Route::post('verify-email', [\App\Http\Controllers\Api\AuthController::class, 'verifyEmail']);
     Route::post('resend-verification', [\App\Http\Controllers\Api\AuthController::class, 'resendVerification']);
     Route::post('forgot-password', [\App\Http\Controllers\Api\AuthController::class, 'forgotPassword']);

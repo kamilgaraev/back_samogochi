@@ -51,6 +51,14 @@ class AuthController extends Controller
             ], 401);
         }
 
+        if (isset($result['error']) && $result['error'] === 'email_not_verified') {
+            return response()->json([
+                'success' => false,
+                'message' => $result['message'],
+                'email_not_verified' => true
+            ], 403);
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Авторизация успешна',
@@ -143,18 +151,19 @@ class AuthController extends Controller
 
     public function verifyEmail(VerifyEmailRequest $request)
     {
-        $success = $this->authService->verifyEmail($request->email, $request->token);
+        $result = $this->authService->verifyEmail($request->email, $request->token);
 
-        if ($success) {
+        if ($result) {
             return response()->json([
                 'success' => true,
-                'message' => 'Email успешно подтвержден'
+                'message' => 'Email успешно подтвержден. Вы автоматически авторизованы.',
+                'data' => $result
             ]);
         }
 
         return response()->json([
             'success' => false,
-            'message' => 'Недействительный токен'
+            'message' => 'Недействительный токен или срок действия истек'
         ], 400);
     }
 

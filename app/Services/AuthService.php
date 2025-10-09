@@ -40,15 +40,11 @@ class AuthService
 
         $this->sendEmailVerification($user);
 
-        $token = JWTAuth::fromUser($user);
-
         return [
             'user' => $user,
             'player' => $playerProfile,
-            'token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => (int)config('jwt.ttl') * 60,
-            'email_verification_sent' => true
+            'email_verification_sent' => true,
+            'message' => 'Регистрация успешна. Проверьте email для подтверждения.'
         ];
     }
 
@@ -59,8 +55,13 @@ class AuthService
             return null;
         }
 
-        // Получаем пользователя напрямую через JWTAuth
         $user = JWTAuth::user();
+        
+        if (!$user->email_verified_at) {
+            JWTAuth::invalidate($token);
+            ActivityLog::logEvent('user.login_blocked_unverified', ['email' => $user->email], $user->id);
+            return ['error' => 'email_not_verified', 'message' => 'Email не подтвержден'];
+        }
         
         if ($user && $user->playerProfile) {
             $user->playerProfile->updateLastLogin();
@@ -125,7 +126,7 @@ class AuthService
 
     public function sendEmailVerification(User $user)
     {
-        $token = Str::random(60);
+        $token = strtoupper(Str::random(6));
         
         DB::table('email_verification_tokens')->updateOrInsert(
             ['email' => $user->email],
@@ -182,7 +183,15 @@ class AuthService
 
         ActivityLog::logEvent('user.email_verified', ['email' => $email], $user->id);
 
-        return true;
+        $jwtToken = JWTAuth::fromUser($user);
+
+        return [
+            'user' => $user,
+            'player' => $user->playerProfile,
+            'token' => $jwtToken,
+            'token_type' => 'bearer',
+            'expires_in' => (int)config('jwt.ttl') * 60
+        ];
     }
 
     public function resendEmailVerification(string $email)
@@ -208,7 +217,7 @@ class AuthService
             return false;
         }
 
-        $token = Str::random(60);
+        $token = strtoupper(Str::random(6));
         
         DB::table('password_reset_tokens')->updateOrInsert(
             ['email' => $email],

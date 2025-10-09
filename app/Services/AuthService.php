@@ -243,20 +243,14 @@ class AuthService
             return false;
         }
 
-        $token = strtoupper(Str::random(6));
+        $newPassword = Str::random(12);
         
-        DB::table('password_reset_tokens')->updateOrInsert(
-            ['email' => $email],
-            [
-                'token' => Hash::make($token),
-                'created_at' => Carbon::now()
-            ]
-        );
+        $user->update(['password' => Hash::make($newPassword)]);
 
         try {
-            $user->notify(new ResetPasswordNotification($token, $email));
-            ActivityLog::logEvent('user.password_reset_requested', ['email' => $email], $user->id);
-            Log::info('Password reset email sent successfully', ['email' => $email]);
+            $user->notify(new ResetPasswordNotification($newPassword, $email));
+            ActivityLog::logEvent('user.password_reset', ['email' => $email], $user->id);
+            Log::info('New password sent successfully', ['email' => $email]);
         } catch (\Exception $e) {
             Log::error('Password reset email failed', [
                 'email' => $email,
@@ -269,39 +263,4 @@ class AuthService
         return true;
     }
 
-    public function resetPassword(string $email, string $token, string $password)
-    {
-        $record = DB::table('password_reset_tokens')
-            ->where('email', $email)
-            ->first();
-        
-        if (!$record) {
-            return false;
-        }
-
-        if (!Hash::check($token, $record->token)) {
-            return false;
-        }
-
-        if (Carbon::parse($record->created_at)->addHours(1)->isPast()) {
-            DB::table('password_reset_tokens')->where('email', $email)->delete();
-            return false;
-        }
-
-        $user = User::where('email', $email)->first();
-        
-        if (!$user) {
-            return false;
-        }
-
-        $user->update([
-            'password' => Hash::make($password)
-        ]);
-
-        DB::table('password_reset_tokens')->where('email', $email)->delete();
-
-        ActivityLog::logEvent('user.password_reset', null, $user->id);
-
-        return true;
-    }
 }

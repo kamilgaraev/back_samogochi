@@ -14,7 +14,6 @@ Route::prefix('auth')->middleware('throttle.game:10,1')->group(function () {
     Route::post('verify-email', [\App\Http\Controllers\Api\AuthController::class, 'verifyEmail']);
     Route::post('resend-verification', [\App\Http\Controllers\Api\AuthController::class, 'resendVerification']);
     Route::post('forgot-password', [\App\Http\Controllers\Api\AuthController::class, 'forgotPassword']);
-    Route::post('reset-password', [\App\Http\Controllers\Api\AuthController::class, 'resetPassword']);
 });
 
 Route::middleware(['auth:api', 'throttle.game:120,1'])->group(function () {

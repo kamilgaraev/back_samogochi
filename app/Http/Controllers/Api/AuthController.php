@@ -108,7 +108,7 @@ class AuthController extends Controller
         if ($success) {
             return response()->json([
                 'success' => true,
-                'message' => 'Инструкции по сбросу пароля отправлены на email'
+                'message' => 'Новый пароль отправлен на email'
             ]);
         }
 
@@ -116,27 +116,6 @@ class AuthController extends Controller
             'success' => false,
             'message' => 'Пользователь с таким email не найден'
         ], 404);
-    }
-
-    public function resetPassword(ResetPasswordRequest $request)
-    {
-        $success = $this->authService->resetPassword(
-            $request->email,
-            $request->token,
-            $request->password
-        );
-
-        if ($success) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Пароль успешно изменен'
-            ]);
-        }
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Недействительный токен или email'
-        ], 400);
     }
 
     public function verifyEmail(VerifyEmailRequest $request)
@@ -217,4 +196,5 @@ class AuthController extends Controller
         \Log::error('Email verification failed', ['email' => $email, 'token' => $token]);
         return redirect(config('app.frontend_url') . '/#/auth/verification-failed?error=invalid_token');
     }
+
 }

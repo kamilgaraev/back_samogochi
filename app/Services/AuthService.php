@@ -51,20 +51,21 @@ class AuthService
 
     public function login(array $credentials)
     {
-        if (!$token = JWTAuth::attempt($credentials)) {
+        $user = User::where('email', $credentials['email'])->first();
+        
+        if (!$user || !Hash::check($credentials['password'], $user->password)) {
             ActivityLog::logEvent('user.login_failed', ['email' => $credentials['email']]);
             return null;
         }
 
-        $user = JWTAuth::user();
-        
         if (!$user->email_verified_at) {
-            JWTAuth::invalidate($token);
             ActivityLog::logEvent('user.login_blocked_unverified', ['email' => $user->email], $user->id);
             return ['error' => 'email_not_verified', 'message' => 'Email не подтвержден'];
         }
+
+        $token = JWTAuth::fromUser($user);
         
-        if ($user && $user->playerProfile) {
+        if ($user->playerProfile) {
             $user->playerProfile->updateLastLogin();
         }
 

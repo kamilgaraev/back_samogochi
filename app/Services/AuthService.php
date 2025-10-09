@@ -9,6 +9,7 @@ use App\Notifications\VerifyEmailNotification;
 use App\Notifications\ResetPasswordNotification;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -97,12 +98,12 @@ class AuthService
     public function refresh()
     {
         try {
-            \Log::info('Refresh attempt started');
+            Log::info('Refresh attempt started');
             $currentToken = JWTAuth::getToken();
-            \Log::info('Current token exists', ['has_token' => !!$currentToken]);
+            Log::info('Current token exists', ['has_token' => !!$currentToken]);
             
             $token = JWTAuth::refresh();
-            \Log::info('Token refreshed successfully');
+            Log::info('Token refreshed successfully');
             
             return [
                 'token' => $token,
@@ -110,7 +111,7 @@ class AuthService
                 'expires_in' => (int)config('jwt.ttl') * 60
             ];
         } catch (JWTException $e) {
-            \Log::error('JWT Refresh failed', ['error' => $e->getMessage()]);
+            Log::error('JWT Refresh failed', ['error' => $e->getMessage()]);
             return null;
         }
     }
@@ -118,9 +119,19 @@ class AuthService
     public function me()
     {
         $user = JWTAuth::user();
+        
+        if (!$user) {
+            return null;
+        }
+
         return [
-            'user' => $user,
-            'player' => $user ? $user->playerProfile : null,
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'email_verified_at' => $user->email_verified_at,
+            'avatar' => $user->avatar,
+            'is_admin' => $user->is_admin,
+            'player' => $user->playerProfile,
         ];
     }
 
@@ -139,9 +150,9 @@ class AuthService
         try {
             $user->notify(new VerifyEmailNotification($token, $user->email));
             ActivityLog::logEvent('user.email_verification_sent', ['email' => $user->email], $user->id);
-            \Log::info('Email verification sent successfully', ['email' => $user->email]);
+            Log::info('Email verification sent successfully', ['email' => $user->email]);
         } catch (\Exception $e) {
-            \Log::error('Email verification failed', [
+            Log::error('Email verification failed', [
                 'email' => $user->email,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
@@ -230,9 +241,9 @@ class AuthService
         try {
             $user->notify(new ResetPasswordNotification($token, $email));
             ActivityLog::logEvent('user.password_reset_requested', ['email' => $email], $user->id);
-            \Log::info('Password reset email sent successfully', ['email' => $email]);
+            Log::info('Password reset email sent successfully', ['email' => $email]);
         } catch (\Exception $e) {
-            \Log::error('Password reset email failed', [
+            Log::error('Password reset email failed', [
                 'email' => $email,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()

@@ -101,16 +101,6 @@ class AuthController extends Controller
         ]);
     }
 
-    public function me()
-    {
-        $result = $this->authService->me();
-
-        return response()->json([
-            'success' => true,
-            'data' => $result
-        ]);
-    }
-
     public function forgotPassword(ForgotPasswordRequest $request)
     {
         $success = $this->authService->forgotPassword($request->email);
@@ -186,6 +176,23 @@ class AuthController extends Controller
             'success' => false,
             'message' => 'Пользователь не найден или email уже подтвержден'
         ], 400);
+    }
+
+    public function me()
+    {
+        $result = $this->authService->me();
+
+        if (!$result) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Пользователь не найден'
+            ], 401);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $result
+        ]);
     }
 
     public function verifyEmailLink(Request $request, string $token)

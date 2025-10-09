@@ -166,19 +166,28 @@ class AuthService
 
     public function verifyEmail(string $email, string $token)
     {
+        Log::info('Starting email verification', ['email' => $email, 'token' => $token]);
+        
         $record = DB::table('email_verification_tokens')
             ->where('email', $email)
             ->first();
 
         if (!$record) {
+            Log::warning('Token not found in DB', ['email' => $email]);
             return false;
         }
+
+        Log::info('Token found in DB', ['email' => $email]);
 
         if (!Hash::check($token, $record->token)) {
+            Log::warning('Token hash mismatch', ['email' => $email]);
             return false;
         }
 
+        Log::info('Token hash matched', ['email' => $email]);
+
         if (Carbon::parse($record->created_at)->addHours(24)->isPast()) {
+            Log::warning('Token expired', ['email' => $email, 'created_at' => $record->created_at]);
             DB::table('email_verification_tokens')->where('email', $email)->delete();
             return false;
         }
@@ -186,10 +195,15 @@ class AuthService
         $user = User::where('email', $email)->first();
         
         if (!$user) {
+            Log::error('User not found', ['email' => $email]);
             return false;
         }
 
-        $user->update(['email_verified_at' => Carbon::now()]);
+        Log::info('User found, updating email_verified_at', ['user_id' => $user->id, 'email' => $email]);
+        
+        $updated = $user->update(['email_verified_at' => Carbon::now()]);
+        
+        Log::info('Update result', ['updated' => $updated, 'email_verified_at' => $user->email_verified_at]);
         
         DB::table('email_verification_tokens')->where('email', $email)->delete();
 

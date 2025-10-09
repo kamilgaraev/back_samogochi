@@ -135,9 +135,18 @@ class AuthService
             ]
         );
 
-        $user->notify(new VerifyEmailNotification($token, $user->email));
-
-        ActivityLog::logEvent('user.email_verification_sent', ['email' => $user->email], $user->id);
+        try {
+            $user->notify(new VerifyEmailNotification($token, $user->email));
+            ActivityLog::logEvent('user.email_verification_sent', ['email' => $user->email], $user->id);
+            \Log::info('Email verification sent successfully', ['email' => $user->email]);
+        } catch (\Exception $e) {
+            \Log::error('Email verification failed', [
+                'email' => $user->email,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
 
         return true;
     }
@@ -209,9 +218,18 @@ class AuthService
             ]
         );
 
-        $user->notify(new ResetPasswordNotification($token, $email));
-
-        ActivityLog::logEvent('user.password_reset_requested', ['email' => $email], $user->id);
+        try {
+            $user->notify(new ResetPasswordNotification($token, $email));
+            ActivityLog::logEvent('user.password_reset_requested', ['email' => $email], $user->id);
+            \Log::info('Password reset email sent successfully', ['email' => $email]);
+        } catch (\Exception $e) {
+            \Log::error('Password reset email failed', [
+                'email' => $email,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
 
         return true;
     }

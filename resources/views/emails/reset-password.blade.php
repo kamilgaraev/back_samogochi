@@ -73,7 +73,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <div class="logo">🎮 {{ config('app.name') }}</div>
+            <div class="logo">🎮 Самогочи</div>
         </div>
         
         <div class="content">
@@ -97,7 +97,7 @@
         </div>
         
         <div class="footer">
-            <p>С уважением,<br>Команда {{ config('app.name') }}</p>
+            <p>С уважением,<br>Команда СтрессХелп</p>
         </div>
     </div>
 </body>

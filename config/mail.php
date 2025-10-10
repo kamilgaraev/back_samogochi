@@ -111,7 +111,7 @@ return [
     */
 
     'from' => [
-        'address' => 'noreply@samogochi.ru',
+        'address' => 'noreply@stressapi.ru',
         'name' => 'Самогочи',
     ],
 

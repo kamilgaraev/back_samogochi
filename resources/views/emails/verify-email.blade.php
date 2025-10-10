@@ -8,57 +8,88 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             line-height: 1.6;
-            color: #333;
+            color: #1f2937;
             max-width: 600px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 40px 20px;
+            background: #f9fafb;
         }
         .container {
             background: #ffffff;
-            border-radius: 8px;
-            padding: 40px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: 50px 40px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        }
+        @media only screen and (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
         }
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
         .logo {
-            font-size: 32px;
+            font-size: 36px;
             font-weight: bold;
-            color: #6366f1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 10px;
         }
         .content {
             margin: 30px 0;
         }
+        .content h2 {
+            color: #111827;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        .content p {
+            color: #4b5563;
+            font-size: 16px;
+            margin: 12px 0;
+        }
         .button {
             display: inline-block;
-            padding: 12px 30px;
-            background: #6366f1;
-            color: #ffffff;
+            padding: 14px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff !important;
             text-decoration: none;
-            border-radius: 6px;
-            margin: 20px 0;
-            font-weight: 500;
+            border-radius: 8px;
+            margin: 25px 0;
+            font-weight: 600;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
         }
         .button:hover {
-            background: #4f46e5;
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+            transform: translateY(-2px);
         }
         .footer {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #e5e7eb;
+            margin-top: 45px;
+            padding-top: 25px;
+            border-top: 2px solid #e5e7eb;
             font-size: 14px;
             color: #6b7280;
             text-align: center;
         }
         .note {
-            background: #f3f4f6;
-            padding: 15px;
-            border-radius: 6px;
-            margin-top: 20px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 18px;
+            border-radius: 8px;
+            margin-top: 25px;
             font-size: 14px;
+            border-left: 4px solid #f59e0b;
+        }
+        .note p {
+            margin: 8px 0;
+            color: #78350f;
+        }
+        .note strong {
+            color: #92400e;
         }
     </style>
 </head>

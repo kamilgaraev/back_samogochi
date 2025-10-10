@@ -4,8 +4,6 @@ namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Notifications\Notification;
 
 class VerifyEmailNotification extends Notification
@@ -47,18 +45,10 @@ class VerifyEmailMailable extends Mailable
         $this->userName = $userName;
     }
 
-    public function envelope(): Envelope
+    public function build()
     {
-        return new Envelope(
-            subject: 'Подтверждение email адреса',
-        );
-    }
-
-    public function content(): Content
-    {
-        return new Content(
-            view: 'emails.verify-email',
-        );
+        return $this->subject('Подтверждение email адреса')
+                    ->view('emails.verify-email');
     }
 }
 

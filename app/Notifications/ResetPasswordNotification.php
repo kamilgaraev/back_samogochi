@@ -4,8 +4,6 @@ namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Notifications\Notification;
 
 class ResetPasswordNotification extends Notification
@@ -45,18 +43,10 @@ class ResetPasswordMailable extends Mailable
         $this->userName = $userName;
     }
 
-    public function envelope(): Envelope
+    public function build()
     {
-        return new Envelope(
-            subject: 'Новый пароль',
-        );
-    }
-
-    public function content(): Content
-    {
-        return new Content(
-            view: 'emails.reset-password',
-        );
+        return $this->subject('Новый пароль')
+                    ->view('emails.reset-password');
     }
 }
 

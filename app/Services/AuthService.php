@@ -5,11 +5,10 @@ namespace App\Services;
 use App\Models\User;
 use App\Models\PlayerProfile;
 use App\Models\ActivityLog;
-use App\Notifications\VerifyEmailNotification;
-use App\Notifications\ResetPasswordNotification;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -149,7 +148,16 @@ class AuthService
         );
 
         try {
-            $user->notify(new VerifyEmailNotification($token, $user->email));
+            $verificationUrl = config('app.url') . '/api/auth/verify-email/' . $token . '?email=' . urlencode($user->email);
+            
+            Mail::send('emails.verify-email', [
+                'verificationUrl' => $verificationUrl,
+                'userName' => $user->name
+            ], function ($message) use ($user) {
+                $message->to($user->email, $user->name)
+                        ->subject('Подтверждение email адреса');
+            });
+            
             ActivityLog::logEvent('user.email_verification_sent', ['email' => $user->email], $user->id);
             Log::info('Email verification sent successfully', ['email' => $user->email]);
         } catch (\Exception $e) {
@@ -248,7 +256,14 @@ class AuthService
         $user->update(['password' => Hash::make($newPassword)]);
 
         try {
-            $user->notify(new ResetPasswordNotification($newPassword, $email));
+            Mail::send('emails.reset-password', [
+                'newPassword' => $newPassword,
+                'userName' => $user->name
+            ], function ($message) use ($user) {
+                $message->to($user->email, $user->name)
+                        ->subject('Новый пароль');
+            });
+            
             ActivityLog::logEvent('user.password_reset', ['email' => $email], $user->id);
             Log::info('New password sent successfully', ['email' => $email]);
         } catch (\Exception $e) {

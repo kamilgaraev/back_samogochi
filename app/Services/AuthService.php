@@ -154,7 +154,8 @@ class AuthService
                 'verificationUrl' => $verificationUrl,
                 'userName' => $user->name
             ], function ($message) use ($user) {
-                $message->to($user->email, $user->name)
+                $message->from('noreply@samogochi.ru', 'Самогочи')
+                        ->to($user->email, $user->name)
                         ->subject('Подтверждение email адреса');
             });
             
@@ -260,7 +261,8 @@ class AuthService
                 'newPassword' => $newPassword,
                 'userName' => $user->name
             ], function ($message) use ($user) {
-                $message->to($user->email, $user->name)
+                $message->from('noreply@samogochi.ru', 'Самогочи')
+                        ->to($user->email, $user->name)
                         ->subject('Новый пароль');
             });
             

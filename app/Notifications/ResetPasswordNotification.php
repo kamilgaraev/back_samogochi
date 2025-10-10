@@ -3,19 +3,21 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Notifications\Notification;
 
 class ResetPasswordNotification extends Notification
 {
     use Queueable;
 
-    protected $token;
+    protected $newPassword;
     protected $email;
 
-    public function __construct(string $token, string $email)
+    public function __construct(string $newPassword, string $email)
     {
-        $this->token = $token;
+        $this->newPassword = $newPassword;
         $this->email = $email;
     }
 
@@ -24,16 +26,37 @@ class ResetPasswordNotification extends Notification
         return ['mail'];
     }
 
-    public function toMail($notifiable): MailMessage
+    public function toMail($notifiable)
     {
-        return (new MailMessage)
-            ->subject('Новый пароль')
-            ->greeting('Здравствуйте, ' . $notifiable->name . '!')
-            ->line('Вы запросили восстановление пароля.')
-            ->line('Ваш новый пароль: **' . $this->token . '**')
-            ->line('Рекомендуем сменить его после входа в систему.')
-            ->line('Если вы не запрашивали восстановление пароля, срочно свяжитесь с поддержкой.')
-            ->salutation('С уважением, команда ' . config('app.name'));
+        return new ResetPasswordMailable($this->newPassword, $notifiable->name);
+    }
+}
+
+class ResetPasswordMailable extends Mailable
+{
+    use Queueable;
+
+    public $newPassword;
+    public $userName;
+
+    public function __construct($newPassword, $userName)
+    {
+        $this->newPassword = $newPassword;
+        $this->userName = $userName;
+    }
+
+    public function envelope(): Envelope
+    {
+        return new Envelope(
+            subject: 'Новый пароль',
+        );
+    }
+
+    public function content(): Content
+    {
+        return new Content(
+            view: 'emails.reset-password',
+        );
     }
 }
 

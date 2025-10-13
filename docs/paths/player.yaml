@@ -442,3 +442,171 @@
                   $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '401':
         description: Неавторизованный запрос
+
+/player/customization:
+  get:
+    tags:
+      - Player
+      - Customization
+    summary: Получение всех элементов кастомизации
+    description: Возвращает все доступные категории кастомизации игрока с учетом разблокированных элементов и текущих выборов
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Данные кастомизации получены успешно
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: array
+                  items:
+                    $ref: '../openapi.yaml#/components/schemas/Customization'
+      '401':
+        description: Неавторизованный запрос
+
+/player/customization/{categoryKey}:
+  get:
+    tags:
+      - Player
+      - Customization
+    summary: Получение элементов кастомизации по категории
+    description: Возвращает элементы кастомизации для конкретной категории с учетом разблокированных элементов и текущего выбора
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: categoryKey
+        in: path
+        required: true
+        schema:
+          type: string
+        example: "wardrobe_shirt"
+        description: "Ключ категории кастомизации"
+    responses:
+      '200':
+        description: Данные кастомизации получены успешно
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  $ref: '../openapi.yaml#/components/schemas/Customization'
+      '401':
+        description: Неавторизованный запрос
+      '404':
+        description: Категория не найдена
+
+/player/customization/select:
+  post:
+    tags:
+      - Player
+      - Customization
+    summary: Выбор элемента кастомизации
+    description: Устанавливает выбранный элемент кастомизации для указанной категории
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - key
+              - selected
+            properties:
+              key:
+                type: string
+                example: "wardrobe_shirt"
+                description: "Ключ категории кастомизации"
+              selected:
+                type: integer
+                example: 2
+                description: "ID выбранного элемента кастомизации"
+    responses:
+      '200':
+        description: Элемент успешно выбран
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: "Элемент успешно выбран"
+      '400':
+        description: Ошибка при выборе элемента
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yaml#/components/responses/ErrorResponse'
+      '401':
+        description: Неавторизованный запрос
+      '422':
+        description: Ошибки валидации
+
+/player/customization/mark-viewed:
+  post:
+    tags:
+      - Player
+      - Customization
+    summary: Отметить новые элементы как просмотренные
+    description: Помечает новые разблокированные элементы кастомизации как просмотренные (убирает из уведомлений)
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - key
+              - viewed_items
+            properties:
+              key:
+                type: string
+                example: "wardrobe_shirt"
+                description: "Ключ категории кастомизации"
+              viewed_items:
+                type: array
+                items:
+                  type: integer
+                example: [4, 5]
+                description: "Массив ID просмотренных элементов"
+    responses:
+      '200':
+        description: Элементы отмечены как просмотренные
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: "Элементы отмечены как просмотренные"
+      '400':
+        description: Ошибка при обновлении
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yaml#/components/responses/ErrorResponse'
+      '401':
+        description: Неавторизованный запрос
+      '422':
+        description: Ошибки валидации

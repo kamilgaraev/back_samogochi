@@ -84,6 +84,9 @@ class PlayerProfile extends Model
 
         if ($newLevel > $oldLevel) {
             event('player.level_up', ['player' => $this, 'old_level' => $oldLevel, 'new_level' => $newLevel]);
+            
+            $customizationService = app(\App\Services\CustomizationService::class);
+            $customizationService->unlockItemsForLevel($this->id, $newLevel);
         }
 
         return $this;

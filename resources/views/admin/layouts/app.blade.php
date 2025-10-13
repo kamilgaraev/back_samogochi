@@ -90,6 +90,15 @@
                         </a>
                     @endcan
 
+                    <!-- Кастомизация -->
+                    @can('configs.view')
+                        <a href="{{ route('admin.customization.index') }}" 
+                           class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white {{ request()->routeIs('admin.customization.*') ? 'bg-gray-700 text-white' : '' }}">
+                            <i class="fas fa-tshirt w-5"></i>
+                            <span class="ml-3">Кастомизация</span>
+                        </a>
+                    @endcan
+
                     <!-- Real-time мониторинг -->
                     <a href="{{ route('admin.realtime') }}" 
                        class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white {{ request()->routeIs('admin.realtime') ? 'bg-gray-700 text-white' : '' }}">

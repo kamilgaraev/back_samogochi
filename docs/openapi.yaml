@@ -591,6 +591,31 @@ components:
                 - Если `false` из-за стресса - показать "Слишком высокий стресс"
                 - Предложить соответствующие действия для восстановления
               example: true
+        customization:
+          type: object
+          description: "👔 Информация о кастомизации игрока"
+          properties:
+            new_customizables:
+              type: array
+              description: "🆕 Массив новых разблокированных элементов кастомизации для уведомлений"
+              items:
+                type: object
+                properties:
+                  key:
+                    type: string
+                    example: "wardrobe_shirt"
+                    description: "Ключ категории кастомизации"
+                  new_unlocked:
+                    type: array
+                    items:
+                      type: integer
+                    example: [4, 5]
+                    description: "Массив ID новых разблокированных элементов"
+              example:
+                - key: "wardrobe_shirt"
+                  new_unlocked: [4, 5]
+                - key: "furniture_table"
+                  new_unlocked: [3]
         timestamps:
           type: object
           description: "⏰ Временные метки"
@@ -855,7 +880,39 @@ components:
         updated_at:
           type: string
           format: date-time
-      
+
+    Customization:
+      type: object
+      description: "Данные кастомизации для категории элементов"
+      properties:
+        key:
+          type: string
+          example: "wardrobe_shirt"
+          description: "Уникальный ключ категории кастомизации"
+        selected:
+          type: integer
+          example: 3
+          description: "ID текущего выбранного элемента (может быть null)"
+        available:
+          type: array
+          items:
+            type: integer
+          example: [1, 2, 4]
+          description: "Массив ID доступных элементов для выбора (без текущего selected)"
+        max:
+          type: integer
+          example: 10
+          description: "Общее количество элементов в категории в игре"
+        current_max:
+          type: integer
+          example: 7
+          description: "Количество разблокированных элементов на текущем уровне игрока"
+        next_unlock_level:
+          type: integer
+          nullable: true
+          example: 8
+          description: "Уровень игрока для разблокировки следующего элемента (null если все разблокировано)"
+
   responses:
     SuccessResponse:
       type: object

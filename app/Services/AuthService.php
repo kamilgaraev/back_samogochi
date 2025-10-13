@@ -36,6 +36,9 @@ class AuthService
             'consecutive_days' => 0,
         ]);
 
+        $customizationService = app(\App\Services\CustomizationService::class);
+        $customizationService->initializePlayerCustomizations($playerProfile->id);
+
         ActivityLog::logRegistration($user->id);
 
         $this->sendEmailVerification($user);

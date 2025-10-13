@@ -52,11 +52,20 @@ class PlayerStateResource extends JsonResource
                 'can_perform_micro_actions' => $this->canPerformMicroActions(),
                 'can_start_situations' => $this->canStartSituations(),
             ],
+            'customization' => [
+                'new_customizables' => $this->getNewCustomizables(),
+            ],
             'timestamps' => [
                 'created_at' => $this->created_at,
                 'updated_at' => $this->updated_at,
             ],
         ];
+    }
+
+    private function getNewCustomizables(): array
+    {
+        $customizationService = app(\App\Services\CustomizationService::class);
+        return $customizationService->getNewUnlockedItems($this->id);
     }
 
     private function getEnergyStatus(): array

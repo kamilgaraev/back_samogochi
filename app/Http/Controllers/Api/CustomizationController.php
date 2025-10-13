@@ -1,0 +1,159 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Services\CustomizationService;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+
+class CustomizationController extends Controller
+{
+    protected CustomizationService $customizationService;
+
+    public function __construct(CustomizationService $customizationService)
+    {
+        $this->customizationService = $customizationService;
+    }
+
+    public function index(Request $request): JsonResponse
+    {
+        try {
+            $user = $request->user();
+            $playerProfile = $user->playerProfile;
+
+            if (!$playerProfile) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Профиль игрока не найден'
+                ], 404);
+            }
+
+            $customizations = $this->customizationService->getPlayerCustomizations($playerProfile->id);
+
+            return response()->json([
+                'success' => true,
+                'data' => $customizations
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при получении данных: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function show(Request $request, string $categoryKey): JsonResponse
+    {
+        try {
+            $user = $request->user();
+            $playerProfile = $user->playerProfile;
+
+            if (!$playerProfile) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Профиль игрока не найден'
+                ], 404);
+            }
+
+            $customization = $this->customizationService->getPlayerCustomizationByKey($playerProfile->id, $categoryKey);
+
+            if (!$customization) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Категория не найдена'
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $customization
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при получении данных: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function select(Request $request): JsonResponse
+    {
+        $request->validate([
+            'key' => 'required|string',
+            'selected' => 'required|integer|min:1',
+        ]);
+
+        try {
+            $user = $request->user();
+            $playerProfile = $user->playerProfile;
+
+            if (!$playerProfile) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Профиль игрока не найден'
+                ], 404);
+            }
+
+            $result = $this->customizationService->selectItem(
+                $playerProfile->id,
+                $request->input('key'),
+                $request->input('selected')
+            );
+
+            if (!$result['success']) {
+                return response()->json($result, 400);
+            }
+
+            return response()->json($result);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при выборе элемента: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function markViewed(Request $request): JsonResponse
+    {
+        $request->validate([
+            'key' => 'required|string',
+            'viewed_items' => 'required|array',
+            'viewed_items.*' => 'integer|min:1',
+        ]);
+
+        try {
+            $user = $request->user();
+            $playerProfile = $user->playerProfile;
+
+            if (!$playerProfile) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Профиль игрока не найден'
+                ], 404);
+            }
+
+            $result = $this->customizationService->markAsViewed(
+                $playerProfile->id,
+                $request->input('key'),
+                $request->input('viewed_items')
+            );
+
+            if (!$result['success']) {
+                return response()->json($result, 400);
+            }
+
+            return response()->json($result);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при обновлении: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+}
+

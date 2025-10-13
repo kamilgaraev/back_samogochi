@@ -83,6 +83,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::middleware(['permission:configs.view'])->get('/', [AdminWebController::class, 'configs'])->name('index');
             Route::middleware(['permission:configs.edit'])->patch('{key}', [AdminWebController::class, 'configUpdate'])->name('update');
         });
+
+        // Customization management - Same permissions as configs
+        Route::prefix('customization')->name('customization.')->group(function () {
+            Route::middleware(['permission:configs.view'])->get('/', [AdminWebController::class, 'customizationItems'])->name('index');
+            Route::middleware(['permission:configs.edit'])->get('create', [AdminWebController::class, 'customizationItemCreate'])->name('create');
+            Route::middleware(['permission:configs.edit'])->post('/', [AdminWebController::class, 'customizationItemStore'])->name('store');
+            Route::middleware(['permission:configs.edit'])->get('{id}/edit', [AdminWebController::class, 'customizationItemEdit'])->name('edit');
+            Route::middleware(['permission:configs.edit'])->patch('{id}', [AdminWebController::class, 'customizationItemUpdate'])->name('update');
+            Route::middleware(['permission:configs.edit'])->delete('{id}', [AdminWebController::class, 'customizationItemDestroy'])->name('destroy');
+        });
         
         // Analytics (if needed in future)
         Route::prefix('analytics')->name('analytics.')->middleware(['permission:analytics.view'])->group(function () {

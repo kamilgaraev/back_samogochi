@@ -475,4 +475,103 @@ class AdminWebController extends Controller
         
         return compact('categories', 'difficulties', 'positions');
     }
+
+    public function customizationItems(Request $request)
+    {
+        Gate::authorize('configs.view');
+        
+        $filters = $request->only(['category', 'category_key', 'is_active', 'unlock_level']);
+        $result = $this->adminService->getCustomizationItems($filters);
+
+        $categories = \App\Enums\CustomizationCategory::cases();
+
+        return view('admin.customization.index', [
+            'items' => $result['data']['items'],
+            'pagination' => $result['data']['pagination'],
+            'categories' => $categories,
+            'filters' => $filters
+        ]);
+    }
+
+    public function customizationItemCreate()
+    {
+        Gate::authorize('configs.edit');
+        
+        $categories = \App\Enums\CustomizationCategory::cases();
+        
+        return view('admin.customization.create', compact('categories'));
+    }
+
+    public function customizationItemStore(Request $request)
+    {
+        Gate::authorize('configs.edit');
+        
+        $request->validate([
+            'category_key' => 'required|string|max:255',
+            'category' => 'required|in:' . \App\Enums\CustomizationCategory::getForValidation(),
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'unlock_level' => 'required|integer|min:1|max:100',
+            'order' => 'nullable|integer|min:0',
+            'is_default' => 'sometimes|boolean',
+            'image_url' => 'nullable|string|max:500',
+            'is_active' => 'sometimes|boolean',
+        ]);
+        
+        $result = $this->adminService->createCustomizationItem($request->all(), auth()->id());
+
+        if (!$result['success']) {
+            return back()->withErrors(['error' => $result['message']])->withInput();
+        }
+
+        return redirect()->route('admin.customization.index')->with('success', $result['message']);
+    }
+
+    public function customizationItemEdit($id)
+    {
+        Gate::authorize('configs.edit');
+        
+        $item = \App\Models\CustomizationItem::findOrFail($id);
+        $categories = \App\Enums\CustomizationCategory::cases();
+        
+        return view('admin.customization.edit', compact('item', 'categories'));
+    }
+
+    public function customizationItemUpdate(Request $request, $id)
+    {
+        Gate::authorize('configs.edit');
+        
+        $request->validate([
+            'category_key' => 'required|string|max:255',
+            'category' => 'required|in:' . \App\Enums\CustomizationCategory::getForValidation(),
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'unlock_level' => 'required|integer|min:1|max:100',
+            'order' => 'nullable|integer|min:0',
+            'is_default' => 'sometimes|boolean',
+            'image_url' => 'nullable|string|max:500',
+            'is_active' => 'sometimes|boolean',
+        ]);
+        
+        $result = $this->adminService->updateCustomizationItem($id, $request->all(), auth()->id());
+
+        if (!$result['success']) {
+            return back()->withErrors(['error' => $result['message']])->withInput();
+        }
+
+        return back()->with('success', $result['message']);
+    }
+
+    public function customizationItemDestroy($id)
+    {
+        Gate::authorize('configs.edit');
+        
+        $result = $this->adminService->deleteCustomizationItem($id, auth()->id());
+
+        if (!$result['success']) {
+            return back()->withErrors(['error' => $result['message']]);
+        }
+
+        return redirect()->route('admin.customization.index')->with('success', $result['message']);
+    }
 }

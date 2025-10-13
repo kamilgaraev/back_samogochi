@@ -526,4 +526,175 @@ class AdminService
             ];
         }
     }
+
+    public function getCustomizationItems(array $filters = []): array
+    {
+        $query = \App\Models\CustomizationItem::query();
+
+        if (isset($filters['category'])) {
+            $query->where('category', $filters['category']);
+        }
+
+        if (isset($filters['category_key'])) {
+            $query->where('category_key', $filters['category_key']);
+        }
+
+        if (isset($filters['is_active'])) {
+            $query->where('is_active', $filters['is_active']);
+        }
+
+        if (isset($filters['unlock_level'])) {
+            $query->where('unlock_level', $filters['unlock_level']);
+        }
+
+        $items = $query->orderBy('category_key')
+            ->orderBy('order')
+            ->paginate(20);
+
+        return [
+            'success' => true,
+            'data' => [
+                'items' => $items->items(),
+                'pagination' => [
+                    'current_page' => $items->currentPage(),
+                    'last_page' => $items->lastPage(),
+                    'per_page' => $items->perPage(),
+                    'total' => $items->total(),
+                ]
+            ]
+        ];
+    }
+
+    public function createCustomizationItem(array $data, int $userId): array
+    {
+        try {
+            DB::beginTransaction();
+
+            $item = \App\Models\CustomizationItem::create([
+                'category_key' => $data['category_key'],
+                'category' => $data['category'],
+                'name' => $data['name'],
+                'description' => $data['description'] ?? null,
+                'unlock_level' => $data['unlock_level'] ?? 1,
+                'order' => $data['order'] ?? 0,
+                'is_default' => $data['is_default'] ?? false,
+                'image_url' => $data['image_url'] ?? null,
+                'is_active' => $data['is_active'] ?? true,
+            ]);
+
+            ActivityLog::logEvent(\App\Enums\ActivityEventType::ADMIN_CONFIG_UPDATED->value, [
+                'action' => 'customization_item_created',
+                'item_id' => $item->id,
+                'category_key' => $item->category_key,
+                'name' => $item->name,
+            ], $userId);
+
+            DB::commit();
+
+            return [
+                'success' => true,
+                'message' => 'Элемент кастомизации успешно создан',
+                'data' => $item
+            ];
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            return [
+                'success' => false,
+                'message' => 'Ошибка при создании элемента: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    public function updateCustomizationItem(int $id, array $data, int $userId): array
+    {
+        try {
+            DB::beginTransaction();
+
+            $item = \App\Models\CustomizationItem::find($id);
+            
+            if (!$item) {
+                return [
+                    'success' => false,
+                    'message' => 'Элемент кастомизации не найден'
+                ];
+            }
+
+            $item->update([
+                'category_key' => $data['category_key'] ?? $item->category_key,
+                'category' => $data['category'] ?? $item->category,
+                'name' => $data['name'] ?? $item->name,
+                'description' => $data['description'] ?? $item->description,
+                'unlock_level' => $data['unlock_level'] ?? $item->unlock_level,
+                'order' => $data['order'] ?? $item->order,
+                'is_default' => $data['is_default'] ?? $item->is_default,
+                'image_url' => $data['image_url'] ?? $item->image_url,
+                'is_active' => $data['is_active'] ?? $item->is_active,
+            ]);
+
+            ActivityLog::logEvent(\App\Enums\ActivityEventType::ADMIN_CONFIG_UPDATED->value, [
+                'action' => 'customization_item_updated',
+                'item_id' => $item->id,
+                'name' => $item->name,
+            ], $userId);
+
+            DB::commit();
+
+            return [
+                'success' => true,
+                'message' => 'Элемент кастомизации успешно обновлен',
+                'data' => $item->fresh()
+            ];
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            return [
+                'success' => false,
+                'message' => 'Ошибка при обновлении элемента: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    public function deleteCustomizationItem(int $id, int $userId): array
+    {
+        try {
+            DB::beginTransaction();
+
+            $item = \App\Models\CustomizationItem::find($id);
+            
+            if (!$item) {
+                return [
+                    'success' => false,
+                    'message' => 'Элемент кастомизации не найден'
+                ];
+            }
+
+            $itemName = $item->name;
+            
+            $item->delete();
+
+            ActivityLog::logEvent(\App\Enums\ActivityEventType::ADMIN_CONFIG_UPDATED->value, [
+                'action' => 'customization_item_deleted',
+                'item_id' => $id,
+                'name' => $itemName,
+            ], $userId);
+
+            DB::commit();
+
+            return [
+                'success' => true,
+                'message' => 'Элемент кастомизации успешно удален'
+            ];
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            return [
+                'success' => false,
+                'message' => 'Ошибка при удалении элемента: ' . $e->getMessage()
+            ];
+        }
+    }
 }

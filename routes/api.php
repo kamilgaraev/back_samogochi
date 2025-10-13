@@ -48,6 +48,13 @@ Route::middleware(['auth:api', 'throttle.game:120,1'])->group(function () {
         Route::get('history', [\App\Http\Controllers\Api\MicroActionController::class, 'history']);
         Route::post('{id}/perform', [\App\Http\Controllers\Api\MicroActionController::class, 'perform']);
     });
+
+    Route::prefix('customization')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Api\CustomizationController::class, 'index']);
+        Route::get('{categoryKey}', [\App\Http\Controllers\Api\CustomizationController::class, 'show']);
+        Route::post('select', [\App\Http\Controllers\Api\CustomizationController::class, 'select']);
+        Route::post('mark-viewed', [\App\Http\Controllers\Api\CustomizationController::class, 'markViewed']);
+    });
 });
 
 Route::middleware(['auth:api', 'admin', 'throttle.game:30,1'])->prefix('admin')->group(function () {

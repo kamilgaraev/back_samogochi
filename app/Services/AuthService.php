@@ -16,39 +16,77 @@ use Carbon\Carbon;
 
 class AuthService
 {
+    public function __construct()
+    {
+        // Проверка конфигурации почты при инициализации сервиса
+        $this->validateMailConfiguration();
+    }
+
+    private function validateMailConfiguration()
+    {
+        $mailDriver = config('mail.default');
+
+        if ($mailDriver === 'log') {
+            Log::warning('Mail driver is set to LOG - emails will not be sent', [
+                'mail_driver' => $mailDriver,
+                'recommended_drivers' => ['smtp', 'mailgun', 'ses', 'postmark']
+            ]);
+        }
+
+        if ($mailDriver === 'smtp') {
+            $requiredConfig = ['host', 'port', 'username', 'password'];
+            $missingConfig = [];
+
+            foreach ($requiredConfig as $config) {
+                if (empty(config("mail.mailers.smtp.{$config}"))) {
+                    $missingConfig[] = $config;
+                }
+            }
+
+            if (!empty($missingConfig)) {
+                Log::error('SMTP mail configuration is incomplete', [
+                    'missing_config' => $missingConfig,
+                    'mail_driver' => $mailDriver
+                ]);
+            }
+        }
+    }
+
     public function register(array $data)
     {
-        $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'is_admin' => false,
-        ]);
+        return DB::transaction(function () use ($data) {
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+                'is_admin' => false,
+            ]);
 
-        $playerProfile = PlayerProfile::create([
-            'user_id' => $user->id,
-            'level' => 1,
-            'total_experience' => 0,
-            'energy' => 100,
-            'stress' => 50,
-            'anxiety' => 30,
-            'last_login' => now(),
-            'consecutive_days' => 0,
-        ]);
+            $playerProfile = PlayerProfile::create([
+                'user_id' => $user->id,
+                'level' => 1,
+                'total_experience' => 0,
+                'energy' => 100,
+                'stress' => 50,
+                'anxiety' => 30,
+                'last_login' => now(),
+                'consecutive_days' => 0,
+            ]);
 
-        $customizationService = app(\App\Services\CustomizationService::class);
-        $customizationService->initializePlayerCustomizations($playerProfile->id);
+            $customizationService = app(\App\Services\CustomizationService::class);
+            $customizationService->initializePlayerCustomizations($playerProfile->id);
 
-        ActivityLog::logRegistration($user->id);
+            ActivityLog::logRegistration($user->id);
 
-        $this->sendEmailVerification($user);
+            $this->sendEmailVerification($user);
 
-        return [
-            'user' => $user,
-            'player' => $playerProfile,
-            'email_verification_sent' => true,
-            'message' => 'Регистрация успешна. Проверьте email для подтверждения.'
-        ];
+            return [
+                'user' => $user,
+                'player' => $playerProfile,
+                'email_verification_sent' => true,
+                'message' => 'Регистрация успешна. Проверьте email для подтверждения.'
+            ];
+        });
     }
 
     public function login(array $credentials)
@@ -141,39 +179,57 @@ class AuthService
     public function sendEmailVerification(User $user)
     {
         $token = strtoupper(Str::random(6));
-        
-        DB::table('email_verification_tokens')->updateOrInsert(
-            ['email' => $user->email],
-            [
-                'token' => Hash::make($token),
-                'created_at' => Carbon::now()
-            ]
-        );
 
         try {
-            $verificationUrl = config('app.url') . '/api/auth/verify-email/' . $token . '?email=' . urlencode($user->email);
-            
-            Mail::send('emails.verify-email', [
-                'verificationUrl' => $verificationUrl,
-                'userName' => $user->name
-            ], function ($message) use ($user) {
-                $message->from('noreply@stressapi.ru', 'Самогочи')
-                        ->to($user->email, $user->name)
-                        ->subject('Подтверждение email адреса');
+            return DB::transaction(function () use ($user, $token) {
+                DB::table('email_verification_tokens')->updateOrInsert(
+                    ['email' => $user->email],
+                    [
+                        'token' => Hash::make($token),
+                        'created_at' => Carbon::now()
+                    ]
+                );
+
+                $verificationUrl = config('app.url') . '/api/auth/verify-email/' . $token . '?email=' . urlencode($user->email);
+
+                Mail::send('emails.verify-email', [
+                    'verificationUrl' => $verificationUrl,
+                    'userName' => $user->name
+                ], function ($message) use ($user) {
+                    $message->from('noreply@stressapi.ru', 'Самогочи')
+                            ->to($user->email, $user->name)
+                            ->subject('Подтверждение email адреса');
+                });
+
+                ActivityLog::logEvent('user.email_verification_sent', ['email' => $user->email], $user->id);
+                Log::info('Email verification sent successfully', ['email' => $user->email]);
+
+                return true;
             });
-            
-            ActivityLog::logEvent('user.email_verification_sent', ['email' => $user->email], $user->id);
-            Log::info('Email verification sent successfully', ['email' => $user->email]);
         } catch (\Exception $e) {
-            Log::error('Email verification failed', [
+            Log::error('Email verification failed - transaction rolled back', [
                 'email' => $user->email,
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
+                'user_id' => $user->id,
+                'token_generated' => $token,
+                'mail_driver' => config('mail.default')
             ]);
+
+            // Уведомление администраторам о критической ошибке
+            Log::critical('CRITICAL: Email verification failed for user registration', [
+                'email' => $user->email,
+                'user_id' => $user->id,
+                'error_type' => get_class($e),
+                'mail_config' => [
+                    'driver' => config('mail.default'),
+                    'host' => config('mail.mailers.' . config('mail.default') . '.host'),
+                    'port' => config('mail.mailers.' . config('mail.default') . '.port')
+                ]
+            ]);
+
             throw $e;
         }
-
-        return true;
     }
 
     public function verifyEmail(string $email, string $token)
@@ -235,52 +291,95 @@ class AuthService
     public function resendEmailVerification(string $email)
     {
         $user = User::where('email', $email)->first();
-        
+
         if (!$user) {
+            Log::warning('Resend email verification failed - user not found', ['email' => $email]);
             return false;
         }
 
         if ($user->email_verified_at) {
+            Log::info('Resend email verification failed - email already verified', ['email' => $email]);
             return false;
         }
 
-        return $this->sendEmailVerification($user);
+        // Проверить, существует ли уже активный токен
+        $existingToken = DB::table('email_verification_tokens')
+            ->where('email', $email)
+            ->first();
+
+        if ($existingToken) {
+            Log::info('Resending email verification - existing token found', [
+                'email' => $email,
+                'token_created_at' => $existingToken->created_at
+            ]);
+        } else {
+            Log::info('Resending email verification - no existing token', ['email' => $email]);
+        }
+
+        try {
+            return $this->sendEmailVerification($user);
+        } catch (\Exception $e) {
+            Log::error('Resend email verification failed', [
+                'email' => $email,
+                'error' => $e->getMessage(),
+                'user_id' => $user->id
+            ]);
+            return false;
+        }
     }
 
     public function forgotPassword(string $email)
     {
         $user = User::where('email', $email)->first();
-        
+
         if (!$user) {
             return false;
         }
 
         $newPassword = Str::random(12);
-        
-        $user->update(['password' => Hash::make($newPassword)]);
 
         try {
-            Mail::send('emails.reset-password', [
-                'newPassword' => $newPassword,
-                'userName' => $user->name
-            ], function ($message) use ($user) {
-                $message->from('noreply@stressapi.ru', 'Самогочи')
-                        ->to($user->email, $user->name)
-                        ->subject('Новый пароль');
+            return DB::transaction(function () use ($user, $newPassword, $email) {
+                $user->update(['password' => Hash::make($newPassword)]);
+
+                Mail::send('emails.reset-password', [
+                    'newPassword' => $newPassword,
+                    'userName' => $user->name
+                ], function ($message) use ($user) {
+                    $message->from('noreply@stressapi.ru', 'Самогочи')
+                            ->to($user->email, $user->name)
+                            ->subject('Новый пароль');
+                });
+
+                ActivityLog::logEvent('user.password_reset', ['email' => $email], $user->id);
+                Log::info('New password sent successfully', ['email' => $email]);
+
+                return true;
             });
-            
-            ActivityLog::logEvent('user.password_reset', ['email' => $email], $user->id);
-            Log::info('New password sent successfully', ['email' => $email]);
         } catch (\Exception $e) {
-            Log::error('Password reset email failed', [
+            Log::error('Password reset email failed - transaction rolled back', [
                 'email' => $email,
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
+                'user_id' => $user->id,
+                'new_password_generated' => $newPassword,
+                'mail_driver' => config('mail.default')
             ]);
+
+            // Уведомление администраторам о критической ошибке
+            Log::critical('CRITICAL: Password reset email failed', [
+                'email' => $email,
+                'user_id' => $user->id,
+                'error_type' => get_class($e),
+                'mail_config' => [
+                    'driver' => config('mail.default'),
+                    'host' => config('mail.mailers.' . config('mail.default') . '.host'),
+                    'port' => config('mail.mailers.' . config('mail.default') . '.port')
+                ]
+            ]);
+
             throw $e;
         }
-
-        return true;
     }
 
 }

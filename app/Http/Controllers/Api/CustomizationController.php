@@ -34,8 +34,10 @@ class CustomizationController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Кастомизации получены успешно',
-                'data' => $result['customizations'],
-                'unlock_levels' => $result['unlock_levels']
+                'data' => [
+                    'customizations' => $result['customizations'],
+                    'unlock_levels' => $result['unlock_levels']
+                ]
             ]);
 
         } catch (\Exception $e) {
@@ -71,8 +73,10 @@ class CustomizationController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Кастомизация категории получена успешно',
-                'data' => $result['customization'],
-                'unlock_levels' => $result['unlock_levels']
+                'data' => [
+                    'customization' => $result['customization'],
+                    'unlock_levels' => $result['unlock_levels']
+                ]
             ]);
 
         } catch (\Exception $e) {

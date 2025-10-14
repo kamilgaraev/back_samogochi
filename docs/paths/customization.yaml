@@ -36,14 +36,17 @@
                   type: string
                   example: "Кастомизации получены успешно"
                 data:
-                  type: array
-                  items:
-                    $ref: '../openapi.yaml#/components/schemas/Customization'
-                unlock_levels:
-                  type: array
-                  items:
-                    $ref: '../openapi.yaml#/components/schemas/UnlockLevelsCategory'
-                  description: "Информация о всех предметах кастомизации с уровнями разблокировки"
+                  type: object
+                  properties:
+                    customizations:
+                      type: array
+                      items:
+                        $ref: '../openapi.yaml#/components/schemas/Customization'
+                    unlock_levels:
+                      type: array
+                      items:
+                        $ref: '../openapi.yaml#/components/schemas/UnlockLevelsCategory'
+                      description: "Информация о всех предметах кастомизации с уровнями разблокировки"
                 player_state:
                   $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '401':
@@ -120,12 +123,15 @@
                   type: string
                   example: "Кастомизация категории получена успешно"
                 data:
-                  $ref: '../openapi.yaml#/components/schemas/Customization'
-                unlock_levels:
-                  type: array
-                  items:
-                    $ref: '../openapi.yaml#/components/schemas/UnlockLevelsCategory'
-                  description: "Информация о всех предметах кастомизации с уровнями разблокировки"
+                  type: object
+                  properties:
+                    customization:
+                      $ref: '../openapi.yaml#/components/schemas/Customization'
+                    unlock_levels:
+                      type: array
+                      items:
+                        $ref: '../openapi.yaml#/components/schemas/UnlockLevelsCategory'
+                      description: "Информация о всех предметах кастомизации с уровнями разблокировки"
                 player_state:
                   $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '401':

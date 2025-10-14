@@ -38,15 +38,14 @@
                 data:
                   type: object
                   properties:
-                    customizations:
-                      type: array
-                      items:
-                        $ref: '../openapi.yaml#/components/schemas/Customization'
                     unlock_levels:
                       type: array
                       items:
                         $ref: '../openapi.yaml#/components/schemas/UnlockLevelsCategory'
                       description: "Информация о всех предметах кастомизации с уровнями разблокировки"
+                  additionalProperties:
+                    $ref: '../openapi.yaml#/components/schemas/Customization'
+                  description: "Объект с кастомизациями по ключам категорий (например, 'wardrobe_shirt', 'Furniture') и unlock_levels"
                 player_state:
                   $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '401':

@@ -31,13 +31,17 @@ class CustomizationController extends Controller
 
             $result = $this->customizationService->getPlayerCustomizations($playerProfile->id);
 
+            $customizationsByKey = [];
+            foreach ($result['customizations'] as $customization) {
+                $customizationsByKey[$customization['key']] = $customization;
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => 'Кастомизации получены успешно',
-                'data' => [
-                    'customizations' => $result['customizations'],
+                'data' => array_merge($customizationsByKey, [
                     'unlock_levels' => $result['unlock_levels']
-                ]
+                ])
             ]);
 
         } catch (\Exception $e) {

@@ -73,10 +73,8 @@ class CustomizationController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Кастомизация категории получена успешно',
-                'data' => [
-                    'customization' => $result['customization'],
-                    'unlock_levels' => $result['unlock_levels']
-                ]
+                'data' => $result['customization'],
+                'unlock_levels' => $result['unlock_levels']
             ]);
 
         } catch (\Exception $e) {

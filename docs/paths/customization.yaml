@@ -123,15 +123,12 @@
                   type: string
                   example: "Кастомизация категории получена успешно"
                 data:
-                  type: object
-                  properties:
-                    customization:
-                      $ref: '../openapi.yaml#/components/schemas/Customization'
-                    unlock_levels:
-                      type: array
-                      items:
-                        $ref: '../openapi.yaml#/components/schemas/UnlockLevelsCategory'
-                      description: "Информация о всех предметах кастомизации с уровнями разблокировки"
+                  $ref: '../openapi.yaml#/components/schemas/Customization'
+                unlock_levels:
+                  type: array
+                  items:
+                    $ref: '../openapi.yaml#/components/schemas/UnlockLevelsCategory'
+                  description: "Информация о всех предметах кастомизации с уровнями разблокировки"
                 player_state:
                   $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '401':

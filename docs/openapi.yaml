@@ -928,10 +928,11 @@ components:
           example: 7
           description: "Количество разблокированных элементов на текущем уровне игрока"
         next_unlock_level:
-          type: integer
-          nullable: true
-          example: 8
-          description: "Уровень игрока для разблокировки следующего элемента (null если все разблокировано)"
+          type: array
+          items:
+            type: integer
+          example: [8, 12, 15]
+          description: "Массив уровней игрока для разблокировки следующих элементов (пустой массив если все разблокировано)"
 
     CustomizationItem:
       type: object

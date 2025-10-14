@@ -1,0 +1,263 @@
+/customization:
+  get:
+    tags:
+      - Customization
+    summary: Получение всех кастомизаций игрока
+    description: |
+      Возвращает все доступные категории кастомизации для текущего игрока с информацией о разблокированных элементах и выбранных опциях.
+
+      **Система кастомизации:**
+      - Элементы разблокируются по мере повышения уровня игрока
+      - Каждый элемент имеет уникальный ID и категорию
+      - Игрок может выбрать один элемент в каждой категории
+      - Разблокированные элементы отмечаются как "доступные"
+
+      **Категории кастомизации:**
+      - `wardrobe_shirt` - Футболки и рубашки
+      - `wardrobe_pants` - Штаны и брюки
+      - `wardrobe_accessory` - Аксессуары (очки, наушники, кепки)
+      - `furniture_table` - Столы и поверхности
+      - `furniture_chair` - Стулья и кресла
+      - `furniture_lamp` - Освещение и лампы
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: Кастомизации получены успешно
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: "Кастомизации получены успешно"
+                data:
+                  type: array
+                  items:
+                    $ref: '../openapi.yaml#/components/schemas/Customization'
+                player_state:
+                  $ref: '../openapi.yaml#/components/schemas/PlayerState'
+      '401':
+        description: Неавторизованный запрос
+      '404':
+        description: Профиль игрока не найден
+
+  /{categoryKey}:
+    get:
+      tags:
+        - Customization
+      summary: Получение кастомизации по категории
+      description: |
+        Возвращает детальную информацию о кастомизации для указанной категории.
+
+        **Доступные категории:**
+        - `wardrobe_shirt` - Футболки и рубашки
+        - `wardrobe_pants` - Штаны и брюки
+        - `wardrobe_accessory` - Аксессуары
+        - `furniture_table` - Столы
+        - `furniture_chair` - Стулья
+        - `furniture_lamp` - Освещение
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: categoryKey
+          in: path
+          required: true
+          schema:
+            type: string
+            enum:
+              - wardrobe_shirt
+              - wardrobe_pants
+              - wardrobe_accessory
+              - furniture_table
+              - furniture_chair
+              - furniture_lamp
+          example: "wardrobe_shirt"
+          description: "Ключ категории кастомизации"
+      responses:
+        '200':
+          description: Кастомизация категории получена успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '../openapi.yaml#/components/schemas/Customization'
+                  player_state:
+                    $ref: '../openapi.yaml#/components/schemas/PlayerState'
+        '401':
+          description: Неавторизованный запрос
+        '404':
+          description: Профиль игрока или категория не найдены
+
+    post:
+      tags:
+        - Customization
+      summary: Выбор элемента кастомизации
+      description: |
+        Выбирает указанный элемент в категории кастомизации.
+        Элемент должен быть предварительно разблокирован игроком.
+
+        **Правила выбора:**
+        - Можно выбрать только разблокированные элементы
+        - Выбор элемента автоматически сохраняется
+        - Предыдущий выбранный элемент становится доступным для повторного выбора
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: categoryKey
+          in: path
+          required: true
+          schema:
+            type: string
+            enum:
+              - wardrobe_shirt
+              - wardrobe_pants
+              - wardrobe_accessory
+              - furniture_table
+              - furniture_chair
+              - furniture_lamp
+          example: "wardrobe_shirt"
+          description: "Ключ категории кастомизации"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - selected
+              properties:
+                selected:
+                  type: integer
+                  minimum: 1
+                  example: 3
+                  description: "ID элемента кастомизации для выбора"
+      responses:
+        '200':
+          description: Элемент успешно выбран
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Элемент кастомизации успешно выбран"
+                  data:
+                    type: object
+                    properties:
+                      selected:
+                        type: integer
+                        example: 3
+                        description: "ID выбранного элемента"
+                      category:
+                        type: string
+                        example: "wardrobe_shirt"
+                        description: "Ключ категории"
+                  player_state:
+                    $ref: '../openapi.yaml#/components/schemas/PlayerState'
+        '400':
+          description: Ошибка валидации или элемент недоступен
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Элемент не разблокирован"
+        '401':
+          description: Неавторизованный запрос
+        '404':
+          description: Профиль игрока или категория не найдены
+
+  /viewed:
+    post:
+      tags:
+        - Customization
+      summary: Отметить элементы как просмотренные
+      description: |
+        Отмечает указанные элементы кастомизации как просмотренные.
+        Просмотренные элементы исчезают из списка "новых" разблокированных элементов.
+
+        **Использование:**
+        - При первом просмотре списка кастомизации элементы отмечаются как просмотренные
+        - Это позволяет отслеживать, какие элементы игрок уже видел
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - key
+                - viewed_items
+              properties:
+                key:
+                  type: string
+                  enum:
+                    - wardrobe_shirt
+                    - wardrobe_pants
+                    - wardrobe_accessory
+                    - furniture_table
+                    - furniture_chair
+                    - furniture_lamp
+                  example: "wardrobe_shirt"
+                  description: "Ключ категории кастомизации"
+                viewed_items:
+                  type: array
+                  items:
+                    type: integer
+                    minimum: 1
+                  example: [1, 2, 3]
+                  description: "Массив ID элементов, отмеченных как просмотренные"
+      responses:
+        '200':
+          description: Элементы успешно отмечены как просмотренные
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Элементы отмечены как просмотренные"
+                  data:
+                    type: object
+                    properties:
+                      viewed_count:
+                        type: integer
+                        example: 3
+                        description: "Количество отмеченных элементов"
+                      category:
+                        type: string
+                        example: "wardrobe_shirt"
+                        description: "Ключ категории"
+                  player_state:
+                    $ref: '../openapi.yaml#/components/schemas/PlayerState'
+        '400':
+          description: Ошибка валидации
+        '401':
+          description: Неавторизованный запрос
+        '404':
+          description: Профиль игрока не найден

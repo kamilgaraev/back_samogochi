@@ -74,10 +74,15 @@ class CustomizationService
         $unlockedItemIds = $playerCustomization->unlocked_items ?? [];
         $selectedItemId = $playerCustomization->selected_item_id ?? null;
 
-        $availableIds = array_values(array_diff($unlockedItemIds, [$selectedItemId]));
+        // Добавляем элементы по умолчанию в разблокированные
+        $defaultItemIds = $allItems->where('is_default', true)->pluck('id')->toArray();
+        $allUnlockedIds = array_unique(array_merge($unlockedItemIds, $defaultItemIds));
+
+        $availableIds = array_values(array_diff($allUnlockedIds, [$selectedItemId]));
 
         $nextUnlockItems = $allItems
             ->where('unlock_level', '>', $playerLevel)
+            ->where('is_default', false)
             ->sortBy('unlock_level')
             ->map(function ($item) {
                 return [
@@ -93,12 +98,17 @@ class CustomizationService
             ->values()
             ->toArray();
 
+        // Считаем разблокированные элементы (по уровню + по умолчанию)
+        $unlockedByLevel = $allItems->where('unlock_level', '<=', $playerLevel)->count();
+        $unlockedByDefault = $allItems->where('is_default', true)->count();
+        $currentMax = max($unlockedByLevel, $unlockedByDefault);
+
         return [
             'key' => $categoryKey,
             'selected' => $selectedItemId,
             'available' => $availableIds,
             'max' => $allItems->count(),
-            'current_max' => $allItems->where('unlock_level', '<=', $playerLevel)->count(),
+            'current_max' => $currentMax,
             'next_unlock_level' => $nextUnlockItems,
         ];
     }

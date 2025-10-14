@@ -29,11 +29,13 @@ class CustomizationController extends Controller
                 ], 404);
             }
 
-            $customizations = $this->customizationService->getPlayerCustomizations($playerProfile->id);
+            $result = $this->customizationService->getPlayerCustomizations($playerProfile->id);
 
             return response()->json([
                 'success' => true,
-                'data' => $customizations
+                'message' => 'Кастомизации получены успешно',
+                'data' => $result['customizations'],
+                'unlock_levels' => $result['unlock_levels']
             ]);
 
         } catch (\Exception $e) {
@@ -57,9 +59,9 @@ class CustomizationController extends Controller
                 ], 404);
             }
 
-            $customization = $this->customizationService->getPlayerCustomizationByKey($playerProfile->id, $categoryKey);
+            $result = $this->customizationService->getPlayerCustomizationByKey($playerProfile->id, $categoryKey);
 
-            if (!$customization) {
+            if (!$result) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Категория не найдена'
@@ -68,7 +70,9 @@ class CustomizationController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $customization
+                'message' => 'Кастомизация категории получена успешно',
+                'data' => $result['customization'],
+                'unlock_levels' => $result['unlock_levels']
             ]);
 
         } catch (\Exception $e) {

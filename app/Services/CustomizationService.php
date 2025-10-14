@@ -29,7 +29,12 @@ class CustomizationService
             }
         }
 
-        return $result;
+        $unlockLevels = $this->getAllItemsWithUnlockLevels();
+
+        return [
+            'customizations' => $result,
+            'unlock_levels' => $unlockLevels,
+        ];
     }
 
     public function getPlayerCustomizationByKey(int $playerId, string $categoryKey): ?array
@@ -37,7 +42,18 @@ class CustomizationService
         $player = PlayerProfile::findOrFail($playerId);
         $playerLevel = $player->level;
 
-        return $this->getCategoryData($playerId, $categoryKey, $playerLevel);
+        $customization = $this->getCategoryData($playerId, $categoryKey, $playerLevel);
+        
+        if (!$customization) {
+            return null;
+        }
+
+        $unlockLevels = $this->getAllItemsWithUnlockLevels();
+
+        return [
+            'customization' => $customization,
+            'unlock_levels' => $unlockLevels,
+        ];
     }
 
     private function getCategoryData(int $playerId, string $categoryKey, int $playerLevel): ?array
@@ -274,6 +290,39 @@ class CustomizationService
                     'new_unlocked' => $newItems,
                 ];
             }
+        }
+
+        return $result;
+    }
+
+    public function getAllItemsWithUnlockLevels(): array
+    {
+        $allItems = CustomizationItem::active()
+            ->orderBy('category_key')
+            ->orderBy('unlock_level')
+            ->get();
+
+        $itemsByCategory = $allItems->groupBy('category_key');
+        $result = [];
+
+        foreach ($itemsByCategory as $categoryKey => $items) {
+            $categoryItems = $items->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'description' => $item->description,
+                    'unlock_level' => $item->unlock_level,
+                    'order' => $item->order,
+                    'is_default' => $item->is_default,
+                    'image_url' => $item->image_url,
+                ];
+            })->toArray();
+
+            $result[] = [
+                'category_key' => $categoryKey,
+                'category' => $items->first()->category,
+                'items' => $categoryItems,
+            ];
         }
 
         return $result;

@@ -935,6 +935,57 @@ components:
 
     CustomizationItem:
       type: object
+      description: "Элемент кастомизации с информацией об уровне разблокировки"
+      properties:
+        id:
+          type: integer
+          example: 1
+          description: "Уникальный ID элемента"
+        name:
+          type: string
+          example: "Красная футболка"
+          description: "Название элемента"
+        description:
+          type: string
+          example: "Стильная красная футболка для повседневной носки"
+          description: "Описание элемента"
+        unlock_level:
+          type: integer
+          example: 5
+          description: "Уровень игрока, на котором разблокируется элемент"
+        order:
+          type: integer
+          example: 1
+          description: "Порядок отображения в списке"
+        is_default:
+          type: boolean
+          example: false
+          description: "Является ли элемент элементом по умолчанию"
+        image_url:
+          type: string
+          example: "https://example.com/images/shirt_red.png"
+          description: "URL изображения элемента"
+
+    UnlockLevelsCategory:
+      type: object
+      description: "Категория с информацией об уровнях разблокировки предметов"
+      properties:
+        category_key:
+          type: string
+          example: "wardrobe_shirt"
+          description: "Уникальный ключ категории"
+        category:
+          type: string
+          example: "Футболки и рубашки"
+          description: "Название категории"
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomizationItem'
+          description: "Список всех элементов в категории с уровнями разблокировки"
+
+    CustomizationItem:
+      type: object
       description: "Элемент кастомизации с полной информацией"
       properties:
         id:

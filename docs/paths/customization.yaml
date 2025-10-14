@@ -39,6 +39,11 @@
                   type: array
                   items:
                     $ref: '../openapi.yaml#/components/schemas/Customization'
+                unlock_levels:
+                  type: array
+                  items:
+                    $ref: '../openapi.yaml#/components/schemas/UnlockLevelsCategory'
+                  description: "Информация о всех предметах кастомизации с уровнями разблокировки"
                 player_state:
                   $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '401':
@@ -116,6 +121,11 @@
                   example: "Кастомизация категории получена успешно"
                 data:
                   $ref: '../openapi.yaml#/components/schemas/Customization'
+                unlock_levels:
+                  type: array
+                  items:
+                    $ref: '../openapi.yaml#/components/schemas/UnlockLevelsCategory'
+                  description: "Информация о всех предметах кастомизации с уровнями разблокировки"
                 player_state:
                   $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '401':

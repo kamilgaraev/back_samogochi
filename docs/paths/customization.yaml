@@ -27,24 +27,28 @@
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                success:
-                  type: boolean
-                  example: true
-                message:
-                  type: string
-                  example: "Кастомизации получены успешно"
-                data:
-                  type: array
-                  items:
-                    $ref: '../openapi.yaml#/components/schemas/Customization'
-                player_state:
-                  $ref: '../openapi.yaml#/components/schemas/PlayerState'
+              allOf:
+                - $ref: '../openapi.yaml#/components/schemas/SuccessResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '../openapi.yaml#/components/schemas/Customization'
+                    player_state:
+                      $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '401':
         description: Неавторизованный запрос
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yaml#/components/schemas/ErrorResponse'
       '404':
         description: Профиль игрока не найден
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yaml#/components/schemas/ErrorResponse'
 
   /{categoryKey}:
     get:
@@ -80,23 +84,30 @@
           description: "Ключ категории кастомизации"
       responses:
         '200':
-          description: Кастомизация категории получена успешно
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  data:
-                    $ref: '../openapi.yaml#/components/schemas/Customization'
-                  player_state:
-                    $ref: '../openapi.yaml#/components/schemas/PlayerState'
-        '401':
-          description: Неавторизованный запрос
-        '404':
-          description: Профиль игрока или категория не найдены
+        description: Кастомизация категории получена успешно
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../openapi.yaml#/components/schemas/SuccessResponse'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '../openapi.yaml#/components/schemas/Customization'
+                    player_state:
+                      $ref: '../openapi.yaml#/components/schemas/PlayerState'
+      '401':
+        description: Неавторизованный запрос
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yaml#/components/schemas/ErrorResponse'
+      '404':
+        description: Профиль игрока или категория не найдены
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yaml#/components/schemas/ErrorResponse'
 
     post:
       tags:
@@ -143,48 +154,51 @@
                   description: "ID элемента кастомизации для выбора"
       responses:
         '200':
-          description: Элемент успешно выбран
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  message:
-                    type: string
-                    example: "Элемент кастомизации успешно выбран"
-                  data:
-                    type: object
-                    properties:
-                      selected:
-                        type: integer
-                        example: 3
-                        description: "ID выбранного элемента"
-                      category:
-                        type: string
-                        example: "wardrobe_shirt"
-                        description: "Ключ категории"
-                  player_state:
-                    $ref: '../openapi.yaml#/components/schemas/PlayerState'
-        '400':
-          description: Ошибка валидации или элемент недоступен
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  message:
-                    type: string
-                    example: "Элемент не разблокирован"
-        '401':
-          description: Неавторизованный запрос
-        '404':
-          description: Профиль игрока или категория не найдены
+        description: Элемент успешно выбран
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../openapi.yaml#/components/schemas/SuccessResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        selected:
+                          type: integer
+                          example: 3
+                          description: "ID выбранного элемента"
+                        category:
+                          type: string
+                          example: "wardrobe_shirt"
+                          description: "Ключ категории"
+                    player_state:
+                      $ref: '../openapi.yaml#/components/schemas/PlayerState'
+      '400':
+        description: Ошибка валидации или элемент недоступен
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../openapi.yaml#/components/schemas/ErrorResponse'
+                - type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "Элемент не разблокирован"
+      '401':
+        description: Неавторизованный запрос
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yaml#/components/schemas/ErrorResponse'
+      '404':
+        description: Профиль игрока или категория не найдены
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yaml#/components/schemas/ErrorResponse'
 
   /viewed:
     post:
@@ -230,34 +244,42 @@
                   description: "Массив ID элементов, отмеченных как просмотренные"
       responses:
         '200':
-          description: Элементы успешно отмечены как просмотренные
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  message:
-                    type: string
-                    example: "Элементы отмечены как просмотренные"
-                  data:
-                    type: object
-                    properties:
-                      viewed_count:
-                        type: integer
-                        example: 3
-                        description: "Количество отмеченных элементов"
-                      category:
-                        type: string
-                        example: "wardrobe_shirt"
-                        description: "Ключ категории"
-                  player_state:
-                    $ref: '../openapi.yaml#/components/schemas/PlayerState'
-        '400':
-          description: Ошибка валидации
-        '401':
-          description: Неавторизованный запрос
-        '404':
-          description: Профиль игрока не найден
+        description: Элементы успешно отмечены как просмотренные
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../openapi.yaml#/components/schemas/SuccessResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        viewed_count:
+                          type: integer
+                          example: 3
+                          description: "Количество отмеченных элементов"
+                        category:
+                          type: string
+                          example: "wardrobe_shirt"
+                          description: "Ключ категории"
+                    player_state:
+                      $ref: '../openapi.yaml#/components/schemas/PlayerState'
+      '400':
+        description: Ошибка валидации
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yaml#/components/schemas/ValidationErrorResponse'
+      '401':
+        description: Неавторизованный запрос
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yaml#/components/schemas/ErrorResponse'
+      '404':
+        description: Профиль игрока не найден
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yaml#/components/schemas/ErrorResponse'

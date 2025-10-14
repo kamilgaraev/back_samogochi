@@ -30,6 +30,7 @@ docs/
 ├── paths/
 │   ├── auth.yaml            # Эндпоинты аутентификации
 │   ├── player.yaml          # Эндпоинты игрока
+│   ├── customization.yaml   # Система кастомизации
 │   ├── situations.yaml      # Ситуации
 │   └── micro-actions.yaml   # Микродействия
 ├── redocly.yaml             # Конфигурация Redocly
@@ -44,3 +45,42 @@ docs/
 ## Аутентификация
 
 JWT Bearer токен в заголовке: `Authorization: Bearer TOKEN`
+
+## 🎨 Система кастомизации
+
+Игра включает прогрессивную систему кастомизации с разблокировкой элементов по уровням.
+
+### Примеры использования:
+
+```bash
+# Получить все кастомизации игрока
+GET /api/customization
+Authorization: Bearer YOUR_JWT_TOKEN
+
+# Получить кастомизацию категории "футболки"
+GET /api/customization/wardrobe_shirt
+Authorization: Bearer YOUR_JWT_TOKEN
+
+# Выбрать элемент кастомизации
+POST /api/customization/wardrobe_shirt
+Authorization: Bearer YOUR_JWT_TOKEN
+Content-Type: application/json
+
+{
+  "selected": 3
+}
+
+# Отметить элементы как просмотренные
+POST /api/customization/viewed
+Authorization: Bearer YOUR_JWT_TOKEN
+Content-Type: application/json
+
+{
+  "key": "wardrobe_shirt",
+  "viewed_items": [1, 2, 3]
+}
+```
+
+### Категории кастомизации:
+- **Гардероб**: `wardrobe_shirt`, `wardrobe_pants`, `wardrobe_accessory`
+- **Мебель**: `furniture_table`, `furniture_chair`, `furniture_lamp`

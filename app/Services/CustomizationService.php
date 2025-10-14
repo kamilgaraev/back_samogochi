@@ -74,9 +74,10 @@ class CustomizationService
         $unlockedItemIds = $playerCustomization->unlocked_items ?? [];
         $selectedItemId = $playerCustomization->selected_item_id ?? null;
 
-        // Добавляем элементы по умолчанию в разблокированные
+        // Добавляем элементы по умолчанию и по уровню в разблокированные
         $defaultItemIds = $allItems->where('is_default', true)->pluck('id')->toArray();
-        $allUnlockedIds = array_unique(array_merge($unlockedItemIds, $defaultItemIds));
+        $unlockedByLevelIds = $allItems->where('unlock_level', '<=', $playerLevel)->pluck('id')->toArray();
+        $allUnlockedIds = array_unique(array_merge($unlockedItemIds, $defaultItemIds, $unlockedByLevelIds));
 
         $availableIds = array_values(array_diff($allUnlockedIds, [$selectedItemId]));
 
@@ -99,7 +100,12 @@ class CustomizationService
             ->toArray();
 
         // Считаем реальное количество разблокированных элементов
-        $currentMax = count($allUnlockedIds);
+        // Включаем выбранный элемент, если он есть
+        $allUnlockedWithSelected = $allUnlockedIds;
+        if ($selectedItemId && !in_array($selectedItemId, $allUnlockedWithSelected)) {
+            $allUnlockedWithSelected[] = $selectedItemId;
+        }
+        $currentMax = count($allUnlockedWithSelected);
 
         return [
             'key' => $categoryKey,

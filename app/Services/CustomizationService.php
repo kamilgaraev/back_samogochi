@@ -98,10 +98,8 @@ class CustomizationService
             ->values()
             ->toArray();
 
-        // Считаем разблокированные элементы (по уровню + по умолчанию)
-        $unlockedByLevel = $allItems->where('unlock_level', '<=', $playerLevel)->count();
-        $unlockedByDefault = $allItems->where('is_default', true)->count();
-        $currentMax = max($unlockedByLevel, $unlockedByDefault);
+        // Считаем реальное количество разблокированных элементов
+        $currentMax = count($allUnlockedIds);
 
         return [
             'key' => $categoryKey,

@@ -984,51 +984,6 @@ components:
             $ref: '#/components/schemas/CustomizationItem'
           description: "Список всех элементов в категории с уровнями разблокировки"
 
-    CustomizationItem:
-      type: object
-      description: "Элемент кастомизации с полной информацией"
-      properties:
-        id:
-          type: integer
-          example: 1
-          description: "Уникальный идентификатор элемента"
-        category_key:
-          type: string
-          example: "wardrobe_shirt"
-          description: "Ключ категории элемента"
-        category:
-          type: string
-          example: "wardrobe"
-          description: "Категория элемента (wardrobe/furniture)"
-        name:
-          type: string
-          example: "Базовая футболка"
-          description: "Название элемента"
-        description:
-          type: string
-          example: "Простая белая футболка"
-          description: "Описание элемента"
-        unlock_level:
-          type: integer
-          example: 1
-          description: "Минимальный уровень игрока для разблокировки"
-        order:
-          type: integer
-          example: 0
-          description: "Порядок сортировки в категории"
-        is_default:
-          type: boolean
-          example: true
-          description: "Является ли элемент дефолтным"
-        image_url:
-          type: string
-          nullable: true
-          example: "https://example.com/images/shirt_basic.png"
-          description: "URL изображения элемента"
-        is_active:
-          type: boolean
-          example: true
-          description: "Активен ли элемент в игре"
 
     CustomizationCategory:
       type: object

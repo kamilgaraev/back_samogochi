@@ -1436,11 +1436,11 @@ paths:
 
   # Customization endpoints
   /customization:
-    $ref: './paths/customization.yaml#/customization'
+    $ref: './paths/customization.yaml#/~1customization'
   /customization/{categoryKey}:
-    $ref: './paths/customization.yaml#/customization/~1{categoryKey}'
+    $ref: './paths/customization.yaml#/~1customization~1{categoryKey}'
   /customization/viewed:
-    $ref: './paths/customization.yaml#/customization/viewed'
+    $ref: './paths/customization.yaml#/~1customization~1viewed'
 
   # Situations endpoints
   /situations:

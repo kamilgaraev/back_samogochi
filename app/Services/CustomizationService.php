@@ -76,11 +76,20 @@ class CustomizationService
 
         $availableIds = array_values(array_diff($unlockedItemIds, [$selectedItemId]));
 
-        $nextUnlockLevels = $allItems
+        $nextUnlockItems = $allItems
             ->where('unlock_level', '>', $playerLevel)
             ->sortBy('unlock_level')
-            ->pluck('unlock_level')
-            ->unique()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'description' => $item->description,
+                    'unlock_level' => $item->unlock_level,
+                    'order' => $item->order,
+                    'is_default' => $item->is_default,
+                    'image_url' => $item->image_url,
+                ];
+            })
             ->values()
             ->toArray();
 
@@ -90,7 +99,7 @@ class CustomizationService
             'available' => $availableIds,
             'max' => $allItems->count(),
             'current_max' => $allItems->where('unlock_level', '<=', $playerLevel)->count(),
-            'next_unlock_level' => $nextUnlockLevels,
+            'next_unlock_level' => $nextUnlockItems,
         ];
     }
 

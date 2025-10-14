@@ -930,9 +930,19 @@ components:
         next_unlock_level:
           type: array
           items:
-            type: integer
-          example: [8, 12, 15]
-          description: "Массив уровней игрока для разблокировки следующих элементов (пустой массив если все разблокировано)"
+            $ref: '../openapi.yaml#/components/schemas/CustomizationItem'
+          example: [
+            {
+              "id": 3,
+              "name": "Синяя футболка",
+              "description": "Стильная синяя футболка",
+              "unlock_level": 8,
+              "order": 0,
+              "is_default": false,
+              "image_url": null
+            }
+          ]
+          description: "Массив объектов элементов, которые будут разблокированы на следующих уровнях (пустой массив если все разблокировано)"
 
     CustomizationItem:
       type: object

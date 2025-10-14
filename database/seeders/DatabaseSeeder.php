@@ -17,6 +17,9 @@ class DatabaseSeeder extends Seeder
             SituationSeeder::class,
             RelaxingSituationSeeder::class,
             MicroActionSeeder::class,
+            
+            // User seeder
+            UserSeeder::class,
         ]);
     }
 }

@@ -129,6 +129,8 @@ class CustomizationService
                 ];
             }
 
+            $player = PlayerProfile::findOrFail($playerId);
+
             $playerCustomization = PlayerCustomization::firstOrCreate(
                 [
                     'player_id' => $playerId,
@@ -140,7 +142,11 @@ class CustomizationService
                 ]
             );
 
-            if (!$playerCustomization->isUnlocked($item->id)) {
+            $isUnlocked = $playerCustomization->isUnlocked($item->id) 
+                || $item->is_default 
+                || $item->unlock_level <= $player->level;
+
+            if (!$isUnlocked) {
                 DB::rollBack();
                 return [
                     'success' => false,

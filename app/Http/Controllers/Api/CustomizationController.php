@@ -89,7 +89,7 @@ class CustomizationController extends Controller
     {
         $request->validate([
             'key' => 'required|string',
-            'selected' => 'required|integer|min:1',
+            'selected' => 'required|integer|min:0',
         ]);
 
         try {
@@ -103,7 +103,7 @@ class CustomizationController extends Controller
                 ], 404);
             }
 
-            $result = $this->customizationService->selectItem(
+            $result = $this->customizationService->selectItemByOrder(
                 $playerProfile->id,
                 $request->input('key'),
                 $request->input('selected')

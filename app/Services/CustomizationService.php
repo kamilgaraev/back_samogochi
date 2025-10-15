@@ -111,10 +111,23 @@ class CustomizationService
         ];
     }
 
-    public function selectItem(int $playerId, string $categoryKey, int $itemId): array
+    public function selectItemByOrder(int $playerId, string $categoryKey, int $order): array
     {
         try {
             DB::beginTransaction();
+
+            $item = CustomizationItem::active()
+                ->byCategory($categoryKey)
+                ->where('order', $order)
+                ->first();
+
+            if (!$item) {
+                DB::rollBack();
+                return [
+                    'success' => false,
+                    'message' => 'Элемент с таким order не найден',
+                ];
+            }
 
             $playerCustomization = PlayerCustomization::firstOrCreate(
                 [
@@ -127,7 +140,7 @@ class CustomizationService
                 ]
             );
 
-            if (!$playerCustomization->isUnlocked($itemId)) {
+            if (!$playerCustomization->isUnlocked($item->id)) {
                 DB::rollBack();
                 return [
                     'success' => false,
@@ -135,13 +148,14 @@ class CustomizationService
                 ];
             }
 
-            $playerCustomization->selected_item_id = $itemId;
+            $playerCustomization->selected_item_id = $item->id;
             $playerCustomization->save();
 
             ActivityLog::logEvent('customization.item_selected', [
                 'player_id' => $playerId,
                 'category_key' => $categoryKey,
-                'item_id' => $itemId,
+                'item_id' => $item->id,
+                'order' => $order,
             ]);
 
             DB::commit();

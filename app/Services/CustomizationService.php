@@ -180,10 +180,25 @@ class CustomizationService
         }
     }
 
-    public function markAsViewed(int $playerId, string $categoryKey, array $viewedItemIds): array
+    public function markAsViewedByOrder(int $playerId, string $categoryKey, array $viewedOrders): array
     {
         try {
             DB::beginTransaction();
+
+            $items = CustomizationItem::active()
+                ->byCategory($categoryKey)
+                ->whereIn('order', $viewedOrders)
+                ->get();
+
+            if ($items->isEmpty()) {
+                DB::rollBack();
+                return [
+                    'success' => false,
+                    'message' => 'Элементы с указанными order не найдены',
+                ];
+            }
+
+            $viewedItemIds = $items->pluck('id')->toArray();
 
             $playerCustomization = PlayerCustomization::where('player_id', $playerId)
                 ->where('category_key', $categoryKey)
@@ -203,7 +218,8 @@ class CustomizationService
             ActivityLog::logEvent('customization.items_viewed', [
                 'player_id' => $playerId,
                 'category_key' => $categoryKey,
-                'viewed_items' => $viewedItemIds,
+                'viewed_orders' => $viewedOrders,
+                'viewed_item_ids' => $viewedItemIds,
             ]);
 
             DB::commit();

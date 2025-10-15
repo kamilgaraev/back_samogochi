@@ -128,7 +128,7 @@ class CustomizationController extends Controller
         $request->validate([
             'key' => 'required|string',
             'viewed_items' => 'required|array',
-            'viewed_items.*' => 'integer|min:1',
+            'viewed_items.*' => 'integer|min:0',
         ]);
 
         try {
@@ -142,7 +142,7 @@ class CustomizationController extends Controller
                 ], 404);
             }
 
-            $result = $this->customizationService->markAsViewed(
+            $result = $this->customizationService->markAsViewedByOrder(
                 $playerProfile->id,
                 $request->input('key'),
                 $request->input('viewed_items')

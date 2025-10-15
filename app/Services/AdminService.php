@@ -547,19 +547,22 @@ class AdminService
             $query->where('unlock_level', $filters['unlock_level']);
         }
 
+        $perPage = $filters['per_page'] ?? 20;
         $items = $query->orderBy('category_key')
             ->orderBy('order')
-            ->paginate(20);
+            ->paginate($perPage);
 
         return [
             'success' => true,
             'data' => [
-                'items' => $items->items(),
+                'items' => $items,
                 'pagination' => [
                     'current_page' => $items->currentPage(),
                     'last_page' => $items->lastPage(),
                     'per_page' => $items->perPage(),
                     'total' => $items->total(),
+                    'from' => $items->firstItem(),
+                    'to' => $items->lastItem(),
                 ]
             ]
         ];

@@ -480,14 +480,13 @@ class AdminWebController extends Controller
     {
         Gate::authorize('configs.view');
         
-        $filters = $request->only(['category', 'category_key', 'is_active', 'unlock_level']);
+        $filters = $request->only(['category', 'category_key', 'is_active', 'unlock_level', 'per_page']);
         $result = $this->adminService->getCustomizationItems($filters);
 
         $categories = \App\Enums\CustomizationCategory::cases();
 
         return view('admin.customization.index', [
             'items' => $result['data']['items'],
-            'pagination' => $result['data']['pagination'],
             'categories' => $categories,
             'filters' => $filters
         ]);

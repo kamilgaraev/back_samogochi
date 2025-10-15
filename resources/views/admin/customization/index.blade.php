@@ -48,6 +48,16 @@
                        placeholder="Уровень разблокировки"
                        class="w-full rounded-md border-gray-300 shadow-sm">
             </div>
+
+            <div class="flex-1 min-w-0">
+                <label class="block text-sm font-medium text-gray-700 mb-1">На странице</label>
+                <select name="per_page" class="w-full rounded-md border-gray-300 shadow-sm">
+                    <option value="10" {{ request('per_page') == '10' ? 'selected' : '' }}>10</option>
+                    <option value="20" {{ request('per_page', '20') == '20' ? 'selected' : '' }}>20</option>
+                    <option value="50" {{ request('per_page') == '50' ? 'selected' : '' }}>50</option>
+                    <option value="100" {{ request('per_page') == '100' ? 'selected' : '' }}>100</option>
+                </select>
+            </div>
             
             <div class="flex items-end">
                 <button type="submit" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700">
@@ -59,9 +69,9 @@
 
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         @php
-            $totalItems = collect($items)->count();
-            $activeItems = collect($items)->where('is_active', true)->count();
-            $categoryStats = collect($items)->groupBy('category');
+            $totalItems = $items->total();
+            $activeItems = collect($items->items())->where('is_active', true)->count();
+            $categoryStats = collect($items->items())->groupBy('category');
         @endphp
         
         <div class="bg-white p-4 rounded-lg shadow-sm border">
@@ -107,7 +117,7 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm text-gray-600">По умолчанию</p>
-                    <p class="text-xl font-semibold">{{ collect($items)->where('is_default', true)->count() }}</p>
+                    <p class="text-xl font-semibold">{{ collect($items->items())->where('is_default', true)->count() }}</p>
                 </div>
             </div>
         </div>
@@ -225,19 +235,58 @@
                 </table>
             </div>
             
-            @if($pagination['last_page'] > 1)
+            @if($items->hasPages())
             <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-700">
-                            Показано 
-                            <span class="font-medium">{{ ($pagination['current_page'] - 1) * $pagination['per_page'] + 1 }}</span>
-                            до 
-                            <span class="font-medium">{{ min($pagination['current_page'] * $pagination['per_page'], $pagination['total']) }}</span>
-                            из 
-                            <span class="font-medium">{{ $pagination['total'] }}</span>
-                            результатов
-                        </p>
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="text-sm text-gray-700">
+                        Показано 
+                        <span class="font-medium">{{ $items->firstItem() ?? 0 }}</span>
+                        до 
+                        <span class="font-medium">{{ $items->lastItem() ?? 0 }}</span>
+                        из 
+                        <span class="font-medium">{{ $items->total() }}</span>
+                        результатов
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        @if ($items->onFirstPage())
+                            <span class="px-3 py-2 text-sm text-gray-400 bg-gray-100 rounded-md cursor-not-allowed">
+                                <i class="fas fa-chevron-left"></i> Назад
+                            </span>
+                        @else
+                            <a href="{{ $items->appends(request()->query())->previousPageUrl() }}" 
+                               class="px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                                <i class="fas fa-chevron-left"></i> Назад
+                            </a>
+                        @endif
+
+                        <div class="flex gap-1">
+                            @foreach(range(1, $items->lastPage()) as $page)
+                                @if($page == $items->currentPage())
+                                    <span class="px-3 py-2 text-sm text-white bg-blue-600 rounded-md">
+                                        {{ $page }}
+                                    </span>
+                                @elseif($page == 1 || $page == $items->lastPage() || abs($page - $items->currentPage()) <= 2)
+                                    <a href="{{ $items->appends(request()->query())->url($page) }}" 
+                                       class="px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                                        {{ $page }}
+                                    </a>
+                                @elseif(abs($page - $items->currentPage()) == 3)
+                                    <span class="px-3 py-2 text-sm text-gray-400">...</span>
+                                @endif
+                            @endforeach
+                        </div>
+
+                        @if ($items->hasMorePages())
+                            <a href="{{ $items->appends(request()->query())->nextPageUrl() }}" 
+                               class="px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                                Вперёд <i class="fas fa-chevron-right"></i>
+                            </a>
+                        @else
+                            <span class="px-3 py-2 text-sm text-gray-400 bg-gray-100 rounded-md cursor-not-allowed">
+                                Вперёд <i class="fas fa-chevron-right"></i>
+                            </span>
+                        @endif
                     </div>
                 </div>
             </div>

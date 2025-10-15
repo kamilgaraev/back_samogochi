@@ -68,12 +68,23 @@ class CustomizationService
         $unlockedItemIds = $playerCustomization->unlocked_items ?? [];
         $selectedItemId = $playerCustomization->selected_item_id ?? null;
 
-        // Добавляем элементы по умолчанию и по уровню в разблокированные
         $defaultItemIds = $allItems->where('is_default', true)->pluck('id')->toArray();
         $unlockedByLevelIds = $allItems->where('unlock_level', '<=', $playerLevel)->pluck('id')->toArray();
         $allUnlockedIds = array_unique(array_merge($unlockedItemIds, $defaultItemIds, $unlockedByLevelIds));
 
-        $availableIds = array_values(array_diff($allUnlockedIds, [$selectedItemId]));
+        $selectedOrder = null;
+        if ($selectedItemId) {
+            $selectedItem = $allItems->firstWhere('id', $selectedItemId);
+            $selectedOrder = $selectedItem ? $selectedItem->order : null;
+        }
+
+        $availableOrders = $allItems
+            ->filter(function ($item) use ($allUnlockedIds, $selectedItemId) {
+                return in_array($item->id, $allUnlockedIds) && $item->id !== $selectedItemId;
+            })
+            ->pluck('order')
+            ->values()
+            ->toArray();
 
         $nextUnlockItems = $allItems
             ->where('unlock_level', '>', $playerLevel)
@@ -93,8 +104,6 @@ class CustomizationService
             ->values()
             ->toArray();
 
-        // Считаем реальное количество разблокированных элементов
-        // Включаем выбранный элемент, если он есть
         $allUnlockedWithSelected = $allUnlockedIds;
         if ($selectedItemId && !in_array($selectedItemId, $allUnlockedWithSelected)) {
             $allUnlockedWithSelected[] = $selectedItemId;
@@ -103,8 +112,8 @@ class CustomizationService
 
         return [
             'key' => $categoryKey,
-            'selected' => $selectedItemId,
-            'available' => $availableIds,
+            'selected' => $selectedOrder,
+            'available' => $availableOrders,
             'max' => $allItems->count(),
             'current_max' => $currentMax,
             'next_unlock_level' => $nextUnlockItems,

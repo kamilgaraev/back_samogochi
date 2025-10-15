@@ -1455,9 +1455,11 @@ paths:
   /customization:
     $ref: './paths/customization.yaml#/~1customization'
   /customization/{categoryKey}:
-    $ref: './paths/customization.yaml#/~1customization~1{categoryKey}'
-  /customization/viewed:
-    $ref: './paths/customization.yaml#/~1customization~1viewed'
+    $ref: './paths/customization.yaml#/~1{categoryKey}'
+  /customization/select:
+    $ref: './paths/customization.yaml#/~1select'
+  /customization/mark-viewed:
+    $ref: './paths/customization.yaml#/~1mark-viewed'
 
   # Situations endpoints
   /situations:

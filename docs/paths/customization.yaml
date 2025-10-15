@@ -153,6 +153,7 @@
                   type: string
                   example: "Профиль игрока или категория не найдены"
 
+/select:
   post:
     tags:
       - Customization
@@ -167,21 +168,6 @@
       - Предыдущий выбранный элемент становится доступным для повторного выбора
     security:
       - bearerAuth: []
-    parameters:
-      - name: categoryKey
-        in: path
-        required: true
-        schema:
-          type: string
-          enum:
-            - wardrobe_shirt
-            - wardrobe_pants
-            - wardrobe_accessory
-            - furniture_table
-            - furniture_chair
-            - furniture_lamp
-        example: "wardrobe_shirt"
-        description: "Ключ категории кастомизации"
     requestBody:
       required: true
       content:
@@ -189,8 +175,20 @@
           schema:
             type: object
             required:
+              - key
               - selected
             properties:
+              key:
+                type: string
+                enum:
+                  - wardrobe_shirt
+                  - wardrobe_pants
+                  - wardrobe_accessory
+                  - furniture_table
+                  - furniture_chair
+                  - furniture_lamp
+                example: "wardrobe_shirt"
+                description: "Ключ категории кастомизации"
               selected:
                 type: integer
                 minimum: 1
@@ -263,7 +261,7 @@
                   type: string
                   example: "Профиль игрока или категория не найдены"
 
-/viewed:
+/mark-viewed:
   post:
     tags:
       - Customization

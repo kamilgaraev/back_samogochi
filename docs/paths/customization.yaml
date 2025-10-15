@@ -39,8 +39,6 @@
                   type: array
                   items:
                     $ref: '../openapi.yaml#/components/schemas/Customization'
-                player_state:
-                  $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '401':
         description: Неавторизованный запрос
         content:
@@ -124,8 +122,6 @@
                           items:
                             $ref: '../openapi.yaml#/components/schemas/UnlockLevelsCategory'
                           description: "Информация о всех предметах кастомизации с уровнями разблокировки"
-                player_state:
-                  $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '401':
         description: Неавторизованный запрос
         content:
@@ -207,20 +203,7 @@
                   example: true
                 message:
                   type: string
-                  example: "Элемент кастомизации успешно выбран"
-                data:
-                  type: object
-                  properties:
-                    selected:
-                      type: integer
-                      example: 3
-                      description: "ID выбранного элемента"
-                    category:
-                      type: string
-                      example: "wardrobe_shirt"
-                      description: "Ключ категории"
-                player_state:
-                  $ref: '../openapi.yaml#/components/schemas/PlayerState'
+                  example: "Элемент успешно выбран"
       '400':
         description: Ошибка валидации или элемент недоступен
         content:
@@ -317,19 +300,6 @@
                 message:
                   type: string
                   example: "Элементы отмечены как просмотренные"
-                data:
-                  type: object
-                  properties:
-                    viewed_count:
-                      type: integer
-                      example: 3
-                      description: "Количество отмеченных элементов"
-                    category:
-                      type: string
-                      example: "wardrobe_shirt"
-                      description: "Ключ категории"
-                player_state:
-                  $ref: '../openapi.yaml#/components/schemas/PlayerState'
       '400':
         description: Ошибка валидации
         content:

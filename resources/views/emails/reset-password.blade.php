@@ -99,6 +99,19 @@
             font-size: 13px;
             color: #78909c;
         }
+        .footer-links {
+            margin: 15px 0;
+        }
+        .footer-links a {
+            color: #455a64;
+            text-decoration: none;
+            font-size: 14px;
+            margin: 0 10px;
+            font-weight: 500;
+        }
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -134,6 +147,11 @@
         </div>
         
         <div class="footer">
+            <div class="footer-links">
+                <a href="https://stresshelp.ru">stresshelp.ru</a>
+                <span style="color: #b0bec5;">|</span>
+                <a href="https://t.me/trevogabutton">Telegram</a>
+            </div>
             <p>© 2025 Самогочи. Все права защищены.</p>
         </div>
     </div>

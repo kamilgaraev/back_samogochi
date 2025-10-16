@@ -23,8 +23,16 @@ Artisan::command('game:daily-rewards', function () {
     $this->info('Задача ежедневных наград запущена!');
 })->purpose('Process daily rewards manually');
 
+
 Schedule::job(new EnergyRegenJob)->hourly();
 
 Schedule::job(new DailyRewardJob)->daily();
 
 Schedule::job(new UpdateRealtimeMetrics)->everyMinute();
+
+Schedule::command('game:send-end-emails')
+    ->dailyAt('12:00')
+    ->when(function () {
+        $targetDate = \Carbon\Carbon::create(2026, 4, 15);
+        return now()->isSameDay($targetDate);
+    });

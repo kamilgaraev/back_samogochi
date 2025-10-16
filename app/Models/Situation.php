@@ -21,6 +21,7 @@ class Situation extends Model
         'experience_reward',
         'is_active',
         'position',
+        'required_customization_key',
     ];
 
     protected function casts(): array

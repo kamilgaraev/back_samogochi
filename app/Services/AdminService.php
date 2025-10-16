@@ -173,6 +173,7 @@ class AdminService
                 'experience_reward' => $data['experience_reward'],
                 'is_active' => $data['is_active'] ?? true,
                 'position' => $data['position'] ?? 'desktop',
+                'required_customization_key' => $data['required_customization_key'] ?? null,
             ]);
 
             if (isset($data['options'])) {
@@ -237,6 +238,7 @@ class AdminService
                 'experience_reward' => $data['experience_reward'] ?? $situation->experience_reward,
                 'is_active' => $data['is_active'] ?? $situation->is_active,
                 'position' => $data['position'] ?? $situation->position,
+                'required_customization_key' => array_key_exists('required_customization_key', $data) ? $data['required_customization_key'] : $situation->required_customization_key,
             ]);
 
             if (isset($data['options'])) {

@@ -5,16 +5,39 @@ namespace App\Repositories;
 use App\Models\Situation;
 use App\Models\PlayerSituation;
 use App\Models\PlayerProfile;
+use App\Models\PlayerCustomization;
+use App\Models\CustomizationItem;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class SituationRepository
 {
-    public function getAvailableSituations(int $playerLevel, int $perPage = 15): LengthAwarePaginator
+    private function applyCustomizationFilter($query, int $playerId)
     {
-        return Situation::where('is_active', true)
-            ->where('min_level_required', '<=', $playerLevel)
-            ->with(['options' => function ($query) use ($playerLevel) {
+        $query->where(function ($q) use ($playerId) {
+            $q->whereNull('required_customization_key')
+              ->orWhereIn('situations.id', function ($subQuery) use ($playerId) {
+                  $subQuery->select('s.id')
+                      ->from('situations as s')
+                      ->join('player_customizations as pc', function ($join) use ($playerId) {
+                          $join->where('pc.player_id', $playerId);
+                      })
+                      ->join('customization_items as ci', 'ci.id', '=', 'pc.selected_item_id')
+                      ->whereRaw('ci.name = s.required_customization_key');
+              });
+        });
+        
+        return $query;
+    }
+
+    public function getAvailableSituations(int $playerLevel, int $playerId, int $perPage = 15): LengthAwarePaginator
+    {
+        $query = Situation::where('is_active', true)
+            ->where('min_level_required', '<=', $playerLevel);
+        
+        $query = $this->applyCustomizationFilter($query, $playerId);
+        
+        return $query->with(['options' => function ($query) use ($playerLevel) {
                 $query->where('min_level_required', '<=', $playerLevel)
                     ->orderBy('order');
             }])
@@ -23,12 +46,15 @@ class SituationRepository
             ->paginate($perPage);
     }
 
-    public function getSituationsByCategory(string $category, int $playerLevel): Collection
+    public function getSituationsByCategory(string $category, int $playerLevel, int $playerId): Collection
     {
-        return Situation::where('is_active', true)
+        $query = Situation::where('is_active', true)
             ->where('category', $category)
-            ->where('min_level_required', '<=', $playerLevel)
-            ->with(['options' => function ($query) use ($playerLevel) {
+            ->where('min_level_required', '<=', $playerLevel);
+        
+        $query = $this->applyCustomizationFilter($query, $playerId);
+        
+        return $query->with(['options' => function ($query) use ($playerLevel) {
                 $query->where('min_level_required', '<=', $playerLevel)
                     ->orderBy('order');
             }])
@@ -36,14 +62,17 @@ class SituationRepository
             ->get();
     }
 
-    public function getRandomSituation(int $playerLevel, ?string $category = null): ?Situation
+    public function getRandomSituation(int $playerLevel, int $playerId, ?string $category = null): ?Situation
     {
         $query = Situation::where('is_active', true)
-            ->where('min_level_required', '<=', $playerLevel)
-            ->with(['options' => function ($query) use ($playerLevel) {
-                $query->where('min_level_required', '<=', $playerLevel)
-                    ->orderBy('order');
-            }]);
+            ->where('min_level_required', '<=', $playerLevel);
+        
+        $query = $this->applyCustomizationFilter($query, $playerId);
+        
+        $query->with(['options' => function ($query) use ($playerLevel) {
+            $query->where('min_level_required', '<=', $playerLevel)
+                ->orderBy('order');
+        }]);
 
         if ($category) {
             $query->where('category', $category);
@@ -198,11 +227,14 @@ class SituationRepository
 
         $query = Situation::where('is_active', true)
             ->where('min_level_required', '<=', $playerLevel)
-            ->whereNotIn('id', $completedSituationIds)
-            ->with(['options' => function ($query) use ($playerLevel) {
-                $query->where('min_level_required', '<=', $playerLevel)
-                    ->orderBy('order');
-            }]);
+            ->whereNotIn('id', $completedSituationIds);
+        
+        $query = $this->applyCustomizationFilter($query, $playerId);
+        
+        $query->with(['options' => function ($query) use ($playerLevel) {
+            $query->where('min_level_required', '<=', $playerLevel)
+                ->orderBy('order');
+        }]);
 
         if ($stressLevel > 70) {
             $query->where('stress_impact', '<=', 0);

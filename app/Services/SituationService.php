@@ -40,7 +40,7 @@ class SituationService
             ];
         }
 
-        $situations = $this->situationRepository->getAvailableSituations($player->level, $perPage);
+        $situations = $this->situationRepository->getAvailableSituations($player->level, $player->id, $perPage);
         
         $onCooldown = $this->situationRepository->isOnCooldown($player->id);
         $cooldownEndTime = null;
@@ -146,7 +146,7 @@ class SituationService
             ];
         }
 
-        $situation = $this->situationRepository->getRandomSituation($player->level, $category);
+        $situation = $this->situationRepository->getRandomSituation($player->level, $player->id, $category);
         
         if (!$situation) {
             return [
@@ -425,7 +425,7 @@ class SituationService
             ];
         }
 
-        $situations = $this->situationRepository->getSituationsByCategory($category, $player->level);
+        $situations = $this->situationRepository->getSituationsByCategory($category, $player->level, $player->id);
 
         return [
             'success' => true,

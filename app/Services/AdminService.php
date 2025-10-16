@@ -323,6 +323,56 @@ class AdminService
         }
     }
 
+    public function bulkDeleteSituations(array $ids, int $userId): array
+    {
+        try {
+            DB::beginTransaction();
+
+            $situations = Situation::whereIn('id', $ids)->get();
+            
+            if ($situations->isEmpty()) {
+                return [
+                    'success' => false,
+                    'message' => 'Ситуации не найдены'
+                ];
+            }
+
+            $deleted = 0;
+            $titles = [];
+
+            foreach ($situations as $situation) {
+                $titles[] = $situation->title;
+                $situation->delete();
+                $deleted++;
+            }
+
+            ActivityLog::logEvent(\App\Enums\ActivityEventType::ADMIN_SITUATION_DELETED->value, [
+                'action' => 'bulk_delete',
+                'count' => $deleted,
+                'situation_ids' => $ids,
+                'titles' => $titles,
+            ], $userId);
+
+            DB::commit();
+
+            return [
+                'success' => true,
+                'message' => "Успешно удалено ситуаций: {$deleted}",
+                'data' => [
+                    'deleted' => $deleted
+                ]
+            ];
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            return [
+                'success' => false,
+                'message' => 'Ошибка при массовом удалении: ' . $e->getMessage()
+            ];
+        }
+    }
+
     private function normalizeGameBalanceTypes(array $data): array
     {
         $typeMap = [

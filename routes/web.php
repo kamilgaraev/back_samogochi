@@ -63,6 +63,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::middleware(['permission:situations.view'])->get('/', [AdminWebController::class, 'situations'])->name('index');
             Route::middleware(['permission:situations.view'])->get('export-template', [AdminWebController::class, 'situationsExportTemplate'])->name('export-template');
             Route::middleware(['permission:situations.create'])->post('import', [AdminWebController::class, 'situationsImport'])->name('import');
+            Route::middleware(['permission:situations.delete'])->post('bulk-delete', [AdminWebController::class, 'situationsBulkDelete'])->name('bulk-delete');
             Route::middleware(['permission:situations.create'])->get('create', [AdminWebController::class, 'situationCreate'])->name('create');
             Route::middleware(['permission:situations.create'])->post('/', [AdminWebController::class, 'situationStore'])->name('store');
             Route::middleware(['permission:situations.edit'])->get('{id}/edit', [AdminWebController::class, 'situationEdit'])->name('edit');

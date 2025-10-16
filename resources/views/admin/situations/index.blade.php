@@ -65,7 +65,29 @@
 @endsection
 
 @section('content')
-<div class="space-y-6">
+<div class="space-y-6" x-data="situationsManager()">
+    
+    <!-- Bulk actions bar -->
+    <div x-show="selectedIds.length > 0" 
+         x-transition
+         class="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center justify-between">
+        <div class="flex items-center">
+            <i class="fas fa-check-circle text-blue-600 mr-2"></i>
+            <span class="text-blue-800 font-medium">Выбрано: <span x-text="selectedIds.length"></span></span>
+        </div>
+        <div class="flex items-center space-x-2">
+            <button type="button" @click="clearSelection()" 
+                    class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">
+                <i class="fas fa-times mr-1"></i>Отменить
+            </button>
+            @can('situations.delete')
+                <button type="button" @click="bulkDelete()" 
+                        class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                    <i class="fas fa-trash mr-1"></i>Удалить выбранные
+                </button>
+            @endcan
+        </div>
+    </div>
     
     <!-- Stats cards -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -134,6 +156,12 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12">
+                            <input type="checkbox" 
+                                   @change="toggleAll($event.target.checked)"
+                                   :checked="allSelected"
+                                   class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                        </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Ситуация
                         </th>
@@ -159,7 +187,13 @@
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($situations as $situation)
-                        <tr class="hover:bg-gray-50">
+                        <tr class="hover:bg-gray-50" :class="{'bg-blue-50': selectedIds.includes({{ $situation->id }})}">
+                            <td class="px-6 py-4">
+                                <input type="checkbox" 
+                                       :checked="selectedIds.includes({{ $situation->id }})"
+                                       @change="toggleSelection({{ $situation->id }})"
+                                       class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                            </td>
                             <td class="px-6 py-4">
                                 <div class="max-w-xs">
                                     <div class="text-sm font-medium text-gray-900 truncate">{{ $situation->title }}</div>
@@ -264,7 +298,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                            <td colspan="8" class="px-6 py-12 text-center text-gray-500">
                                 <i class="fas fa-puzzle-piece text-4xl mb-4 opacity-50"></i>
                                 <p class="text-lg font-medium mb-2">Ситуации не найдены</p>
                                 <p class="text-sm">
@@ -316,5 +350,59 @@
             </div>
         @endif
     </div>
+
+    <!-- Hidden form for bulk delete -->
+    <form id="bulkDeleteForm" method="POST" action="{{ route('admin.situations.bulk-delete') }}" class="hidden">
+        @csrf
+        <template x-for="id in selectedIds" :key="id">
+            <input type="hidden" name="ids[]" :value="id">
+        </template>
+    </form>
 </div>
+
+<script>
+function situationsManager() {
+    return {
+        selectedIds: [],
+        allIds: @json(collect($situations)->pluck('id')->toArray()),
+        
+        get allSelected() {
+            return this.allIds.length > 0 && this.selectedIds.length === this.allIds.length;
+        },
+        
+        toggleAll(checked) {
+            if (checked) {
+                this.selectedIds = [...this.allIds];
+            } else {
+                this.selectedIds = [];
+            }
+        },
+        
+        toggleSelection(id) {
+            const index = this.selectedIds.indexOf(id);
+            if (index === -1) {
+                this.selectedIds.push(id);
+            } else {
+                this.selectedIds.splice(index, 1);
+            }
+        },
+        
+        clearSelection() {
+            this.selectedIds = [];
+        },
+        
+        bulkDelete() {
+            if (this.selectedIds.length === 0) {
+                alert('Не выбрано ни одной ситуации');
+                return;
+            }
+            
+            const count = this.selectedIds.length;
+            if (confirm(`Вы уверены, что хотите удалить ${count} ситуаций? Это действие нельзя отменить!`)) {
+                document.getElementById('bulkDeleteForm').submit();
+            }
+        }
+    }
+}
+</script>
 @endsection

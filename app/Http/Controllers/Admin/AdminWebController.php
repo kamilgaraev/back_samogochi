@@ -343,6 +343,24 @@ class AdminWebController extends Controller
         return redirect()->route('admin.situations.index')->with('success', $message);
     }
 
+    public function situationsBulkDelete(Request $request)
+    {
+        Gate::authorize('situations.delete');
+        
+        $request->validate([
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:situations,id'
+        ]);
+
+        $result = $this->adminService->bulkDeleteSituations($request->ids, auth()->id());
+
+        if (!$result['success']) {
+            return back()->withErrors(['error' => $result['message']]);
+        }
+
+        return redirect()->route('admin.situations.index')->with('success', $result['message']);
+    }
+
     // === МИКРО-ДЕЙСТВИЯ ===
     public function microActions()
     {

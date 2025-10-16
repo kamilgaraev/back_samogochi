@@ -35,7 +35,6 @@ class RegisterRequest extends FormRequest
                 'string',
                 'min:8',
                 'confirmed',
-                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/'
             ],
         ];
     }
@@ -60,7 +59,6 @@ class RegisterRequest extends FormRequest
             'password.required' => 'Пароль обязателен для заполнения',
             'password.min' => 'Пароль должен содержать минимум 8 символов',
             'password.confirmed' => 'Подтверждение пароля не совпадает',
-            'password.regex' => 'Пароль должен содержать: минимум 1 строчную букву, 1 заглавную букву, 1 цифру и 1 специальный символ (@$!%*?&)',
         ];
     }
 

@@ -8,10 +8,6 @@
       
       **Требования к паролю:**
       - Минимум 8 символов
-      - Минимум 1 строчная буква (a-z)
-      - Минимум 1 заглавная буква (A-Z)  
-      - Минимум 1 цифра (0-9)
-      - Минимум 1 специальный символ (@$!%*?&)
     requestBody:
       required: true
       content:
@@ -39,12 +35,11 @@
               password:
                 type: string
                 minLength: 8
-                pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$'
-                example: "MyPass123!"
-                description: "Сложный пароль согласно требованиям"
+                example: "mypassword"
+                description: "Пароль (минимум 8 символов)"
               password_confirmation:
                 type: string
-                example: "MyPass123!"
+                example: "mypassword"
                 description: "Подтверждение пароля (должно совпадать с password)"
     responses:
       '201':

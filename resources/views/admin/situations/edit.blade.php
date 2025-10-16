@@ -149,6 +149,24 @@
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
+                    
+                    <!-- Required Customization Key -->
+                    <div>
+                        <label for="required_customization_key" class="block text-sm font-medium text-gray-700 mb-1">
+                            Привязка к кастомизации (необязательно)
+                        </label>
+                        <input type="text" 
+                               id="required_customization_key" 
+                               name="required_customization_key" 
+                               value="{{ old('required_customization_key', $situation->required_customization_key) }}"
+                               maxlength="100"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 @error('required_customization_key') border-red-500 @enderror"
+                               placeholder="Например: Character_1_1">
+                        <p class="mt-1 text-xs text-gray-500">Ситуация будет показана только игрокам с выбранным скином (name элемента)</p>
+                        @error('required_customization_key')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
                 
                 <!-- Game Parameters -->

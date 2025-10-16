@@ -118,6 +118,21 @@
                     @enderror
                 </div>
                 
+                <!-- Required Customization Key -->
+                <div>
+                    <label for="required_customization_key" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-user-tag mr-1"></i>Привязка к кастомизации (необязательно)
+                    </label>
+                    <input type="text" name="required_customization_key" id="required_customization_key" maxlength="100"
+                           value="{{ old('required_customization_key') }}"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('required_customization_key') border-red-500 @enderror"
+                           placeholder="Например: Character_1_1">
+                    <p class="text-xs text-gray-500 mt-1">Ситуация будет показана только игрокам с выбранным скином (name элемента)</p>
+                    @error('required_customization_key')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+                
                 <!-- Status -->
                 <div>
                     <label class="flex items-center">

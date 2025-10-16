@@ -20,15 +20,15 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 40px 20px;
+            background: #eceff1;
+            padding: 30px 20px;
             text-align: center;
         }
         .header h1 {
             margin: 0;
-            font-size: 28px;
+            font-size: 22px;
             font-weight: 600;
-            color: #ffffff;
+            color: #37474f;
         }
         .container {
             padding: 40px 50px;
@@ -40,7 +40,7 @@
         }
         .content h2 {
             color: #212121;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 600;
             margin: 0 0 20px 0;
         }
@@ -52,15 +52,14 @@
         }
         .highlight-box {
             background: #f5f5f5;
-            padding: 25px;
+            padding: 20px;
             margin: 25px 0;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
+            border-radius: 4px;
         }
         .highlight-box p {
             margin: 10px 0;
-            color: #424242;
-            font-size: 15px;
+            color: #616161;
+            font-size: 14px;
         }
         .stats-grid {
             display: grid;
@@ -69,15 +68,15 @@
             margin: 25px 0;
         }
         .stat-card {
-            background: #f8f9fa;
+            background: #f5f5f5;
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 4px;
             text-align: center;
         }
         .stat-value {
             font-size: 24px;
             font-weight: bold;
-            color: #667eea;
+            color: #455a64;
             margin: 0;
         }
         .stat-label {
@@ -109,53 +108,55 @@
             text-decoration: underline;
         }
         .stay-connected-box {
-            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
-            padding: 30px;
+            background: #f5f5f5;
+            padding: 25px;
             margin: 30px 0;
-            border-radius: 8px;
+            border-radius: 4px;
             text-align: center;
         }
         .stay-connected-box h3 {
-            color: #1a237e;
-            font-size: 20px;
+            color: #212121;
+            font-size: 18px;
             font-weight: 600;
             margin: 0 0 15px 0;
         }
         .stay-connected-box p {
-            color: #424242;
+            color: #616161;
             font-size: 15px;
-            margin: 10px 0 20px 0;
+            margin: 10px 0 25px 0;
             line-height: 1.6;
         }
         .resource-links {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-top: 20px;
+            text-align: center;
+            margin-top: 0;
         }
         .resource-link {
             display: inline-block;
-            padding: 12px 25px;
-            background: #ffffff;
-            color: #667eea !important;
+            padding: 12px 30px;
+            background: #455a64;
+            color: #ffffff !important;
             text-decoration: none;
-            border-radius: 6px;
+            border-radius: 4px;
             font-weight: 500;
             font-size: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
+            margin: 0 8px;
         }
         .resource-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            background: #37474f;
+        }
+        @media only screen and (max-width: 600px) {
+            .resource-link {
+                display: block;
+                margin: 10px auto;
+                max-width: 250px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="email-wrapper">
         <div class="header">
-            <h1>🎮 Самогочи</h1>
+            <h1>Самогочи</h1>
         </div>
         
         <div class="container">
@@ -191,8 +192,8 @@
                 <h3>Мы останемся с вами!</h3>
                 <p>Хотя игра завершена, наша работа продолжается. Следите за полезными материалами, статьями и новостями о ментальном здоровье на нашем сайте и в Telegram-канале.</p>
                 <div class="resource-links">
-                    <a href="https://stresshelp.ru" class="resource-link">📖 Читать статьи</a>
-                    <a href="https://t.me/trevogabutton" class="resource-link">💬 Подписаться в Telegram</a>
+                    <a href="https://stresshelp.ru" class="resource-link">Читать статьи</a>
+                    <a href="https://t.me/trevogabutton" class="resource-link">Подписаться в Telegram</a>
                 </div>
             </div>
             

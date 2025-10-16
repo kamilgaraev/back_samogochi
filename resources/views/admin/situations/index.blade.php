@@ -35,6 +35,27 @@
         </button>
     </form>
     
+    <!-- Import/Export buttons -->
+    <div class="flex items-center space-x-2">
+        <a href="{{ route('admin.situations.export-template') }}" 
+           class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700" 
+           title="Скачать шаблон Excel с примерами">
+            <i class="fas fa-file-download mr-2"></i>Скачать шаблон
+        </a>
+        
+        <button type="button" 
+                onclick="document.getElementById('importFile').click()" 
+                class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                title="Импортировать ситуации из Excel">
+            <i class="fas fa-file-upload mr-2"></i>Импортировать
+        </button>
+        
+        <form id="importForm" method="POST" action="{{ route('admin.situations.import') }}" enctype="multipart/form-data" class="hidden">
+            @csrf
+            <input type="file" id="importFile" name="file" accept=".xlsx,.xls" onchange="document.getElementById('importForm').submit()">
+        </form>
+    </div>
+    
     <!-- Create button -->
     <a href="{{ route('admin.situations.create') }}" 
        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">

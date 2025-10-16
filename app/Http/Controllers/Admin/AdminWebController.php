@@ -311,6 +311,38 @@ class AdminWebController extends Controller
         return redirect()->route('admin.situations.index')->with('success', $result['message']);
     }
 
+    public function situationsExportTemplate()
+    {
+        Gate::authorize('situations.view');
+        
+        return $this->adminService->exportSituationsTemplate();
+    }
+
+    public function situationsImport(Request $request)
+    {
+        Gate::authorize('situations.create');
+        
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls|max:10240'
+        ]);
+
+        $result = $this->adminService->importSituations($request->file('file'), auth()->id());
+
+        if (!$result['success']) {
+            return back()->withErrors(['error' => $result['message']]);
+        }
+
+        $message = $result['message'];
+        if (!empty($result['data']['errors'])) {
+            $message .= '<br><br>Ошибки:<br>' . implode('<br>', array_slice($result['data']['errors'], 0, 10));
+            if (count($result['data']['errors']) > 10) {
+                $message .= '<br>... и ещё ' . (count($result['data']['errors']) - 10) . ' ошибок';
+            }
+        }
+
+        return redirect()->route('admin.situations.index')->with('success', $message);
+    }
+
     // === МИКРО-ДЕЙСТВИЯ ===
     public function microActions()
     {

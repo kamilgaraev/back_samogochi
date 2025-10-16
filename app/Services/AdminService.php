@@ -6,9 +6,12 @@ use App\Models\GameConfig;
 use App\Models\Situation;
 use App\Models\SituationOption;
 use App\Models\ActivityLog;
+use App\Exports\SituationsTemplateExport;
+use App\Imports\SituationsImport;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminService
 {
@@ -699,6 +702,51 @@ class AdminService
             return [
                 'success' => false,
                 'message' => 'Ошибка при удалении элемента: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    public function exportSituationsTemplate()
+    {
+        return Excel::download(new SituationsTemplateExport(), 'situations_template.xlsx');
+    }
+
+    public function importSituations($file, int $userId): array
+    {
+        try {
+            $import = new SituationsImport();
+            
+            Excel::import($import, $file);
+
+            $imported = $import->getImported();
+            $skipped = $import->getSkipped();
+            $errors = $import->getErrors();
+
+            ActivityLog::logEvent(\App\Enums\ActivityEventType::ADMIN_CONFIG_UPDATED->value, [
+                'action' => 'situations_imported',
+                'imported' => $imported,
+                'skipped' => $skipped,
+                'errors_count' => count($errors),
+            ], $userId);
+
+            $message = "Импорт завершён. Импортировано: {$imported}, Пропущено: {$skipped}";
+
+            return [
+                'success' => true,
+                'message' => $message,
+                'data' => [
+                    'imported' => $imported,
+                    'skipped' => $skipped,
+                    'errors' => $errors
+                ]
+            ];
+
+        } catch (\Exception $e) {
+            Log::error('Import situations error: ' . $e->getMessage());
+            
+            return [
+                'success' => false,
+                'message' => 'Ошибка при импорте: ' . $e->getMessage()
             ];
         }
     }

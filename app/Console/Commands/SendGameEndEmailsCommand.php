@@ -118,7 +118,7 @@ class SendGameEndEmailsCommand extends Command
         }
 
         $createdAt = $user->created_at;
-        $daysPlayed = $createdAt ? now()->diffInDays($createdAt) : 0;
+        $daysPlayed = $createdAt ? (int) $createdAt->diffInDays(now()) : 0;
 
         $totalActions = DB::table('activity_logs')
             ->where('user_id', $user->id)
@@ -126,8 +126,8 @@ class SendGameEndEmailsCommand extends Command
             ->count();
 
         return [
-            'days_played' => min($daysPlayed, 180),
-            'total_actions' => $totalActions
+            'days_played' => (int) min($daysPlayed, 180),
+            'total_actions' => (int) $totalActions
         ];
     }
 

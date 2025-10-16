@@ -174,11 +174,11 @@
             @if(isset($stats))
             <div class="stats-grid">
                 <div class="stat-card">
-                    <p class="stat-value">{{ $stats['days_played'] ?? 0 }}</p>
+                    <p class="stat-value">{{ (int) ($stats['days_played'] ?? 0) }}</p>
                     <p class="stat-label">дней в игре</p>
                 </div>
                 <div class="stat-card">
-                    <p class="stat-value">{{ $stats['total_actions'] ?? 0 }}</p>
+                    <p class="stat-value">{{ (int) ($stats['total_actions'] ?? 0) }}</p>
                     <p class="stat-label">действий выполнено</p>
                 </div>
             </div>

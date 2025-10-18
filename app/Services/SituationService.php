@@ -113,7 +113,10 @@ class SituationService
                     'experience_reward' => $situation->experience_reward,
                     'position' => $situation->position,
                 ],
-                'options' => $availableOptions->values(),
+                'options' => $availableOptions->map(function ($option) use ($player) {
+                    $isAvailable = $option->min_level_required <= $player->level && $option->is_available;
+                    return array_merge($option->toArray(), ['is_available' => $isAvailable]);
+                })->values(),
                 'player_info' => [
                     'current_stress' => $player->stress,
                     'current_energy' => $player->energy,
@@ -155,6 +158,11 @@ class SituationService
             ];
         }
 
+        $allOptions = $situation->options->map(function ($option) use ($player) {
+            $isAvailable = $option->min_level_required <= $player->level && $option->is_available;
+            return array_merge($option->toArray(), ['is_available' => $isAvailable]);
+        });
+
         return [
             'success' => true,
             'data' => [
@@ -168,9 +176,7 @@ class SituationService
                     'experience_reward' => $situation->experience_reward,
                     'position' => $situation->position,
                 ],
-                'options' => $situation->options->filter(function ($option) use ($player) {
-                    return $option->min_level_required <= $player->level && $option->is_available;
-                })->values(),
+                'options' => $allOptions->values(),
                 'player_info' => [
                     'current_stress' => $player->stress,
                     'current_energy' => $player->energy,
@@ -253,6 +259,11 @@ class SituationService
 
             DB::commit();
 
+            $allOptions = $situation->options->map(function ($option) use ($player) {
+                $isAvailable = $option->min_level_required <= $player->level && $option->is_available;
+                return array_merge($option->toArray(), ['is_available' => $isAvailable]);
+            });
+
             return [
                 'success' => true,
                 'message' => 'Ситуация успешно начата!',
@@ -265,9 +276,7 @@ class SituationService
                         'stress_impact' => $situation->stress_impact,
                         'position' => $situation->position
                     ],
-                    'options' => $situation->options->filter(function ($option) use ($player) {
-                        return $option->min_level_required <= $player->level && $option->is_available;
-                    })->values(),
+                    'options' => $allOptions->values(),
                     'player_changes' => [
                         'old_stress' => $oldStress,
                         'new_stress' => $player->fresh()->stress,
@@ -524,6 +533,11 @@ class SituationService
             ];
         }
 
+        $allOptions = $situation->options->map(function ($option) use ($player) {
+            $isAvailable = $option->min_level_required <= $player->level && $option->is_available;
+            return array_merge($option->toArray(), ['is_available' => $isAvailable]);
+        });
+
         return [
             'success' => true,
             'data' => [
@@ -537,9 +551,7 @@ class SituationService
                     'experience_reward' => $situation->experience_reward,
                     'position' => $situation->position,
                 ],
-                'options' => $situation->options->filter(function ($option) use ($player) {
-                    return $option->min_level_required <= $player->level && $option->is_available;
-                })->values(),
+                'options' => $allOptions->values(),
                 'player_info' => [
                     'current_stress' => $player->stress,
                     'current_energy' => $player->energy,
@@ -574,7 +586,12 @@ class SituationService
         return [
             'success' => true,
             'data' => [
-                'situations' => $activeSituations->map(function ($activeSituation) {
+                'situations' => $activeSituations->map(function ($activeSituation) use ($player) {
+                    $allOptions = $activeSituation->situation->options->map(function ($option) use ($player) {
+                        $isAvailable = $option->min_level_required <= $player->level && $option->is_available;
+                        return array_merge($option->toArray(), ['is_available' => $isAvailable]);
+                    });
+
                     return [
                         'player_situation_id' => $activeSituation->id,
                         'situation' => [
@@ -587,7 +604,7 @@ class SituationService
                             'experience_reward' => $activeSituation->situation->experience_reward,
                             'position' => $activeSituation->situation->position,
                         ],
-                        'options' => $activeSituation->situation->options->values(),
+                        'options' => $allOptions->values(),
                         'started_at' => $activeSituation->created_at,
                     ];
                 })->values(),

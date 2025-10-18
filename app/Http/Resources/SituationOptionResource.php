@@ -16,6 +16,7 @@ class SituationOptionResource extends JsonResource
             'experience_reward' => $this->experience_reward,
             'energy_cost' => $this->energy_cost,
             'min_level_required' => $this->min_level_required,
+            'is_available' => $this->is_available,
             'order' => $this->order,
             'effects' => [
                 'stress_effect' => $this->getStressEffect(),

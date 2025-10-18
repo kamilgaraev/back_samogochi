@@ -39,6 +39,7 @@ class SituationRepository
         
         return $query->with(['options' => function ($query) use ($playerLevel) {
                 $query->where('min_level_required', '<=', $playerLevel)
+                    ->where('is_available', true)
                     ->orderBy('order');
             }])
             ->orderBy('difficulty_level')
@@ -56,6 +57,7 @@ class SituationRepository
         
         return $query->with(['options' => function ($query) use ($playerLevel) {
                 $query->where('min_level_required', '<=', $playerLevel)
+                    ->where('is_available', true)
                     ->orderBy('order');
             }])
             ->orderBy('difficulty_level')
@@ -71,6 +73,7 @@ class SituationRepository
         
         $query->with(['options' => function ($query) use ($playerLevel) {
             $query->where('min_level_required', '<=', $playerLevel)
+                ->where('is_available', true)
                 ->orderBy('order');
         }]);
 
@@ -84,7 +87,8 @@ class SituationRepository
     public function findSituationById(int $id): ?Situation
     {
         return Situation::with(['options' => function ($query) {
-            $query->orderBy('order');
+            $query->where('is_available', true)
+                ->orderBy('order');
         }])
         ->where('is_active', true)
         ->find($id);
@@ -113,7 +117,14 @@ class SituationRepository
         return PlayerSituation::where('player_id', $playerId)
             ->where('situation_id', $situationId)
             ->whereNull('completed_at')
-            ->with(['situation.options'])
+            ->with(['situation.options' => function ($query) use ($playerId) {
+                $player = PlayerProfile::find($playerId);
+                if ($player) {
+                    $query->where('min_level_required', '<=', $player->level)
+                          ->where('is_available', true)
+                          ->orderBy('order');
+                }
+            }])
             ->first();
     }
 
@@ -123,7 +134,14 @@ class SituationRepository
             ->where('situation_id', $situationId)
             ->whereNull('completed_at')
             ->whereNull('selected_option_id')
-            ->with(['situation.options'])
+            ->with(['situation.options' => function ($query) use ($playerId) {
+                $player = PlayerProfile::find($playerId);
+                if ($player) {
+                    $query->where('min_level_required', '<=', $player->level)
+                          ->where('is_available', true)
+                          ->orderBy('order');
+                }
+            }])
             ->first();
     }
 
@@ -233,6 +251,7 @@ class SituationRepository
         
         $query->with(['options' => function ($query) use ($playerLevel) {
             $query->where('min_level_required', '<=', $playerLevel)
+                ->where('is_available', true)
                 ->orderBy('order');
         }]);
 
@@ -267,6 +286,7 @@ class SituationRepository
                 $player = PlayerProfile::find($playerId);
                 if ($player) {
                     $query->where('min_level_required', '<=', $player->level)
+                          ->where('is_available', true)
                           ->orderBy('order');
                 }
             }])
@@ -282,6 +302,7 @@ class SituationRepository
                 $player = PlayerProfile::find($playerId);
                 if ($player) {
                     $query->where('min_level_required', '<=', $player->level)
+                          ->where('is_available', true)
                           ->orderBy('order');
                 }
             }])

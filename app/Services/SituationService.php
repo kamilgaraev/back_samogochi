@@ -97,7 +97,7 @@ class SituationService
         }
 
         $availableOptions = $situation->options->filter(function ($option) use ($player) {
-            return $option->min_level_required <= $player->level;
+            return $option->min_level_required <= $player->level && $option->is_available;
         });
 
         return [
@@ -169,7 +169,7 @@ class SituationService
                     'position' => $situation->position,
                 ],
                 'options' => $situation->options->filter(function ($option) use ($player) {
-                    return $option->min_level_required <= $player->level;
+                    return $option->min_level_required <= $player->level && $option->is_available;
                 })->values(),
                 'player_info' => [
                     'current_stress' => $player->stress,
@@ -266,7 +266,7 @@ class SituationService
                         'position' => $situation->position
                     ],
                     'options' => $situation->options->filter(function ($option) use ($player) {
-                        return $option->min_level_required <= $player->level;
+                        return $option->min_level_required <= $player->level && $option->is_available;
                     })->values(),
                     'player_changes' => [
                         'old_stress' => $oldStress,
@@ -334,6 +334,13 @@ class SituationService
                 return [
                     'success' => false,
                     'message' => 'Недостаточный уровень для этого действия'
+                ];
+            }
+
+            if (!$option->is_available) {
+                return [
+                    'success' => false,
+                    'message' => 'Это действие сейчас недоступно'
                 ];
             }
 
@@ -531,7 +538,7 @@ class SituationService
                     'position' => $situation->position,
                 ],
                 'options' => $situation->options->filter(function ($option) use ($player) {
-                    return $option->min_level_required <= $player->level;
+                    return $option->min_level_required <= $player->level && $option->is_available;
                 })->values(),
                 'player_info' => [
                     'current_stress' => $player->stress,

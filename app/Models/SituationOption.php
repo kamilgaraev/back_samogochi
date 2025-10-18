@@ -16,7 +16,12 @@ class SituationOption extends Model
         'experience_reward',
         'energy_cost',
         'min_level_required',
+        'is_available',
         'order',
+    ];
+
+    protected $casts = [
+        'is_available' => 'boolean',
     ];
 
     public function situation()

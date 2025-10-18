@@ -42,6 +42,17 @@ class SituationService
 
         $situations = $this->situationRepository->getAvailableSituations($player->level, $player->id, $perPage);
         
+        $situationsWithOptions = collect($situations->items())->map(function ($situation) use ($player) {
+            $allOptions = $situation->options->map(function ($option) use ($player) {
+                $isAvailable = $option->min_level_required <= $player->level && $option->is_available;
+                return array_merge($option->toArray(), ['is_available' => $isAvailable]);
+            });
+            
+            $situationArray = $situation->toArray();
+            $situationArray['options'] = $allOptions->values();
+            return $situationArray;
+        });
+        
         $onCooldown = $this->situationRepository->isOnCooldown($player->id);
         $cooldownEndTime = null;
         
@@ -52,7 +63,7 @@ class SituationService
         return [
             'success' => true,
             'data' => [
-                'situations' => $situations->items(),
+                'situations' => $situationsWithOptions,
                 'pagination' => [
                     'current_page' => $situations->currentPage(),
                     'total_pages' => $situations->lastPage(),
@@ -443,12 +454,23 @@ class SituationService
 
         $situations = $this->situationRepository->getSituationsByCategory($category, $player->level, $player->id);
 
+        $situationsWithOptions = $situations->map(function ($situation) use ($player) {
+            $allOptions = $situation->options->map(function ($option) use ($player) {
+                $isAvailable = $option->min_level_required <= $player->level && $option->is_available;
+                return array_merge($option->toArray(), ['is_available' => $isAvailable]);
+            });
+            
+            $situationArray = $situation->toArray();
+            $situationArray['options'] = $allOptions->values();
+            return $situationArray;
+        });
+
         return [
             'success' => true,
             'data' => [
                 'category' => $category,
-                'situations' => $situations,
-                'count' => $situations->count()
+                'situations' => $situationsWithOptions,
+                'count' => $situationsWithOptions->count()
             ],
             'player_state' => $this->playerStateService->getPlayerStateByProfile($player)
         ];
@@ -499,10 +521,21 @@ class SituationService
 
         $recommendations = $this->situationRepository->getRecommendedSituations($player->id);
 
+        $recommendationsWithOptions = $recommendations->map(function ($situation) use ($player) {
+            $allOptions = $situation->options->map(function ($option) use ($player) {
+                $isAvailable = $option->min_level_required <= $player->level && $option->is_available;
+                return array_merge($option->toArray(), ['is_available' => $isAvailable]);
+            });
+            
+            $situationArray = $situation->toArray();
+            $situationArray['options'] = $allOptions->values();
+            return $situationArray;
+        });
+
         return [
             'success' => true,
             'data' => [
-                'recommendations' => $recommendations,
+                'recommendations' => $recommendationsWithOptions,
                 'based_on' => [
                     'stress_level' => $player->stress,
                     'player_level' => $player->level,

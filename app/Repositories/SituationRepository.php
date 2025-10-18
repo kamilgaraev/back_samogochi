@@ -37,9 +37,8 @@ class SituationRepository
         
         $query = $this->applyCustomizationFilter($query, $playerId);
         
-        return $query->with(['options' => function ($query) use ($playerLevel) {
-                $query->where('min_level_required', '<=', $playerLevel)
-                    ->where('is_available', true)
+        return $query->with(['options' => function ($query) {
+                $query->where('is_available', true)
                     ->orderBy('order');
             }])
             ->orderBy('difficulty_level')
@@ -55,9 +54,8 @@ class SituationRepository
         
         $query = $this->applyCustomizationFilter($query, $playerId);
         
-        return $query->with(['options' => function ($query) use ($playerLevel) {
-                $query->where('min_level_required', '<=', $playerLevel)
-                    ->where('is_available', true)
+        return $query->with(['options' => function ($query) {
+                $query->where('is_available', true)
                     ->orderBy('order');
             }])
             ->orderBy('difficulty_level')
@@ -71,9 +69,8 @@ class SituationRepository
         
         $query = $this->applyCustomizationFilter($query, $playerId);
         
-        $query->with(['options' => function ($query) use ($playerLevel) {
-            $query->where('min_level_required', '<=', $playerLevel)
-                ->where('is_available', true)
+        $query->with(['options' => function ($query) {
+            $query->where('is_available', true)
                 ->orderBy('order');
         }]);
 
@@ -117,13 +114,9 @@ class SituationRepository
         return PlayerSituation::where('player_id', $playerId)
             ->where('situation_id', $situationId)
             ->whereNull('completed_at')
-            ->with(['situation.options' => function ($query) use ($playerId) {
-                $player = PlayerProfile::find($playerId);
-                if ($player) {
-                    $query->where('min_level_required', '<=', $player->level)
-                          ->where('is_available', true)
-                          ->orderBy('order');
-                }
+            ->with(['situation.options' => function ($query) {
+                $query->where('is_available', true)
+                      ->orderBy('order');
             }])
             ->first();
     }
@@ -134,13 +127,9 @@ class SituationRepository
             ->where('situation_id', $situationId)
             ->whereNull('completed_at')
             ->whereNull('selected_option_id')
-            ->with(['situation.options' => function ($query) use ($playerId) {
-                $player = PlayerProfile::find($playerId);
-                if ($player) {
-                    $query->where('min_level_required', '<=', $player->level)
-                          ->where('is_available', true)
-                          ->orderBy('order');
-                }
+            ->with(['situation.options' => function ($query) {
+                $query->where('is_available', true)
+                      ->orderBy('order');
             }])
             ->first();
     }
@@ -249,9 +238,8 @@ class SituationRepository
         
         $query = $this->applyCustomizationFilter($query, $playerId);
         
-        $query->with(['options' => function ($query) use ($playerLevel) {
-            $query->where('min_level_required', '<=', $playerLevel)
-                ->where('is_available', true)
+        $query->with(['options' => function ($query) {
+            $query->where('is_available', true)
                 ->orderBy('order');
         }]);
 
@@ -282,13 +270,9 @@ class SituationRepository
         return PlayerSituation::where('player_id', $playerId)
             ->whereNull('completed_at')
             ->whereNull('selected_option_id')
-            ->with(['situation.options' => function ($query) use ($playerId) {
-                $player = PlayerProfile::find($playerId);
-                if ($player) {
-                    $query->where('min_level_required', '<=', $player->level)
-                          ->where('is_available', true)
-                          ->orderBy('order');
-                }
+            ->with(['situation.options' => function ($query) {
+                $query->where('is_available', true)
+                      ->orderBy('order');
             }])
             ->first();
     }
@@ -298,13 +282,9 @@ class SituationRepository
         return PlayerSituation::where('player_id', $playerId)
             ->whereNull('completed_at')
             ->whereNull('selected_option_id')
-            ->with(['situation.options' => function ($query) use ($playerId) {
-                $player = PlayerProfile::find($playerId);
-                if ($player) {
-                    $query->where('min_level_required', '<=', $player->level)
-                          ->where('is_available', true)
-                          ->orderBy('order');
-                }
+            ->with(['situation.options' => function ($query) {
+                $query->where('is_available', true)
+                      ->orderBy('order');
             }])
             ->orderBy('created_at', 'desc')
             ->get();

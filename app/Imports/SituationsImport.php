@@ -78,6 +78,19 @@ class SituationsImport implements ToCollection, WithHeadingRow
                     $levelKey = "variant_{$i}_min_uroven";
 
                     if (!empty($row[$textKey])) {
+                        if ($i === 1 && $optionsCreated === 0) {
+                            Log::info("Row {$rowNumber}, Option {$i} raw values:", [
+                                'text' => $row[$textKey] ?? 'missing',
+                                'stress_raw' => $row[$stressKey] ?? 'missing',
+                                'stress_int' => intval($row[$stressKey] ?? 0),
+                                'exp_raw' => $row[$expKey] ?? 'missing',
+                                'exp_int' => intval($row[$expKey] ?? 0),
+                                'energy_raw' => $row[$energyKey] ?? 'missing',
+                                'energy_int' => intval($row[$energyKey] ?? 0),
+                                'level_raw' => $row[$levelKey] ?? 'missing',
+                            ]);
+                        }
+                        
                         SituationOption::create([
                             'situation_id' => $situation->id,
                             'text' => $row[$textKey],

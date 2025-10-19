@@ -361,6 +361,15 @@ class AdminWebController extends Controller
         return redirect()->route('admin.situations.index')->with('success', $result['message']);
     }
 
+    public function situationsDeleteAll()
+    {
+        Gate::authorize('situations.delete');
+
+        $result = $this->adminService->deleteAllSituations(auth()->id());
+
+        return response()->json($result, $result['success'] ? 200 : 400);
+    }
+
     // === МИКРО-ДЕЙСТВИЯ ===
     public function microActions()
     {

@@ -56,6 +56,16 @@
         </form>
     </div>
     
+    <!-- Danger zone - Delete all -->
+    @can('situations.delete')
+    <button type="button" 
+            onclick="deleteAllSituations()" 
+            class="px-4 py-2 bg-red-700 text-white rounded-lg hover:bg-red-800 border-2 border-red-900"
+            title="ОПАСНО: Удалить все ситуации из базы данных">
+        <i class="fas fa-trash-alt mr-2"></i>Удалить все
+    </button>
+    @endcan
+    
     <!-- Create button -->
     <a href="{{ route('admin.situations.create') }}" 
        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
@@ -403,6 +413,54 @@ function situationsManager() {
             }
         }
     }
+}
+
+function deleteAllSituations() {
+    const totalCount = {{ collect($situations)->count() }};
+    
+    if (totalCount === 0) {
+        alert('Нет ситуаций для удаления');
+        return;
+    }
+    
+    const confirmed = confirm(
+        `⚠️ ОПАСНАЯ ОПЕРАЦИЯ ⚠️\n\n` +
+        `Вы уверены, что хотите удалить ВСЕ ситуации?\n` +
+        `Будет удалено: ${totalCount} ситуаций\n\n` +
+        `Это действие НЕЛЬЗЯ отменить!\n\n` +
+        `Нажмите ОК для подтверждения.`
+    );
+    
+    if (!confirmed) return;
+    
+    const doubleConfirm = confirm(
+        `Последнее предупреждение!\n\n` +
+        `Вы действительно хотите БЕЗВОЗВРАТНО удалить все ${totalCount} ситуаций?\n\n` +
+        `Нажмите ОК для окончательного подтверждения.`
+    );
+    
+    if (!doubleConfirm) return;
+    
+    fetch('{{ route("admin.situations.delete-all") }}', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(`✓ ${data.message}`);
+            window.location.reload();
+        } else {
+            alert(`✗ Ошибка: ${data.message}`);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Произошла ошибка при удалении ситуаций');
+    });
 }
 </script>
 @endsection

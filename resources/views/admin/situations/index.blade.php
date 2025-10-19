@@ -416,7 +416,7 @@ function situationsManager() {
 }
 
 function deleteAllSituations() {
-    const totalCount = {{ collect($situations)->count() }};
+    const totalCount = {{ isset($pagination) ? $pagination['total'] : collect($situations)->count() }};
     
     if (totalCount === 0) {
         alert('Нет ситуаций для удаления');
@@ -426,7 +426,7 @@ function deleteAllSituations() {
     const confirmed = confirm(
         `⚠️ ОПАСНАЯ ОПЕРАЦИЯ ⚠️\n\n` +
         `Вы уверены, что хотите удалить ВСЕ ситуации?\n` +
-        `Будет удалено: ${totalCount} ситуаций\n\n` +
+        `Будет удалено: ${totalCount} ситуаций из базы данных\n\n` +
         `Это действие НЕЛЬЗЯ отменить!\n\n` +
         `Нажмите ОК для подтверждения.`
     );
@@ -435,7 +435,7 @@ function deleteAllSituations() {
     
     const doubleConfirm = confirm(
         `Последнее предупреждение!\n\n` +
-        `Вы действительно хотите БЕЗВОЗВРАТНО удалить все ${totalCount} ситуаций?\n\n` +
+        `Вы действительно хотите БЕЗВОЗВРАТНО удалить ВСЕ ${totalCount} ситуаций из базы данных?\n\n` +
         `Нажмите ОК для окончательного подтверждения.`
     );
     

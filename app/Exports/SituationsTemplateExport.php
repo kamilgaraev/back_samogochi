@@ -80,7 +80,7 @@ class SituationsTemplateExport implements FromCollection, WithHeadings, WithStyl
             'Мин. уровень',
             'Влияние на стресс (-50 до +50)',
             'Награда опытом (1-100)',
-            'Позиция (desktop/phone/tablet/tv/etc)',
+            'Позиция (desktop/phone/tablet/tv/speaker/bookshelf/kitchen/table/wallClock/lapTop/fridge/trashCan/bed/mirror)',
             'Привязка к кастомизации (Character_1_1 и т.д.)',
             'Активна (1/0)',
         ];

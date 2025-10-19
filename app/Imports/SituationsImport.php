@@ -46,6 +46,10 @@ class SituationsImport implements ToCollection, WithHeadingRow
                 $category = strtolower(trim($row['kategoriia_workstudypersonalhealth'] ?? 'personal'));
                 $category = $categoryMap[$category] ?? 'personal';
 
+                $validPositions = array_column(\App\Enums\Position::cases(), 'value');
+                $position = trim($row['pozitsiia_desktopphoneta blettvets'] ?? 'desktop');
+                $position = in_array($position, $validPositions) ? $position : 'desktop';
+
                 $situation = Situation::create([
                     'title' => $row['nazvanie'],
                     'description' => $row['opisanie'],
@@ -54,7 +58,7 @@ class SituationsImport implements ToCollection, WithHeadingRow
                     'min_level_required' => max(1, intval($row['min_uroven'] ?? 1)),
                     'stress_impact' => max(-50, min(50, intval($row['vliianie_na_stress_50_do_50'] ?? 0))),
                     'experience_reward' => max(1, min(100, intval($row['nagrada_opytom_1_100'] ?? 10))),
-                    'position' => $row['pozitsiia_desktopphoneta blettvets'] ?? 'desktop',
+                    'position' => $position,
                     'required_customization_key' => !empty($row['priviazka_k_kastomizatsii_character_1_1_i_td']) 
                         ? $row['priviazka_k_kastomizatsii_character_1_1_i_td'] 
                         : null,

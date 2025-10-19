@@ -410,7 +410,7 @@ class AdminWebController extends Controller
             'cooldown_minutes' => 'required|integer|min:1|max:1440',
             'unlock_level' => 'required|integer|min:1|max:100',
             'category' => 'required|in:' . \App\Enums\MicroActionCategory::getForValidation(),
-            'position' => 'required|in:desktop,phone,tablet,tv,speaker,bookshelf,kitchen',
+            'position' => 'required|in:' . \App\Enums\Position::getForValidation(),
             'is_active' => 'sometimes|boolean',
         ]);
         
@@ -445,7 +445,7 @@ class AdminWebController extends Controller
             'cooldown_minutes' => 'required|integer|min:1|max:1440',
             'unlock_level' => 'required|integer|min:1|max:100',
             'category' => 'required|in:' . \App\Enums\MicroActionCategory::getForValidation(),
-            'position' => 'required|in:desktop,phone,tablet,tv,speaker,bookshelf,kitchen',
+            'position' => 'required|in:' . \App\Enums\Position::getForValidation(),
             'is_active' => 'sometimes|boolean',
         ]);
         
@@ -522,15 +522,14 @@ class AdminWebController extends Controller
             ];
         });
         
-        $positions = [
-            ['value' => 'phone', 'label' => 'Телефон', 'icon' => '📱', 'description' => 'Отображение на мобильном устройстве'],
-            ['value' => 'tablet', 'label' => 'Планшет', 'icon' => '📊', 'description' => 'Отображение на планшете'],
-            ['value' => 'desktop', 'label' => 'Компьютер', 'icon' => '💻', 'description' => 'Отображение на компьютере'],
-            ['value' => 'tv', 'label' => 'Телевизор', 'icon' => '📺', 'description' => 'Отображение на большом экране'],
-            ['value' => 'speaker', 'label' => 'Колонка', 'icon' => '🔊', 'description' => 'Голосовое взаимодействие через колонку'],
-            ['value' => 'bookshelf', 'label' => 'Книжная полка', 'icon' => '📚', 'description' => 'Действие связанное с чтением'],
-            ['value' => 'kitchen', 'label' => 'Кухня', 'icon' => '🍳', 'description' => 'Действие на кухне']
-        ];
+        $positions = array_map(function($position) {
+            return [
+                'value' => $position->value,
+                'label' => $position->getLabel(),
+                'icon' => $position->getIcon(),
+                'description' => $position->getDescription()
+            ];
+        }, \App\Enums\Position::cases());
         
         return compact('categories', 'difficulties', 'positions');
     }

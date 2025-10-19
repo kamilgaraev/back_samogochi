@@ -168,8 +168,8 @@ class PlayerProfile extends Model
         return [
             'is_sleeping' => true,
             'sleeping_until' => $this->sleeping_until,
-            'time_remaining_seconds' => now()->diffInSeconds($this->sleeping_until, false),
-            'time_remaining_minutes' => now()->diffInMinutes($this->sleeping_until, false),
+            'time_remaining_seconds' => (int) now()->diffInSeconds($this->sleeping_until, false),
+            'time_remaining_minutes' => (int) now()->diffInMinutes($this->sleeping_until, false),
         ];
     }
 }

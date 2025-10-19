@@ -139,20 +139,46 @@ class AuthService
     public function refresh()
     {
         try {
-            Log::info('Refresh attempt started');
             $currentToken = JWTAuth::getToken();
-            Log::info('Current token exists', ['has_token' => !!$currentToken]);
             
-            $token = JWTAuth::refresh();
-            Log::info('Token refreshed successfully');
+            if (!$currentToken) {
+                Log::warning('Refresh failed: No token provided');
+                return null;
+            }
+
+            Log::info('Refresh attempt started', [
+                'token_preview' => substr($currentToken, 0, 20) . '...'
+            ]);
+            
+            $token = JWTAuth::refresh($currentToken);
+            
+            $user = JWTAuth::setToken($token)->toUser();
+            
+            Log::info('Token refreshed successfully', [
+                'user_id' => $user->id
+            ]);
             
             return [
                 'token' => $token,
                 'token_type' => 'bearer',
                 'expires_in' => (int)config('jwt.ttl') * 60
             ];
+        } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+            Log::error('JWT Refresh failed: Token expired beyond refresh window', [
+                'error' => $e->getMessage(),
+                'refresh_ttl_minutes' => config('jwt.refresh_ttl')
+            ]);
+            return null;
+        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+            Log::error('JWT Refresh failed: Invalid token', [
+                'error' => $e->getMessage()
+            ]);
+            return null;
         } catch (JWTException $e) {
-            Log::error('JWT Refresh failed', ['error' => $e->getMessage()]);
+            Log::error('JWT Refresh failed: General error', [
+                'error' => $e->getMessage(),
+                'type' => get_class($e)
+            ]);
             return null;
         }
     }

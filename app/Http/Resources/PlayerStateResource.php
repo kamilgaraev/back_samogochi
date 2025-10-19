@@ -11,6 +11,7 @@ class PlayerStateResource extends JsonResource
     public function toArray(Request $request): array
     {
         $stressLevel = StressLevel::fromValue($this->stress);
+        $maxEnergy = $this->getMaxEnergy();
         
         return [
             'id' => $this->id,
@@ -24,9 +25,9 @@ class PlayerStateResource extends JsonResource
             ],
             'energy' => [
                 'current' => $this->energy,
-                'max' => 200,
-                'percentage' => round(($this->energy / 200) * 100, 1),
-                'status' => $this->getEnergyStatus(),
+                'max' => $maxEnergy,
+                'percentage' => round(($this->energy / $maxEnergy) * 100, 1),
+                'status' => $this->getEnergyStatus($maxEnergy),
             ],
             'stress' => [
                 'current' => $this->stress,
@@ -68,9 +69,9 @@ class PlayerStateResource extends JsonResource
         return $customizationService->getNewUnlockedItems($this->id);
     }
 
-    private function getEnergyStatus(): array
+    private function getEnergyStatus(int $maxEnergy = 200): array
     {
-        $percentage = ($this->energy / 200) * 100;
+        $percentage = ($this->energy / $maxEnergy) * 100;
         
         if ($percentage >= 75) {
             return [
@@ -107,5 +108,11 @@ class PlayerStateResource extends JsonResource
     private function canStartSituations(): bool
     {
         return $this->energy >= 20 && $this->stress <= 80;
+    }
+
+    private function getMaxEnergy(): int
+    {
+        $gameBalance = \App\Models\GameConfig::getGameBalance();
+        return $gameBalance['max_energy'] ?? 200;
     }
 }

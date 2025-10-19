@@ -47,20 +47,8 @@ class SituationsImport implements ToCollection, WithHeadingRow
                 $category = $categoryMap[$category] ?? 'personal';
 
                 $validPositions = array_column(\App\Enums\Position::cases(), 'value');
-                $positionRaw = $row['pozitsiia_desktopphoneta blettvets'] ?? null;
+                $positionRaw = $row['poziciia_desktopphonetablettvetc'] ?? null;
                 $position = trim($positionRaw ?? 'desktop');
-                
-                if ($index === 0) {
-                    Log::info("Position import check (first row):", [
-                        'column_key' => 'pozitsiia_desktopphoneta blettvets',
-                        'raw_value' => $positionRaw,
-                        'trimmed_value' => $position,
-                        'valid_positions' => $validPositions,
-                        'is_valid' => in_array($position, $validPositions),
-                        'final_position' => in_array($position, $validPositions) ? $position : 'desktop'
-                    ]);
-                }
-                
                 $position = in_array($position, $validPositions) ? $position : 'desktop';
 
                 $situation = Situation::create([

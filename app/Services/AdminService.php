@@ -373,6 +373,48 @@ class AdminService
         }
     }
 
+    public function deleteAllSituations(int $userId): array
+    {
+        try {
+            DB::beginTransaction();
+
+            $totalCount = Situation::count();
+            
+            if ($totalCount === 0) {
+                return [
+                    'success' => false,
+                    'message' => 'Нет ситуаций для удаления'
+                ];
+            }
+
+            SituationOption::query()->delete();
+            Situation::query()->delete();
+
+            ActivityLog::logEvent(\App\Enums\ActivityEventType::ADMIN_SITUATION_DELETED->value, [
+                'action' => 'delete_all_situations',
+                'count' => $totalCount,
+            ], $userId);
+
+            DB::commit();
+
+            return [
+                'success' => true,
+                'message' => "Все ситуации успешно удалены (всего: {$totalCount})",
+                'data' => [
+                    'deleted' => $totalCount
+                ]
+            ];
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            return [
+                'success' => false,
+                'message' => 'Ошибка при удалении всех ситуаций: ' . $e->getMessage()
+            ];
+        }
+    }
+
     private function normalizeGameBalanceTypes(array $data): array
     {
         $typeMap = [

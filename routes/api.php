@@ -64,6 +64,7 @@ Route::middleware(['auth:api', 'admin', 'throttle.game:30,1'])->prefix('admin')-
     Route::prefix('situations')->group(function () {
         Route::get('/', [\App\Http\Controllers\Api\AdminController::class, 'situations']);
         Route::post('/', [\App\Http\Controllers\Api\AdminController::class, 'createSituation']);
+        Route::delete('all', [\App\Http\Controllers\Api\AdminController::class, 'deleteAllSituations']);
         Route::put('{id}', [\App\Http\Controllers\Api\AdminController::class, 'updateSituation']);
         Route::delete('{id}', [\App\Http\Controllers\Api\AdminController::class, 'deleteSituation']);
     });

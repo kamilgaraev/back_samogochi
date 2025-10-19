@@ -259,4 +259,32 @@ class AdminController extends Controller
             ], 500);
         }
     }
+
+    public function deleteAllSituations()
+    {
+        try {
+            $userId = auth('api')->id();
+            $result = $this->adminService->deleteAllSituations($userId);
+
+            if (!$result['success']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $result['message']
+                ], 400);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => $result['message'],
+                'data' => $result['data']
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка при удалении всех ситуаций',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

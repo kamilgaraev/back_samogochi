@@ -68,9 +68,9 @@ class SituationsImport implements ToCollection, WithHeadingRow
                 $optionsCreated = 0;
                 for ($i = 1; $i <= 10; $i++) {
                     $textKey = "variant_{$i}_tekst";
-                    $stressKey = "variant_{$i}_izm_stressa_50_do_50";
-                    $expKey = "variant_{$i}_opyt_0_100";
-                    $energyKey = "variant_{$i}_energiia_0_50";
+                    $stressKey = "variant_{$i}_izm_stressa";
+                    $expKey = "variant_{$i}_opyt";
+                    $energyKey = "variant_{$i}_energiia";
                     $levelKey = "variant_{$i}_min_uroven";
 
                     if (!empty($row[$textKey])) {

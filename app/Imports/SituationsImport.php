@@ -24,6 +24,10 @@ class SituationsImport implements ToCollection, WithHeadingRow
                 DB::beginTransaction();
 
                 $rowNumber = $index + 2;
+                
+                if ($index === 0) {
+                    Log::info('Excel row keys (first row):', ['keys' => array_keys($row->toArray())]);
+                }
 
                 if (empty($row['nazvanie']) || empty($row['opisanie'])) {
                     $this->skipped++;

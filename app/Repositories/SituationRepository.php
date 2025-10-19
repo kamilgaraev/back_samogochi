@@ -224,17 +224,18 @@ class SituationRepository
             return collect();
         }
 
-        $completedSituationIds = PlayerSituation::where('player_id', $playerId)
+        $recentlyCompletedIds = PlayerSituation::where('player_id', $playerId)
             ->whereNotNull('completed_at')
+            ->where('completed_at', '>', now()->subHours(24))
             ->pluck('situation_id')
             ->toArray();
 
-        $stressLevel = $player->stress;
-        $playerLevel = $player->level;
-
         $query = Situation::where('is_active', true)
-            ->where('min_level_required', '<=', $playerLevel)
-            ->whereNotIn('id', $completedSituationIds);
+            ->where('min_level_required', '<=', $player->level);
+        
+        if (!empty($recentlyCompletedIds)) {
+            $query->whereNotIn('id', $recentlyCompletedIds);
+        }
         
         $query = $this->applyCustomizationFilter($query, $playerId);
         
@@ -242,12 +243,6 @@ class SituationRepository
             $query->where('is_available', true)
                 ->orderBy('order');
         }]);
-
-        if ($stressLevel > 70) {
-            $query->where('stress_impact', '<=', 0);
-        } elseif ($stressLevel < 30) {
-            $query->where('stress_impact', '>=', 0);
-        }
 
         return $query->orderBy('experience_reward', 'desc')
             ->limit($limit)

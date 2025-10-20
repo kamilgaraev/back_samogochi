@@ -120,7 +120,7 @@ class PlayerStateResource extends JsonResource
         return $gameBalance['max_energy'] ?? 200;
     }
 
-    private function getProgressPercentage(): float
+    private function getProgressPercentage(): int
     {
         $experienceInCurrentLevel = \App\Services\GameConfigService::getExperienceInCurrentLevel($this->total_experience, $this->level);
         $nextLevelExp = \App\Services\GameConfigService::getExperienceForLevel($this->level + 1);
@@ -131,6 +131,7 @@ class PlayerStateResource extends JsonResource
             return 0;
         }
         
-        return round(($experienceInCurrentLevel / $expForThisLevel) * 100, 1);
+        $percentage = ($experienceInCurrentLevel / $expForThisLevel) * 100;
+        return (int) min(100, max(0, round($percentage)));
     }
 }

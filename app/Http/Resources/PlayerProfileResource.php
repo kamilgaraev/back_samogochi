@@ -32,7 +32,7 @@ class PlayerProfileResource extends JsonResource
             'experience_progress' => [
                 'current_level_experience' => $experienceInCurrentLevel,
                 'experience_to_next_level' => $experienceToNextLevel,
-                'progress_percentage' => round($progressPercentage, 1),
+                'progress_percentage' => (int) min(100, max(0, round($progressPercentage))),
             ],
             'energy' => [
                 'current' => $this->energy,

@@ -206,7 +206,7 @@ class PlayerRepository
             'current_level' => $currentLevel,
             'experience_in_level' => $experienceInCurrentLevel,
             'experience_to_next' => $experienceNeededForNextLevel,
-            'progress_percentage' => round($progressPercentage, 1)
+            'progress_percentage' => (int) round(min(100, max(0, $progressPercentage)))
         ];
     }
 

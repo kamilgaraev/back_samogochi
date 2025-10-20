@@ -333,7 +333,7 @@ class PlayerService
         return [
             'experience_in_level' => max(0, $experienceInCurrentLevel),
             'experience_to_next' => max(0, $experienceNeededForNextLevel),
-            'progress_percentage' => round(min(100, max(0, $progressPercentage)), 1)
+            'progress_percentage' => (int) round(min(100, max(0, $progressPercentage)))
         ];
     }
 

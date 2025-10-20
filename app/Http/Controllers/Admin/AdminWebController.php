@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\PlayerProfile;
 use App\Models\Role;
 use App\Models\Permission;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -179,6 +180,53 @@ class AdminWebController extends Controller
         $user->removeRole($role);
         
         return back()->with('success', "Роль '{$role->display_name}' отозвана у пользователя");
+    }
+
+    public function updatePlayerMetrics(Request $request, $id)
+    {
+        Gate::authorize('users.manage-roles');
+        
+        $user = User::with('playerProfile')->findOrFail($id);
+        
+        if (!$user->playerProfile) {
+            return back()->with('error', 'У пользователя нет игрового профиля');
+        }
+        
+        $validated = $request->validate([
+            'level' => 'required|integer|min:1|max:100',
+            'total_experience' => 'required|integer|min:0|max:100000',
+            'energy' => 'required|integer|min:0|max:500',
+            'stress' => 'required|integer|min:0|max:100',
+            'anxiety' => 'required|integer|min:0|max:100',
+            'consecutive_days' => 'required|integer|min:0|max:365',
+        ]);
+        
+        $profile = $user->playerProfile;
+        $oldValues = [
+            'level' => $profile->level,
+            'total_experience' => $profile->total_experience,
+            'energy' => $profile->energy,
+            'stress' => $profile->stress,
+            'anxiety' => $profile->anxiety,
+            'consecutive_days' => $profile->consecutive_days,
+        ];
+        
+        $profile->update($validated);
+        
+        ActivityLog::create([
+            'user_id' => $user->id,
+            'event_type' => 'admin_metrics_updated',
+            'event_data' => [
+                'admin_id' => auth()->id(),
+                'admin_name' => auth()->user()->name,
+                'old_values' => $oldValues,
+                'new_values' => $validated,
+            ],
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+        
+        return back()->with('success', 'Показатели игрока успешно обновлены');
     }
 
     /**

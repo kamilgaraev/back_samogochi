@@ -26,6 +26,39 @@
 @section('content')
 <div class="space-y-6">
     
+    <!-- Flash messages -->
+    @if(session('success'))
+        <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-lg">
+            <div class="flex items-center">
+                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                <p class="text-green-800">{{ session('success') }}</p>
+            </div>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+            <div class="flex items-center">
+                <i class="fas fa-exclamation-circle text-red-500 mr-3"></i>
+                <p class="text-red-800">{{ session('error') }}</p>
+            </div>
+        </div>
+    @endif
+
+    @if($errors->any())
+        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+            <div class="flex items-center mb-2">
+                <i class="fas fa-exclamation-triangle text-red-500 mr-3"></i>
+                <p class="text-red-800 font-medium">Ошибка валидации:</p>
+            </div>
+            <ul class="ml-8 list-disc text-red-700">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+    
     <!-- User profile header -->
     <div class="bg-white rounded-lg shadow overflow-hidden">
         <div class="p-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white">
@@ -149,6 +182,119 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Edit Player Metrics -->
+                @can('users.manage-roles')
+                <div class="bg-white rounded-lg shadow">
+                    <div class="p-6 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">
+                            <i class="fas fa-sliders-h text-indigo-600 mr-2"></i>
+                            Редактирование показателей игрока
+                        </h3>
+                        <p class="text-sm text-gray-600 mt-1">Измените метрики для тестирования или коррекции</p>
+                    </div>
+                    <div class="p-6">
+                        <form method="POST" action="{{ route('admin.users.update-metrics', $user->id) }}" class="space-y-6">
+                            @csrf
+                            @method('PATCH')
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Level -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="fas fa-level-up-alt text-blue-500 mr-1"></i>
+                                        Уровень (1-100)
+                                    </label>
+                                    <input type="number" name="level" 
+                                           value="{{ $user->playerProfile->level }}"
+                                           min="1" max="100" step="1"
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+
+                                <!-- Total Experience -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="fas fa-star text-green-500 mr-1"></i>
+                                        Общий опыт (0-100000)
+                                    </label>
+                                    <input type="number" name="total_experience" 
+                                           value="{{ $user->playerProfile->total_experience }}"
+                                           min="0" max="100000" step="1"
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+
+                                <!-- Energy -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="fas fa-bolt text-yellow-500 mr-1"></i>
+                                        Энергия (0-500)
+                                    </label>
+                                    <input type="number" name="energy" 
+                                           value="{{ $user->playerProfile->energy }}"
+                                           min="0" max="500" step="1"
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    <p class="text-xs text-gray-500 mt-1">Текущий: {{ $user->playerProfile->energy }}</p>
+                                </div>
+
+                                <!-- Stress -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="fas fa-heartbeat text-red-500 mr-1"></i>
+                                        Стресс (0-100)
+                                    </label>
+                                    <input type="number" name="stress" 
+                                           value="{{ $user->playerProfile->stress }}"
+                                           min="0" max="100" step="1"
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                                        <div class="bg-red-500 h-2 rounded-full transition-all" 
+                                             style="width: {{ $user->playerProfile->stress }}%"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Anxiety -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="fas fa-brain text-orange-500 mr-1"></i>
+                                        Тревожность (0-100)
+                                    </label>
+                                    <input type="number" name="anxiety" 
+                                           value="{{ $user->playerProfile->anxiety }}"
+                                           min="0" max="100" step="1"
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                                        <div class="bg-orange-500 h-2 rounded-full transition-all" 
+                                             style="width: {{ $user->playerProfile->anxiety }}%"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Consecutive Days -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="fas fa-calendar-check text-purple-500 mr-1"></i>
+                                        Дней подряд (0-365)
+                                    </label>
+                                    <input type="number" name="consecutive_days" 
+                                           value="{{ $user->playerProfile->consecutive_days }}"
+                                           min="0" max="365" step="1"
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between pt-6 border-t border-gray-200">
+                                <div class="text-sm text-gray-600">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    Изменения будут применены немедленно
+                                </div>
+                                <button type="submit" 
+                                        class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                                    <i class="fas fa-save mr-2"></i>Сохранить изменения
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                @endcan
             @else
                 <div class="bg-white rounded-lg shadow p-6 text-center">
                     <i class="fas fa-user-slash text-4xl text-gray-300 mb-4"></i>
@@ -156,6 +302,104 @@
                 </div>
             @endif
             
+            <!-- Player Statistics -->
+            @if($user->playerProfile)
+                <div class="bg-white rounded-lg shadow">
+                    <div class="p-6 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">
+                            <i class="fas fa-chart-bar text-purple-600 mr-2"></i>
+                            Детальная статистика
+                        </h3>
+                    </div>
+                    <div class="p-6">
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+                            <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm text-blue-700 font-medium">Ситуаций</span>
+                                    <i class="fas fa-puzzle-piece text-blue-600"></i>
+                                </div>
+                                <p class="text-2xl font-bold text-blue-900">
+                                    {{ \DB::table('player_situations')->where('player_id', $user->playerProfile->id)->count() }}
+                                </p>
+                                <p class="text-xs text-blue-600 mt-1">всего завершено</p>
+                            </div>
+
+                            <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm text-green-700 font-medium">Микро-действий</span>
+                                    <i class="fas fa-bolt text-green-600"></i>
+                                </div>
+                                <p class="text-2xl font-bold text-green-900">
+                                    {{ \DB::table('player_micro_actions')->where('player_id', $user->playerProfile->id)->count() }}
+                                </p>
+                                <p class="text-xs text-green-600 mt-1">всего выполнено</p>
+                            </div>
+
+                            <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm text-purple-700 font-medium">Время в игре</span>
+                                    <i class="fas fa-clock text-purple-600"></i>
+                                </div>
+                                <p class="text-2xl font-bold text-purple-900">
+                                    {{ $user->playerProfile->created_at->diffInDays(now()) }}
+                                </p>
+                                <p class="text-xs text-purple-600 mt-1">дней с регистрации</p>
+                            </div>
+
+                            <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm text-yellow-700 font-medium">Среднее за день</span>
+                                    <i class="fas fa-calendar-day text-yellow-600"></i>
+                                </div>
+                                <p class="text-2xl font-bold text-yellow-900">
+                                    @php
+                                        $days = max(1, $user->playerProfile->created_at->diffInDays(now()));
+                                        $total = \DB::table('player_situations')->where('player_id', $user->playerProfile->id)->count();
+                                        $avg = round($total / $days, 1);
+                                    @endphp
+                                    {{ $avg }}
+                                </p>
+                                <p class="text-xs text-yellow-600 mt-1">ситуаций в день</p>
+                            </div>
+
+                            <div class="bg-gradient-to-br from-red-50 to-red-100 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm text-red-700 font-medium">Статус стресса</span>
+                                    <i class="fas fa-heart-pulse text-red-600"></i>
+                                </div>
+                                <p class="text-2xl font-bold text-red-900">
+                                    @if($user->playerProfile->stress < 30)
+                                        Низкий
+                                    @elseif($user->playerProfile->stress < 60)
+                                        Средний
+                                    @else
+                                        Высокий
+                                    @endif
+                                </p>
+                                <p class="text-xs text-red-600 mt-1">{{ $user->playerProfile->stress }}% стресса</p>
+                            </div>
+
+                            <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm text-indigo-700 font-medium">Активность</span>
+                                    <i class="fas fa-fire text-indigo-600"></i>
+                                </div>
+                                <p class="text-2xl font-bold text-indigo-900">
+                                    @php
+                                        $lastWeek = \DB::table('player_situations')
+                                            ->where('player_id', $user->playerProfile->id)
+                                            ->where('created_at', '>=', now()->subWeek())
+                                            ->count();
+                                    @endphp
+                                    {{ $lastWeek }}
+                                </p>
+                                <p class="text-xs text-indigo-600 mt-1">за последнюю неделю</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             <!-- Activity log -->
             <div class="bg-white rounded-lg shadow">
                 <div class="p-6 border-b border-gray-200">

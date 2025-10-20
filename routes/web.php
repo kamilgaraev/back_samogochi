@@ -48,6 +48,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 Route::patch('{id}/toggle-admin', [AdminWebController::class, 'userToggleAdmin'])->name('toggle-admin');
                 Route::post('{id}/assign-role', [AdminWebController::class, 'userAssignRole'])->name('assign-role');
                 Route::delete('{userId}/remove-role/{roleId}', [AdminWebController::class, 'userRemoveRole'])->name('remove-role');
+                Route::patch('{id}/update-metrics', [AdminWebController::class, 'updatePlayerMetrics'])->name('update-metrics');
             });
         });
         

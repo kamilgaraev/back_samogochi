@@ -211,6 +211,9 @@ class AdminWebController extends Controller
             'consecutive_days' => $profile->consecutive_days,
         ];
         
+        $calculatedLevel = floor($validated['total_experience'] / 100) + 1;
+        $validated['level'] = $calculatedLevel;
+        
         $profile->update($validated);
         
         ActivityLog::create([

@@ -80,7 +80,10 @@ class PlayerProfile extends Model
     {
         $oldLevel = $this->current_level;
         $this->increment('total_experience', $amount);
+        $this->refresh();
         $newLevel = $this->current_level;
+
+        $this->update(['level' => $newLevel]);
 
         if ($newLevel > $oldLevel) {
             event('player.level_up', ['player' => $this, 'old_level' => $oldLevel, 'new_level' => $newLevel]);

@@ -30,6 +30,8 @@ Schedule::job(new DailyRewardJob)->daily();
 
 Schedule::job(new UpdateRealtimeMetrics)->everyMinute();
 
+Schedule::command('players:recalculate-levels')->hourly();
+
 Schedule::command('game:send-end-emails')
     ->dailyAt('12:00')
     ->when(function () {

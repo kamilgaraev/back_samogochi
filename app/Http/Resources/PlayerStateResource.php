@@ -16,6 +16,10 @@ class PlayerStateResource extends JsonResource
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
+            'user' => [
+                'name' => $this->user->name,
+                'email' => $this->user->email,
+            ],
             'level' => $this->level,
             'experience' => [
                 'total' => $this->total_experience,

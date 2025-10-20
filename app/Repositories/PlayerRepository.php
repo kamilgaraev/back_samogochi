@@ -11,12 +11,12 @@ class PlayerRepository
 {
     public function findByUserId(int $userId): ?PlayerProfile
     {
-        return PlayerProfile::where('user_id', $userId)->first();
+        return PlayerProfile::with('user')->where('user_id', $userId)->first();
     }
 
     public function findById(int $id): ?PlayerProfile
     {
-        return PlayerProfile::find($id);
+        return PlayerProfile::with('user')->find($id);
     }
 
     public function updateProfile(int $userId, array $data): bool

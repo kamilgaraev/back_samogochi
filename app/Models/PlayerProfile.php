@@ -76,14 +76,37 @@ class PlayerProfile extends Model
         return $this->last_daily_reward->startOfDay() < now()->startOfDay();
     }
 
+    public function recalculateLevel(): bool
+    {
+        $calculatedLevel = floor($this->total_experience / 100) + 1;
+        
+        if ($calculatedLevel !== $this->level) {
+            $oldLevel = $this->level;
+            $this->update(['level' => $calculatedLevel]);
+            
+            if ($calculatedLevel > $oldLevel) {
+                $customizationService = app(\App\Services\CustomizationService::class);
+                $customizationService->unlockItemsForLevel($this->id, $calculatedLevel);
+            }
+            
+            return true;
+        }
+        
+        return false;
+    }
+
     public function addExperience($amount)
     {
-        $oldLevel = $this->current_level;
-        $this->increment('total_experience', $amount);
-        $this->refresh();
-        $newLevel = $this->current_level;
+        $oldLevel = $this->level;
+        $newTotalExperience = $this->total_experience + $amount;
+        $newLevel = floor($newTotalExperience / 100) + 1;
 
-        $this->update(['level' => $newLevel]);
+        $this->update([
+            'total_experience' => $newTotalExperience,
+            'level' => $newLevel
+        ]);
+
+        $this->refresh();
 
         if ($newLevel > $oldLevel) {
             event('player.level_up', ['player' => $this, 'old_level' => $oldLevel, 'new_level' => $newLevel]);

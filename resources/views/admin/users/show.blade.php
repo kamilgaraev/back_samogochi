@@ -199,18 +199,6 @@
                             @method('PATCH')
                             
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <!-- Level -->
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                                        <i class="fas fa-level-up-alt text-blue-500 mr-1"></i>
-                                        Уровень (1-100)
-                                    </label>
-                                    <input type="number" name="level" 
-                                           value="{{ $user->playerProfile->level }}"
-                                           min="1" max="100" step="1"
-                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                </div>
-
                                 <!-- Total Experience -->
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -218,9 +206,29 @@
                                         Общий опыт (0-100000)
                                     </label>
                                     <input type="number" name="total_experience" 
+                                           id="total_experience"
                                            value="{{ $user->playerProfile->total_experience }}"
                                            min="0" max="100000" step="1"
+                                           onchange="updateCalculatedLevel()"
                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    <p class="text-xs text-gray-500 mt-1">Уровень рассчитается автоматически: каждые 100 опыта = 1 уровень</p>
+                                </div>
+
+                                <!-- Level (calculated) -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="fas fa-level-up-alt text-blue-500 mr-1"></i>
+                                        Уровень (рассчитывается автоматически)
+                                    </label>
+                                    <input type="number" name="level" 
+                                           id="calculated_level"
+                                           value="{{ $user->playerProfile->level }}"
+                                           readonly
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-700 cursor-not-allowed">
+                                    <p class="text-xs text-indigo-600 mt-1">
+                                        <i class="fas fa-calculator mr-1"></i>
+                                        Будет: <span id="level_preview">{{ floor($user->playerProfile->total_experience / 100) + 1 }}</span>
+                                    </p>
                                 </div>
 
                                 <!-- Energy -->
@@ -681,3 +689,23 @@
 @endcan
 
 @endsection
+
+@push('scripts')
+<script>
+function updateCalculatedLevel() {
+    const experience = parseInt(document.getElementById('total_experience').value) || 0;
+    const calculatedLevel = Math.floor(experience / 100) + 1;
+    
+    document.getElementById('calculated_level').value = calculatedLevel;
+    document.getElementById('level_preview').textContent = calculatedLevel;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const experienceInput = document.getElementById('total_experience');
+    if (experienceInput) {
+        experienceInput.addEventListener('input', updateCalculatedLevel);
+        experienceInput.addEventListener('change', updateCalculatedLevel);
+    }
+});
+</script>
+@endpush

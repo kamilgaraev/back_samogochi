@@ -42,12 +42,7 @@ class RecalculatePlayerLevels extends Command
                     try {
                         DB::beginTransaction();
                         
-                        $player->update(['level' => $calculatedLevel]);
-                        
-                        if ($calculatedLevel > $currentLevel) {
-                            $customizationService = app(\App\Services\CustomizationService::class);
-                            $customizationService->unlockItemsForLevel($player->id, $calculatedLevel);
-                        }
+                        $player->recalculateLevel();
                         
                         DB::commit();
                         $updated++;

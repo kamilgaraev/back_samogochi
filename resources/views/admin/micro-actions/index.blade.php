@@ -174,22 +174,26 @@
                                 {!! $categoryHtml !!}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
+                                @php
+                                    $positionLabels = [
+                                        'desktop' => '💻 Компьютер',
+                                        'phone' => '📱 Телефон',
+                                        'tablet' => '📊 Планшет',
+                                        'tv' => '📺 Телевизор',
+                                        'speaker' => '🔊 Колонка',
+                                        'bookshelf' => '📚 Полка',
+                                        'kitchen' => '🍳 Кухня',
+                                        'table' => '🪑 Стол',
+                                        'wallClock' => '🕐 Часы',
+                                        'lapTop' => '💻 Ноутбук',
+                                        'fridge' => '🧊 Холодильник',
+                                        'trashCan' => '🗑️ Корзина',
+                                        'bed' => '🛏️ Кровать',
+                                        'mirror' => '🪞 Зеркало'
+                                    ];
+                                @endphp
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                    @if($microAction->position === 'phone')
-                                        📱 Телефон
-                                    @elseif($microAction->position === 'tablet')
-                                        📊 Планшет
-                                    @elseif($microAction->position === 'tv')
-                                        📺 Телевизор
-                                    @elseif($microAction->position === 'speaker')
-                                        🔊 Колонка
-                                    @elseif($microAction->position === 'bookshelf')
-                                        📚 Полка
-                                    @elseif($microAction->position === 'kitchen')
-                                        🍳 Кухня
-                                    @else
-                                        💻 Компьютер
-                                    @endif
+                                    {{ $positionLabels[$microAction->position] ?? '💻 Компьютер' }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -249,12 +253,22 @@
                 </table>
             </div>
             
-            <!-- Pagination would go here if implemented -->
             @if($pagination['total_pages'] > 1)
             <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
                 <div class="flex items-center justify-between">
                     <div class="flex-1 flex justify-between sm:hidden">
-                        <!-- Mobile pagination -->
+                        @if($pagination['current_page'] > 1)
+                            <a href="{{ request()->fullUrlWithQuery(['page' => $pagination['current_page'] - 1]) }}" 
+                               class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                Предыдущая
+                            </a>
+                        @endif
+                        @if($pagination['current_page'] < $pagination['total_pages'])
+                            <a href="{{ request()->fullUrlWithQuery(['page' => $pagination['current_page'] + 1]) }}" 
+                               class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                Следующая
+                            </a>
+                        @endif
                     </div>
                     <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                         <div>
@@ -267,6 +281,75 @@
                                 <span class="font-medium">{{ $pagination['total'] }}</span>
                                 результатов
                             </p>
+                        </div>
+                        <div>
+                            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                                @if($pagination['current_page'] > 1)
+                                    <a href="{{ request()->fullUrlWithQuery(['page' => $pagination['current_page'] - 1]) }}" 
+                                       class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                        <span class="sr-only">Предыдущая</span>
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                @else
+                                    <span class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-gray-100 text-sm font-medium text-gray-400 cursor-not-allowed">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                @endif
+
+                                @php
+                                    $start = max(1, $pagination['current_page'] - 2);
+                                    $end = min($pagination['total_pages'], $pagination['current_page'] + 2);
+                                @endphp
+
+                                @if($start > 1)
+                                    <a href="{{ request()->fullUrlWithQuery(['page' => 1]) }}" 
+                                       class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                        1
+                                    </a>
+                                    @if($start > 2)
+                                        <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                                            ...
+                                        </span>
+                                    @endif
+                                @endif
+
+                                @for($i = $start; $i <= $end; $i++)
+                                    @if($i == $pagination['current_page'])
+                                        <span class="z-10 bg-blue-50 border-blue-500 text-blue-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                            {{ $i }}
+                                        </span>
+                                    @else
+                                        <a href="{{ request()->fullUrlWithQuery(['page' => $i]) }}" 
+                                           class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                            {{ $i }}
+                                        </a>
+                                    @endif
+                                @endfor
+
+                                @if($end < $pagination['total_pages'])
+                                    @if($end < $pagination['total_pages'] - 1)
+                                        <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                                            ...
+                                        </span>
+                                    @endif
+                                    <a href="{{ request()->fullUrlWithQuery(['page' => $pagination['total_pages']]) }}" 
+                                       class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                        {{ $pagination['total_pages'] }}
+                                    </a>
+                                @endif
+
+                                @if($pagination['current_page'] < $pagination['total_pages'])
+                                    <a href="{{ request()->fullUrlWithQuery(['page' => $pagination['current_page'] + 1]) }}" 
+                                       class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                        <span class="sr-only">Следующая</span>
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                @else
+                                    <span class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-gray-100 text-sm font-medium text-gray-400 cursor-not-allowed">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                @endif
+                            </nav>
                         </div>
                     </div>
                 </div>

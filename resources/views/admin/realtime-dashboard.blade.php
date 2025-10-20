@@ -194,7 +194,7 @@
 
     </div>
 
-    <!-- Charts Row -->
+    <!-- Charts Row 1 -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         <!-- Players Activity Chart -->
@@ -216,6 +216,114 @@
             </h3>
             <div style="height: 300px;">
                 <canvas id="system-performance-chart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Charts Row 2 -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Players Level Distribution -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">
+                <i class="fas fa-chart-bar text-purple-600 mr-2"></i>
+                Распределение игроков по уровням
+            </h3>
+            <div style="height: 300px;">
+                <canvas id="level-distribution-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Stress & Energy Over Time -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">
+                <i class="fas fa-heartbeat text-red-600 mr-2"></i>
+                Стресс и Энергия (24 часа)
+            </h3>
+            <div style="height: 300px;">
+                <canvas id="stress-energy-chart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Charts Row 3 -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Situation Categories -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">
+                <i class="fas fa-chart-pie text-indigo-600 mr-2"></i>
+                Популярные категории ситуаций
+            </h3>
+            <div style="height: 300px;">
+                <canvas id="situation-categories-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Activity by Hour -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">
+                <i class="fas fa-clock text-orange-600 mr-2"></i>
+                Активность по времени суток
+            </h3>
+            <div style="height: 300px;">
+                <canvas id="hourly-activity-chart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Charts Row 4 -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Top Micro Actions -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">
+                <i class="fas fa-bolt text-yellow-600 mr-2"></i>
+                Топ-10 микро-действий
+            </h3>
+            <div style="height: 300px;">
+                <canvas id="top-micro-actions-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Progress & Achievements -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">
+                <i class="fas fa-trophy text-yellow-500 mr-2"></i>
+                Прогресс и выполнение целей
+            </h3>
+            <div style="height: 300px;">
+                <canvas id="progress-chart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Charts Row 5 -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Conversion Funnel -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">
+                <i class="fas fa-filter text-teal-600 mr-2"></i>
+                Воронка конверсии новичков
+            </h3>
+            <div style="height: 300px;">
+                <canvas id="conversion-funnel-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Platform Distribution -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">
+                <i class="fas fa-mobile-alt text-pink-600 mr-2"></i>
+                Распределение по платформам
+            </h3>
+            <div style="height: 300px;">
+                <canvas id="platform-distribution-chart"></canvas>
             </div>
         </div>
 
@@ -379,6 +487,193 @@ class RealtimeMetrics {
                 }
             }
         });
+
+        // Level Distribution Chart
+        const levelCtx = document.getElementById('level-distribution-chart').getContext('2d');
+        this.charts.levelDistribution = new Chart(levelCtx, {
+            type: 'bar',
+            data: {
+                labels: ['1-5', '6-10', '11-15', '16-20', '21-25', '26-30', '31+'],
+                datasets: [{
+                    label: 'Количество игроков',
+                    data: [0, 0, 0, 0, 0, 0, 0],
+                    backgroundColor: 'rgba(147, 51, 234, 0.7)',
+                    borderColor: 'rgb(147, 51, 234)',
+                    borderWidth: 2
+                }]
+            },
+            options: chartOptions
+        });
+
+        // Stress & Energy Chart
+        const stressEnergyCtx = document.getElementById('stress-energy-chart').getContext('2d');
+        this.charts.stressEnergy = new Chart(stressEnergyCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'Средний стресс',
+                        data: [],
+                        borderColor: 'rgb(239, 68, 68)',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Средняя энергия',
+                        data: [],
+                        borderColor: 'rgb(16, 185, 129)',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }
+                ]
+            },
+            options: chartOptions
+        });
+
+        // Situation Categories Chart
+        const categoriesCtx = document.getElementById('situation-categories-chart').getContext('2d');
+        this.charts.situationCategories = new Chart(categoriesCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Работа', 'Учёба', 'Личное', 'Здоровье'],
+                datasets: [{
+                    data: [0, 0, 0, 0],
+                    backgroundColor: [
+                        'rgba(59, 130, 246, 0.7)',
+                        'rgba(16, 185, 129, 0.7)',
+                        'rgba(249, 115, 22, 0.7)',
+                        'rgba(236, 72, 153, 0.7)'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    }
+                }
+            }
+        });
+
+        // Hourly Activity Chart
+        const hourlyCtx = document.getElementById('hourly-activity-chart').getContext('2d');
+        this.charts.hourlyActivity = new Chart(hourlyCtx, {
+            type: 'line',
+            data: {
+                labels: ['00', '02', '04', '06', '08', '10', '12', '14', '16', '18', '20', '22'],
+                datasets: [{
+                    label: 'Активность',
+                    data: [],
+                    borderColor: 'rgb(249, 115, 22)',
+                    backgroundColor: 'rgba(249, 115, 22, 0.3)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: chartOptions
+        });
+
+        // Top Micro Actions Chart
+        const topActionsCtx = document.getElementById('top-micro-actions-chart').getContext('2d');
+        this.charts.topMicroActions = new Chart(topActionsCtx, {
+            type: 'bar',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Использований',
+                    data: [],
+                    backgroundColor: 'rgba(234, 179, 8, 0.7)',
+                    borderColor: 'rgb(234, 179, 8)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...chartOptions,
+                indexAxis: 'y'
+            }
+        });
+
+        // Progress Chart
+        const progressCtx = document.getElementById('progress-chart').getContext('2d');
+        this.charts.progress = new Chart(progressCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Новички', 'Опытные', 'Мастера', 'Эксперты'],
+                datasets: [
+                    {
+                        label: 'Завершено ситуаций',
+                        data: [],
+                        backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                        borderColor: 'rgb(16, 185, 129)',
+                        borderWidth: 2
+                    },
+                    {
+                        label: 'Выполнено действий',
+                        data: [],
+                        backgroundColor: 'rgba(234, 179, 8, 0.7)',
+                        borderColor: 'rgb(234, 179, 8)',
+                        borderWidth: 2
+                    }
+                ]
+            },
+            options: chartOptions
+        });
+
+        // Conversion Funnel Chart
+        const funnelCtx = document.getElementById('conversion-funnel-chart').getContext('2d');
+        this.charts.conversionFunnel = new Chart(funnelCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Регистрация', 'Первый вход', 'Первая ситуация', 'День 7', 'День 30'],
+                datasets: [{
+                    label: 'Пользователей',
+                    data: [],
+                    backgroundColor: [
+                        'rgba(20, 184, 166, 0.9)',
+                        'rgba(20, 184, 166, 0.7)',
+                        'rgba(20, 184, 166, 0.5)',
+                        'rgba(20, 184, 166, 0.3)',
+                        'rgba(20, 184, 166, 0.2)'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: chartOptions
+        });
+
+        // Platform Distribution Chart
+        const platformCtx = document.getElementById('platform-distribution-chart').getContext('2d');
+        this.charts.platformDistribution = new Chart(platformCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Desktop', 'Mobile', 'Tablet', 'Other'],
+                datasets: [{
+                    data: [0, 0, 0, 0],
+                    backgroundColor: [
+                        'rgba(59, 130, 246, 0.7)',
+                        'rgba(236, 72, 153, 0.7)',
+                        'rgba(168, 85, 247, 0.7)',
+                        'rgba(156, 163, 175, 0.7)'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    }
+                }
+            }
+        });
     }
 
     async fetchMetrics() {
@@ -487,6 +782,56 @@ class RealtimeMetrics {
             this.charts.systemPerformance.data.datasets[0].data = responseData;
             this.charts.systemPerformance.data.datasets[1].data = cpuData;
             this.charts.systemPerformance.update('none');
+        }
+
+        if (charts.level_distribution) {
+            this.charts.levelDistribution.data.datasets[0].data = charts.level_distribution;
+            this.charts.levelDistribution.update('none');
+        }
+
+        if (charts.stress_energy && charts.stress_energy.length > 0) {
+            const labels = charts.stress_energy.map(item => 
+                new Date(item.timestamp).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+            );
+            const stressData = charts.stress_energy.map(item => parseFloat(item.stress) || 0);
+            const energyData = charts.stress_energy.map(item => parseFloat(item.energy) || 0);
+            
+            this.charts.stressEnergy.data.labels = labels;
+            this.charts.stressEnergy.data.datasets[0].data = stressData;
+            this.charts.stressEnergy.data.datasets[1].data = energyData;
+            this.charts.stressEnergy.update('none');
+        }
+
+        if (charts.situation_categories) {
+            this.charts.situationCategories.data.datasets[0].data = charts.situation_categories;
+            this.charts.situationCategories.update('none');
+        }
+
+        if (charts.hourly_activity) {
+            this.charts.hourlyActivity.data.datasets[0].data = charts.hourly_activity;
+            this.charts.hourlyActivity.update('none');
+        }
+
+        if (charts.top_micro_actions) {
+            this.charts.topMicroActions.data.labels = charts.top_micro_actions.labels || [];
+            this.charts.topMicroActions.data.datasets[0].data = charts.top_micro_actions.data || [];
+            this.charts.topMicroActions.update('none');
+        }
+
+        if (charts.progress) {
+            this.charts.progress.data.datasets[0].data = charts.progress.situations || [];
+            this.charts.progress.data.datasets[1].data = charts.progress.actions || [];
+            this.charts.progress.update('none');
+        }
+
+        if (charts.conversion_funnel) {
+            this.charts.conversionFunnel.data.datasets[0].data = charts.conversion_funnel;
+            this.charts.conversionFunnel.update('none');
+        }
+
+        if (charts.platform_distribution) {
+            this.charts.platformDistribution.data.datasets[0].data = charts.platform_distribution;
+            this.charts.platformDistribution.update('none');
         }
     }
 

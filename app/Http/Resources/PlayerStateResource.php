@@ -23,9 +23,9 @@ class PlayerStateResource extends JsonResource
             'level' => $this->level,
             'experience' => [
                 'total' => $this->total_experience,
-                'current_level' => $this->total_experience - (($this->level - 1) * $this->getExperiencePerLevel()),
-                'to_next_level' => ($this->level * $this->getExperiencePerLevel()) - $this->total_experience,
-                'progress_percentage' => round(((($this->total_experience - (($this->level - 1) * $this->getExperiencePerLevel())) / $this->getExperiencePerLevel()) * 100), 1),
+                'current_level' => \App\Services\GameConfigService::getExperienceInCurrentLevel($this->total_experience, $this->level),
+                'to_next_level' => \App\Services\GameConfigService::getExperienceToNextLevel($this->total_experience, $this->level),
+                'progress_percentage' => $this->getProgressPercentage(),
             ],
             'energy' => [
                 'current' => $this->energy,
@@ -120,9 +120,17 @@ class PlayerStateResource extends JsonResource
         return $gameBalance['max_energy'] ?? 200;
     }
 
-    private function getExperiencePerLevel(): int
+    private function getProgressPercentage(): float
     {
-        $gameBalance = \App\Models\GameConfig::getGameBalance();
-        return $gameBalance['experience_per_level'] ?? 100;
+        $experienceInCurrentLevel = \App\Services\GameConfigService::getExperienceInCurrentLevel($this->total_experience, $this->level);
+        $nextLevelExp = \App\Services\GameConfigService::getExperienceForLevel($this->level + 1);
+        $currentLevelExp = \App\Services\GameConfigService::getExperienceForLevel($this->level);
+        $expForThisLevel = $nextLevelExp - $currentLevelExp;
+        
+        if ($expForThisLevel <= 0) {
+            return 0;
+        }
+        
+        return round(($experienceInCurrentLevel / $expForThisLevel) * 100, 1);
     }
 }

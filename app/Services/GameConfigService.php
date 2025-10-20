@@ -63,4 +63,65 @@ class GameConfigService
     {
         return GameConfig::getGameBalance()['disable_micro_actions_during_sleep'] ?? config('game.disable_micro_actions_during_sleep', true);
     }
+
+    public static function getLevelRequirements(): array
+    {
+        return GameConfig::getLevelRequirements();
+    }
+
+    public static function calculateLevelFromExperience(int $totalExperience): int
+    {
+        $requirements = self::getLevelRequirements();
+        
+        if (empty($requirements)) {
+            $expPerLevel = self::getExperiencePerLevel();
+            return floor($totalExperience / $expPerLevel) + 1;
+        }
+
+        $level = 1;
+        foreach ($requirements as $req) {
+            if ($totalExperience >= $req['experience']) {
+                $level = $req['level'];
+            } else {
+                break;
+            }
+        }
+        
+        return $level;
+    }
+
+    public static function getExperienceForLevel(int $level): int
+    {
+        $requirements = self::getLevelRequirements();
+        
+        if (empty($requirements)) {
+            return ($level - 1) * self::getExperiencePerLevel();
+        }
+
+        foreach ($requirements as $req) {
+            if ($req['level'] == $level) {
+                return $req['experience'];
+            }
+        }
+
+        $lastReq = end($requirements);
+        if ($level > $lastReq['level']) {
+            $expPerLevel = self::getExperiencePerLevel();
+            return $lastReq['experience'] + (($level - $lastReq['level']) * $expPerLevel);
+        }
+        
+        return 0;
+    }
+
+    public static function getExperienceToNextLevel(int $totalExperience, int $currentLevel): int
+    {
+        $nextLevelExp = self::getExperienceForLevel($currentLevel + 1);
+        return max(0, $nextLevelExp - $totalExperience);
+    }
+
+    public static function getExperienceInCurrentLevel(int $totalExperience, int $currentLevel): int
+    {
+        $currentLevelExp = self::getExperienceForLevel($currentLevel);
+        return max(0, $totalExperience - $currentLevelExp);
+    }
 }

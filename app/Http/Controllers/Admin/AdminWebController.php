@@ -211,8 +211,7 @@ class AdminWebController extends Controller
             'consecutive_days' => $profile->consecutive_days,
         ];
         
-        $expPerLevel = \App\Services\GameConfigService::getExperiencePerLevel();
-        $calculatedLevel = floor($validated['total_experience'] / $expPerLevel) + 1;
+        $calculatedLevel = \App\Services\GameConfigService::calculateLevelFromExperience($validated['total_experience']);
         $validated['level'] = $calculatedLevel;
         
         $profile->update($validated);

@@ -11,8 +11,18 @@ class PlayerProfileResource extends JsonResource
     public function toArray(Request $request): array
     {
         $stressLevel = StressLevel::fromValue($this->stress);
-        $expPerLevel = \App\Services\GameConfigService::getExperiencePerLevel();
         $maxEnergy = \App\Services\GameConfigService::getMaxEnergy();
+        
+        $experienceInCurrentLevel = \App\Services\GameConfigService::getExperienceInCurrentLevel($this->total_experience, $this->level);
+        $experienceToNextLevel = \App\Services\GameConfigService::getExperienceToNextLevel($this->total_experience, $this->level);
+        
+        $nextLevelExp = \App\Services\GameConfigService::getExperienceForLevel($this->level + 1);
+        $currentLevelExp = \App\Services\GameConfigService::getExperienceForLevel($this->level);
+        $expForThisLevel = $nextLevelExp - $currentLevelExp;
+        
+        $progressPercentage = $expForThisLevel > 0 
+            ? ($experienceInCurrentLevel / $expForThisLevel) * 100 
+            : 0;
         
         return [
             'id' => $this->id,
@@ -20,9 +30,9 @@ class PlayerProfileResource extends JsonResource
             'level' => $this->level,
             'total_experience' => $this->total_experience,
             'experience_progress' => [
-                'current_level_experience' => $this->total_experience - (($this->level - 1) * $expPerLevel),
-                'experience_to_next_level' => ($this->level * $expPerLevel) - $this->total_experience,
-                'progress_percentage' => ((($this->total_experience - (($this->level - 1) * $expPerLevel)) / $expPerLevel) * 100),
+                'current_level_experience' => $experienceInCurrentLevel,
+                'experience_to_next_level' => $experienceToNextLevel,
+                'progress_percentage' => round($progressPercentage, 1),
             ],
             'energy' => [
                 'current' => $this->energy,

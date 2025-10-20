@@ -54,14 +54,12 @@ class PlayerProfile extends Model
 
     public function getCurrentLevelAttribute()
     {
-        $expPerLevel = GameConfig::getGameBalance()['experience_per_level'] ?? 100;
-        return floor($this->total_experience / $expPerLevel) + 1;
+        return \App\Services\GameConfigService::calculateLevelFromExperience($this->total_experience);
     }
 
     public function getExperienceToNextLevelAttribute()
     {
-        $expPerLevel = GameConfig::getGameBalance()['experience_per_level'] ?? 100;
-        return $expPerLevel - ($this->total_experience % $expPerLevel);
+        return \App\Services\GameConfigService::getExperienceToNextLevel($this->total_experience, $this->level);
     }
 
     public function updateLastLogin()
@@ -80,8 +78,7 @@ class PlayerProfile extends Model
 
     public function recalculateLevel(): bool
     {
-        $expPerLevel = GameConfig::getGameBalance()['experience_per_level'] ?? 100;
-        $calculatedLevel = floor($this->total_experience / $expPerLevel) + 1;
+        $calculatedLevel = \App\Services\GameConfigService::calculateLevelFromExperience($this->total_experience);
         
         if ($calculatedLevel !== $this->level) {
             $oldLevel = $this->level;
@@ -100,10 +97,9 @@ class PlayerProfile extends Model
 
     public function addExperience($amount)
     {
-        $expPerLevel = GameConfig::getGameBalance()['experience_per_level'] ?? 100;
         $oldLevel = $this->level;
         $newTotalExperience = $this->total_experience + $amount;
-        $newLevel = floor($newTotalExperience / $expPerLevel) + 1;
+        $newLevel = \App\Services\GameConfigService::calculateLevelFromExperience($newTotalExperience);
 
         $this->update([
             'total_experience' => $newTotalExperience,

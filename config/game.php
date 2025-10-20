@@ -9,4 +9,7 @@ return [
     'stress_threshold_high' => 80,
     'stress_threshold_low' => 20,
     'experience_per_level' => 100,
+    'situations_before_sleep' => 10,
+    'sleep_duration_minutes' => 480,
+    'disable_micro_actions_during_sleep' => true,
 ];

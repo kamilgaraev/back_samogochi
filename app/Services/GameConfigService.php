@@ -54,9 +54,9 @@ class GameConfigService
         return GameConfig::getGameBalance()['situations_before_sleep'] ?? config('game.situations_before_sleep', 10);
     }
 
-    public static function getSleepDurationHours(): int
+    public static function getSleepDurationMinutes(): int
     {
-        return GameConfig::getGameBalance()['sleep_duration_hours'] ?? config('game.sleep_duration_hours', 8);
+        return GameConfig::getGameBalance()['sleep_duration_minutes'] ?? config('game.sleep_duration_minutes', 480);
     }
 
     public static function isMicroActionsDisabledDuringSleep(): bool

@@ -22,7 +22,7 @@ class GameConfigSeeder extends Seeder
                     'micro_action_cooldown_minutes' => 30,
                     'experience_per_level' => 100,
                     'situations_before_sleep' => 10,
-                    'sleep_duration_hours' => 8,
+                    'sleep_duration_minutes' => 480,
                     'disable_micro_actions_during_sleep' => true
                 ],
                 'description' => 'Основные игровые константы для баланса',

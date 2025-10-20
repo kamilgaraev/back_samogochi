@@ -149,10 +149,10 @@ class PlayerProfile extends Model
     public function putToSleep(): void
     {
         $sleepConfig = GameConfig::getGameBalance();
-        $sleepDurationHours = $sleepConfig['sleep_duration_hours'] ?? 8;
+        $sleepDurationMinutes = $sleepConfig['sleep_duration_minutes'] ?? 480;
 
         $this->update([
-            'sleeping_until' => now()->addHours($sleepDurationHours),
+            'sleeping_until' => now()->addMinutes($sleepDurationMinutes),
             'completed_situations_since_sleep' => 0,
         ]);
     }

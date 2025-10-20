@@ -188,17 +188,18 @@ class PlayerRepository
 
     private function getLevelProgress(PlayerProfile $player): array
     {
+        $expPerLevel = \App\Services\GameConfigService::getExperiencePerLevel();
         $currentLevel = $player->level;
         $totalExperience = $player->total_experience;
         
-        $experienceForCurrentLevel = ($currentLevel - 1) * 100;
-        $experienceForNextLevel = $currentLevel * 100;
+        $experienceForCurrentLevel = ($currentLevel - 1) * $expPerLevel;
+        $experienceForNextLevel = $currentLevel * $expPerLevel;
         
         $experienceInCurrentLevel = $totalExperience - $experienceForCurrentLevel;
         $experienceNeededForNextLevel = $experienceForNextLevel - $totalExperience;
         
         $progressPercentage = $experienceInCurrentLevel > 0 
-            ? ($experienceInCurrentLevel / 100) * 100 
+            ? ($experienceInCurrentLevel / $expPerLevel) * 100 
             : 0;
 
         return [

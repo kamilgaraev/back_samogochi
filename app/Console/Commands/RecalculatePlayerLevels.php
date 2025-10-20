@@ -31,7 +31,8 @@ class RecalculatePlayerLevels extends Command
         $this->output->progressStart($players->count());
 
         foreach ($players as $player) {
-            $calculatedLevel = floor($player->total_experience / 100) + 1;
+            $expPerLevel = \App\Services\GameConfigService::getExperiencePerLevel();
+            $calculatedLevel = floor($player->total_experience / $expPerLevel) + 1;
             $currentLevel = $player->level;
 
             if ($calculatedLevel !== $currentLevel) {

@@ -11,6 +11,8 @@ class PlayerProfileResource extends JsonResource
     public function toArray(Request $request): array
     {
         $stressLevel = StressLevel::fromValue($this->stress);
+        $expPerLevel = \App\Services\GameConfigService::getExperiencePerLevel();
+        $maxEnergy = \App\Services\GameConfigService::getMaxEnergy();
         
         return [
             'id' => $this->id,
@@ -18,15 +20,15 @@ class PlayerProfileResource extends JsonResource
             'level' => $this->level,
             'total_experience' => $this->total_experience,
             'experience_progress' => [
-                'current_level_experience' => $this->total_experience % 100,
-                'experience_to_next_level' => 100 - ($this->total_experience % 100),
-                'progress_percentage' => (($this->total_experience % 100) / 100) * 100,
+                'current_level_experience' => $this->total_experience - (($this->level - 1) * $expPerLevel),
+                'experience_to_next_level' => ($this->level * $expPerLevel) - $this->total_experience,
+                'progress_percentage' => ((($this->total_experience - (($this->level - 1) * $expPerLevel)) / $expPerLevel) * 100),
             ],
             'energy' => [
                 'current' => $this->energy,
-                'max' => 200,
-                'percentage' => ($this->energy / 200) * 100,
-                'status' => $this->getEnergyStatus(),
+                'max' => $maxEnergy,
+                'percentage' => ($this->energy / $maxEnergy) * 100,
+                'status' => $this->getEnergyStatus($maxEnergy),
             ],
             'stress' => [
                 'current' => $this->stress,
@@ -56,9 +58,9 @@ class PlayerProfileResource extends JsonResource
         ];
     }
 
-    private function getEnergyStatus(): array
+    private function getEnergyStatus(int $maxEnergy): array
     {
-        $percentage = ($this->energy / 200) * 100;
+        $percentage = ($this->energy / $maxEnergy) * 100;
         
         if ($percentage >= 75) {
             return [

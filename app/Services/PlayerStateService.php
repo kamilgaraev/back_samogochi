@@ -54,8 +54,9 @@ class PlayerStateService
         }
 
         if (isset($oldData['total_experience']) && isset($newData['total_experience']) && $oldData['total_experience'] !== $newData['total_experience']) {
-            $oldLevel = floor($oldData['total_experience'] / 100) + 1;
-            $newLevel = floor($newData['total_experience'] / 100) + 1;
+            $expPerLevel = \App\Services\GameConfigService::getExperiencePerLevel();
+            $oldLevel = floor($oldData['total_experience'] / $expPerLevel) + 1;
+            $newLevel = floor($newData['total_experience'] / $expPerLevel) + 1;
             
             $changes['experience'] = [
                 'old_total' => $oldData['total_experience'],

@@ -227,7 +227,7 @@
                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-700 cursor-not-allowed">
                                     <p class="text-xs text-indigo-600 mt-1">
                                         <i class="fas fa-calculator mr-1"></i>
-                                        Будет: <span id="level_preview">{{ floor($user->playerProfile->total_experience / 100) + 1 }}</span>
+                                        Будет: <span id="level_preview">{{ floor($user->playerProfile->total_experience / (\App\Services\GameConfigService::getExperiencePerLevel())) + 1 }}</span>
                                     </p>
                                 </div>
 
@@ -692,9 +692,11 @@
 
 @push('scripts')
 <script>
+const EXP_PER_LEVEL = {{ \App\Services\GameConfigService::getExperiencePerLevel() }};
+
 function updateCalculatedLevel() {
     const experience = parseInt(document.getElementById('total_experience').value) || 0;
-    const calculatedLevel = Math.floor(experience / 100) + 1;
+    const calculatedLevel = Math.floor(experience / EXP_PER_LEVEL) + 1;
     
     document.getElementById('calculated_level').value = calculatedLevel;
     document.getElementById('level_preview').textContent = calculatedLevel;

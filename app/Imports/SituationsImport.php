@@ -63,6 +63,7 @@ class SituationsImport implements ToCollection, WithHeadingRow
                     'required_customization_key' => !empty($row['priviazka_k_kastomizatsii_character_1_1_i_td']) 
                         ? $row['priviazka_k_kastomizatsii_character_1_1_i_td'] 
                         : null,
+                    'link' => !empty($row['ssylka']) ? $row['ssylka'] : null,
                     'is_active' => !empty($row['aktivna_10']) && $row['aktivna_10'] == '1',
                 ]);
 

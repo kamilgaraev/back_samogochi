@@ -167,6 +167,24 @@
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
+                    
+                    <!-- Link -->
+                    <div>
+                        <label for="link" class="block text-sm font-medium text-gray-700 mb-1">
+                            Ссылка (необязательно)
+                        </label>
+                        <input type="text" 
+                               id="link" 
+                               name="link" 
+                               value="{{ old('link', $situation->link) }}"
+                               maxlength="500"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 @error('link') border-red-500 @enderror"
+                               placeholder="https://example.com/help">
+                        <p class="mt-1 text-xs text-gray-500">Ссылка произвольного формата для дополнительных действий</p>
+                        @error('link')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
                 
                 <!-- Game Parameters -->

@@ -22,6 +22,7 @@ class Situation extends Model
         'is_active',
         'position',
         'required_customization_key',
+        'link',
     ];
 
     protected function casts(): array

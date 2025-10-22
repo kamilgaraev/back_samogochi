@@ -30,6 +30,7 @@ class SituationResource extends JsonResource
             'stress_impact' => $this->stress_impact,
             'experience_reward' => $this->experience_reward,
             'is_active' => $this->is_active,
+            'link' => $this->link,
             'options' => SituationOptionResource::collection($this->whenLoaded('options')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

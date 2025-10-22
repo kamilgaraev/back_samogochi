@@ -177,6 +177,7 @@ class AdminService
                 'is_active' => $data['is_active'] ?? true,
                 'position' => $data['position'] ?? 'desktop',
                 'required_customization_key' => $data['required_customization_key'] ?? null,
+                'link' => $data['link'] ?? null,
             ]);
 
             if (isset($data['options'])) {
@@ -242,6 +243,7 @@ class AdminService
                 'is_active' => $data['is_active'] ?? $situation->is_active,
                 'position' => $data['position'] ?? $situation->position,
                 'required_customization_key' => array_key_exists('required_customization_key', $data) ? $data['required_customization_key'] : $situation->required_customization_key,
+                'link' => array_key_exists('link', $data) ? $data['link'] : $situation->link,
             ]);
 
             if (isset($data['options'])) {

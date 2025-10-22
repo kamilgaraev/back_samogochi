@@ -133,6 +133,21 @@
                     @enderror
                 </div>
                 
+                <!-- Link -->
+                <div>
+                    <label for="link" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-link mr-1"></i>Ссылка (необязательно)
+                    </label>
+                    <input type="text" name="link" id="link" maxlength="500"
+                           value="{{ old('link') }}"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('link') border-red-500 @enderror"
+                           placeholder="https://example.com/help">
+                    <p class="text-xs text-gray-500 mt-1">Ссылка произвольного формата для дополнительных действий</p>
+                    @error('link')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+                
                 <!-- Status -->
                 <div>
                     <label class="flex items-center">

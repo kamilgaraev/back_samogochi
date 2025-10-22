@@ -123,6 +123,7 @@ class SituationService
                     'stress_impact' => $situation->stress_impact,
                     'experience_reward' => $situation->experience_reward,
                     'position' => $situation->position,
+                    'link' => $situation->link,
                 ],
                 'options' => $availableOptions->map(function ($option) use ($player) {
                     $isAvailable = $option->min_level_required <= $player->level && $option->is_available;
@@ -186,6 +187,7 @@ class SituationService
                     'stress_impact' => $situation->stress_impact,
                     'experience_reward' => $situation->experience_reward,
                     'position' => $situation->position,
+                    'link' => $situation->link,
                 ],
                 'options' => $allOptions->values(),
                 'player_info' => [
@@ -285,7 +287,8 @@ class SituationService
                         'description' => $situation->description,
                         'category' => $situation->category,
                         'stress_impact' => $situation->stress_impact,
-                        'position' => $situation->position
+                        'position' => $situation->position,
+                        'link' => $situation->link
                     ],
                     'options' => $allOptions->values(),
                     'player_changes' => [
@@ -583,6 +586,7 @@ class SituationService
                     'stress_impact' => $situation->stress_impact,
                     'experience_reward' => $situation->experience_reward,
                     'position' => $situation->position,
+                    'link' => $situation->link,
                 ],
                 'options' => $allOptions->values(),
                 'player_info' => [
@@ -636,6 +640,7 @@ class SituationService
                             'stress_impact' => $activeSituation->situation->stress_impact,
                             'experience_reward' => $activeSituation->situation->experience_reward,
                             'position' => $activeSituation->situation->position,
+                            'link' => $activeSituation->situation->link,
                         ],
                         'options' => $allOptions->values(),
                         'started_at' => $activeSituation->created_at,

@@ -148,6 +148,21 @@
                     @enderror
                 </div>
                 
+                <!-- Article Title -->
+                <div>
+                    <label for="article_title" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-file-alt mr-1"></i>Название статьи (необязательно)
+                    </label>
+                    <input type="text" name="article_title" id="article_title" maxlength="255"
+                           value="{{ old('article_title') }}"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('article_title') border-red-500 @enderror"
+                           placeholder="Как решать конфликты на работе">
+                    <p class="text-xs text-gray-500 mt-1">Название статьи или материала, связанного с ситуацией</p>
+                    @error('article_title')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+                
                 <!-- Status -->
                 <div>
                     <label class="flex items-center">

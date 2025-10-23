@@ -178,6 +178,7 @@ class AdminService
                 'position' => $data['position'] ?? 'desktop',
                 'required_customization_key' => $data['required_customization_key'] ?? null,
                 'link' => $data['link'] ?? null,
+                'article_title' => $data['article_title'] ?? null,
             ]);
 
             if (isset($data['options'])) {
@@ -244,6 +245,7 @@ class AdminService
                 'position' => $data['position'] ?? $situation->position,
                 'required_customization_key' => array_key_exists('required_customization_key', $data) ? $data['required_customization_key'] : $situation->required_customization_key,
                 'link' => array_key_exists('link', $data) ? $data['link'] : $situation->link,
+                'article_title' => array_key_exists('article_title', $data) ? $data['article_title'] : $situation->article_title,
             ]);
 
             if (isset($data['options'])) {

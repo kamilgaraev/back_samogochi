@@ -185,6 +185,24 @@
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
+                    
+                    <!-- Article Title -->
+                    <div>
+                        <label for="article_title" class="block text-sm font-medium text-gray-700 mb-1">
+                            Название статьи (необязательно)
+                        </label>
+                        <input type="text" 
+                               id="article_title" 
+                               name="article_title" 
+                               value="{{ old('article_title', $situation->article_title) }}"
+                               maxlength="255"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 @error('article_title') border-red-500 @enderror"
+                               placeholder="Как решать конфликты на работе">
+                        <p class="mt-1 text-xs text-gray-500">Название статьи или материала, связанного с ситуацией</p>
+                        @error('article_title')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
                 
                 <!-- Game Parameters -->

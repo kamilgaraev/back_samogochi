@@ -64,6 +64,7 @@ class SituationsImport implements ToCollection, WithHeadingRow
                         ? $row['priviazka_k_kastomizatsii_character_1_1_i_td'] 
                         : null,
                     'link' => !empty($row['ssylka']) ? $row['ssylka'] : null,
+                    'article_title' => !empty($row['nazvanie_stati']) ? $row['nazvanie_stati'] : null,
                     'is_active' => !empty($row['aktivna_10']) && $row['aktivna_10'] == '1',
                 ]);
 

@@ -27,6 +27,7 @@ class SituationsTemplateExport implements FromCollection, WithHeadings, WithStyl
             'desktop',
             'Character_1_1',
             'https://example.com/help',
+            'Как решать конфликты на работе',
             '1',
         ];
 
@@ -52,6 +53,7 @@ class SituationsTemplateExport implements FromCollection, WithHeadings, WithStyl
             '15',
             '30',
             'desktop',
+            '',
             '',
             '',
             '1',
@@ -85,6 +87,7 @@ class SituationsTemplateExport implements FromCollection, WithHeadings, WithStyl
             'Позиция (desktop/phone/tablet/tv/speaker/bookshelf/kitchen/table/wallClock/lapTop/fridge/trashCan/bed/mirror)',
             'Привязка к кастомизации (Character_1_1 и т.д.)',
             'Ссылка',
+            'Название статьи',
             'Активна (1/0)',
         ];
 
@@ -116,7 +119,7 @@ class SituationsTemplateExport implements FromCollection, WithHeadings, WithStyl
     {
         return [
             AfterSheet::class => function(AfterSheet $event) {
-                $lastColumn = $this->numberToColumn(11 + 10 * 5);
+                $lastColumn = $this->numberToColumn(12 + 10 * 5);
                 $event->sheet->getDelegate()->getStyle("A1:{$lastColumn}1")->getAlignment()->setWrapText(true);
                 $event->sheet->getDelegate()->getRowDimension('1')->setRowHeight(50);
                 
@@ -136,7 +139,11 @@ class SituationsTemplateExport implements FromCollection, WithHeadings, WithStyl
                     "Ссылка произвольного формата (например URL для дополнительной информации или действий)"
                 );
 
-                $event->sheet->getDelegate()->getComment('L2')->getText()->createTextRun(
+                $event->sheet->getDelegate()->getComment('K2')->getText()->createTextRun(
+                    "Название статьи или материала, связанного с ситуацией"
+                );
+
+                $event->sheet->getDelegate()->getComment('M2')->getText()->createTextRun(
                     "Минимум 1 вариант обязателен.\nМожно добавить до 10 вариантов действий.\nОставьте пустыми ячейки для неиспользуемых вариантов."
                 );
             }

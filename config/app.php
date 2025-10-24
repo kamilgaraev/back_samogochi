@@ -54,7 +54,7 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
-    'frontend_url' => env('APP_FRONTEND_URL', 'https://dev.uit-lab.ru/stresshelp'),
+    'frontend_url' => env('APP_FRONTEND_URL', 'https://game.stresshelp.ru'),
 
     /*
     |--------------------------------------------------------------------------

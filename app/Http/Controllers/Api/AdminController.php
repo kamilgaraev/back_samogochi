@@ -81,6 +81,7 @@ class AdminController extends Controller
     public function situations(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'search' => 'sometimes|string|max:255',
             'category' => 'sometimes|string|in:' . \App\Enums\SituationCategory::getForValidation(),
             'difficulty_level' => 'sometimes|integer|min:1|max:5',
             'is_active' => 'sometimes|boolean'
@@ -95,7 +96,7 @@ class AdminController extends Controller
         }
 
         try {
-            $filters = $request->only(['category', 'difficulty_level', 'is_active']);
+            $filters = $request->only(['search', 'category', 'difficulty_level', 'is_active']);
             $result = $this->adminService->getSituations($filters);
 
             return response()->json([

@@ -4,8 +4,19 @@
 
 @section('header-actions')
 <div class="flex items-center space-x-4">
-    <!-- Filters -->
+    <!-- Search and Filters -->
     <form method="GET" class="flex items-center space-x-2">
+        <div class="relative">
+            <input type="text" 
+                   name="search" 
+                   value="{{ request('search') }}"
+                   placeholder="Поиск по названию или описанию..." 
+                   class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-80">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-search text-gray-400"></i>
+            </div>
+        </div>
+        
         <select name="category" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             <option value="">Все категории</option>
             @foreach(\App\Enums\SituationCategory::cases() as $category)
@@ -30,9 +41,17 @@
             <option value="0" {{ request('is_active') == '0' ? 'selected' : '' }}>Неактивные</option>
         </select>
         
-        <button type="submit" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700">
-            <i class="fas fa-filter mr-1"></i>Фильтр
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <i class="fas fa-search mr-1"></i>Поиск
         </button>
+        
+        @if(request()->hasAny(['search', 'category', 'difficulty_level', 'is_active']))
+            <a href="{{ route('admin.situations.index') }}" 
+               class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+               title="Сбросить фильтры">
+                <i class="fas fa-times mr-1"></i>Сбросить
+            </a>
+        @endif
     </form>
     
     <!-- Import/Export buttons -->
@@ -152,6 +171,52 @@
             </div>
         </div>
     </div>
+
+    <!-- Active filters info -->
+    @if(request()->hasAny(['search', 'category', 'difficulty_level', 'is_active']))
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div class="flex items-start justify-between">
+                <div>
+                    <h4 class="text-sm font-medium text-blue-900 mb-2">
+                        <i class="fas fa-filter mr-1"></i>Активные фильтры:
+                    </h4>
+                    <div class="flex flex-wrap gap-2">
+                        @if(request('search'))
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
+                                <i class="fas fa-search mr-2"></i>
+                                Поиск: "{{ request('search') }}"
+                            </span>
+                        @endif
+                        
+                        @if(request('category'))
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
+                                <i class="fas fa-tag mr-2"></i>
+                                Категория: {{ collect(\App\Enums\SituationCategory::cases())->firstWhere('value', request('category'))->getLabel() }}
+                            </span>
+                        @endif
+                        
+                        @if(request('difficulty_level'))
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
+                                <i class="fas fa-star mr-2"></i>
+                                Уровень: {{ request('difficulty_level') }}
+                            </span>
+                        @endif
+                        
+                        @if(request('is_active') !== null)
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
+                                <i class="fas fa-{{ request('is_active') == '1' ? 'check' : 'times' }}-circle mr-2"></i>
+                                {{ request('is_active') == '1' ? 'Активные' : 'Неактивные' }}
+                            </span>
+                        @endif
+                    </div>
+                </div>
+                <a href="{{ route('admin.situations.index') }}" 
+                   class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                    <i class="fas fa-times mr-1"></i>Сбросить все
+                </a>
+            </div>
+        </div>
+    @endif
 
     <!-- Situations table -->
     <div class="bg-white rounded-lg shadow overflow-hidden">
@@ -309,13 +374,25 @@
                     @empty
                         <tr>
                             <td colspan="8" class="px-6 py-12 text-center text-gray-500">
-                                <i class="fas fa-puzzle-piece text-4xl mb-4 opacity-50"></i>
-                                <p class="text-lg font-medium mb-2">Ситуации не найдены</p>
-                                <p class="text-sm">
-                                    <a href="{{ route('admin.situations.create') }}" class="text-blue-600 hover:text-blue-800">
-                                        Создать первую ситуацию <i class="fas fa-arrow-right ml-1"></i>
+                                @if(request()->hasAny(['search', 'category', 'difficulty_level', 'is_active']))
+                                    <i class="fas fa-search text-4xl mb-4 opacity-50"></i>
+                                    <p class="text-lg font-medium mb-2">По вашему запросу ничего не найдено</p>
+                                    <p class="text-sm mb-4">
+                                        Попробуйте изменить параметры поиска или фильтры
+                                    </p>
+                                    <a href="{{ route('admin.situations.index') }}" 
+                                       class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                        <i class="fas fa-times mr-2"></i>Сбросить фильтры
                                     </a>
-                                </p>
+                                @else
+                                    <i class="fas fa-puzzle-piece text-4xl mb-4 opacity-50"></i>
+                                    <p class="text-lg font-medium mb-2">Ситуации не найдены</p>
+                                    <p class="text-sm">
+                                        <a href="{{ route('admin.situations.create') }}" class="text-blue-600 hover:text-blue-800">
+                                            Создать первую ситуацию <i class="fas fa-arrow-right ml-1"></i>
+                                        </a>
+                                    </p>
+                                @endif
                             </td>
                         </tr>
                     @endforelse
@@ -329,10 +406,19 @@
                 <div class="flex items-center justify-between">
                     <div class="text-sm text-gray-700">
                         Показано {{ count($situations) }} из {{ $pagination['total'] }} ситуаций
+                        @if(request('search'))
+                            <span class="text-blue-600 font-medium ml-2">
+                                (поиск: "{{ request('search') }}")
+                            </span>
+                        @endif
                     </div>
                     <div class="flex space-x-2">
+                        @php
+                            $queryParams = request()->only(['search', 'category', 'difficulty_level', 'is_active']);
+                        @endphp
+                        
                         @if($pagination['current_page'] > 1)
-                            <a href="?page={{ $pagination['current_page'] - 1 }}" 
+                            <a href="?{{ http_build_query(array_merge($queryParams, ['page' => $pagination['current_page'] - 1])) }}" 
                                class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-500 hover:bg-gray-50">
                                 Назад
                             </a>
@@ -342,7 +428,7 @@
                             @if($i == $pagination['current_page'])
                                 <span class="px-3 py-2 bg-blue-600 text-white rounded-lg text-sm">{{ $i }}</span>
                             @else
-                                <a href="?page={{ $i }}" 
+                                <a href="?{{ http_build_query(array_merge($queryParams, ['page' => $i])) }}" 
                                    class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-500 hover:bg-gray-50">
                                     {{ $i }}
                                 </a>
@@ -350,7 +436,7 @@
                         @endfor
                         
                         @if($pagination['current_page'] < $pagination['total_pages'])
-                            <a href="?page={{ $pagination['current_page'] + 1 }}" 
+                            <a href="?{{ http_build_query(array_merge($queryParams, ['page' => $pagination['current_page'] + 1])) }}" 
                                class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-500 hover:bg-gray-50">
                                 Далее
                             </a>

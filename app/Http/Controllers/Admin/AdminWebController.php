@@ -294,7 +294,7 @@ class AdminWebController extends Controller
     {
         Gate::authorize('situations.view');
         
-        $filters = $request->only(['category', 'difficulty_level', 'is_active']);
+        $filters = $request->only(['search', 'category', 'difficulty_level', 'is_active']);
         $result = $this->adminService->getSituations($filters);
 
         return view('admin.situations.index', [
@@ -520,6 +520,15 @@ class AdminWebController extends Controller
         }
 
         return redirect()->route('admin.micro-actions.index')->with('success', $result['message']);
+    }
+
+    public function microActionsDeleteAll()
+    {
+        Gate::authorize('situations.delete');
+
+        $result = $this->adminService->deleteAllMicroActions(auth()->id());
+
+        return response()->json($result, $result['success'] ? 200 : 400);
     }
 
     // === КОНФИГУРАЦИИ ИГРЫ ===

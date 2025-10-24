@@ -133,6 +133,15 @@ class AdminService
     {
         $query = Situation::with(['options']);
 
+        if (isset($filters['search']) && !empty($filters['search'])) {
+            $searchTerm = $filters['search'];
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('title', 'LIKE', '%' . $searchTerm . '%')
+                  ->orWhere('description', 'LIKE', '%' . $searchTerm . '%')
+                  ->orWhere('article_title', 'LIKE', '%' . $searchTerm . '%');
+            });
+        }
+
         if (isset($filters['category'])) {
             $query->where('category', $filters['category']);
         }
@@ -175,7 +184,7 @@ class AdminService
                 'stress_impact' => $data['stress_impact'],
                 'experience_reward' => $data['experience_reward'],
                 'is_active' => $data['is_active'] ?? true,
-                'position' => $data['position'] ?? 'desktop',
+                'position' => $data['position'] ?? 'phone',
                 'required_customization_key' => $data['required_customization_key'] ?? null,
                 'link' => $data['link'] ?? null,
                 'article_title' => $data['article_title'] ?? null,
@@ -511,7 +520,7 @@ class AdminService
                 'cooldown_minutes' => $data['cooldown_minutes'] ?? 60,
                 'unlock_level' => $data['unlock_level'] ?? 1,
                 'category' => $data['category'],
-                'position' => $data['position'] ?? 'desktop',
+                'position' => $data['position'] ?? 'phone',
                 'is_active' => $data['is_active'] ?? true,
             ]);
 
@@ -624,6 +633,48 @@ class AdminService
             return [
                 'success' => false,
                 'message' => 'Ошибка при удалении микро-действия: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    public function deleteAllMicroActions(int $userId): array
+    {
+        try {
+            DB::beginTransaction();
+
+            $totalCount = \App\Models\MicroAction::count();
+            
+            if ($totalCount === 0) {
+                return [
+                    'success' => false,
+                    'message' => 'Нет микро-действий для удаления'
+                ];
+            }
+
+            \App\Models\PlayerMicroAction::query()->delete();
+            \App\Models\MicroAction::query()->delete();
+
+            ActivityLog::logEvent(\App\Enums\ActivityEventType::ADMIN_SITUATION_DELETED->value, [
+                'action' => 'delete_all_micro_actions',
+                'count' => $totalCount,
+            ], $userId);
+
+            DB::commit();
+
+            return [
+                'success' => true,
+                'message' => "Все микро-действия успешно удалены (всего: {$totalCount})",
+                'data' => [
+                    'deleted' => $totalCount
+                ]
+            ];
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            return [
+                'success' => false,
+                'message' => 'Ошибка при удалении всех микро-действий: ' . $e->getMessage()
             ];
         }
     }

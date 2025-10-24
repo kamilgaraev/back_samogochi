@@ -81,6 +81,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::middleware(['permission:situations.view'])->get('{id}', [AdminWebController::class, 'microActionEdit'])->name('edit');
             Route::middleware(['permission:situations.edit'])->patch('{id}', [AdminWebController::class, 'microActionUpdate'])->name('update');
             Route::middleware(['permission:situations.delete'])->delete('{id}', [AdminWebController::class, 'microActionDestroy'])->name('destroy');
+            Route::middleware(['permission:situations.delete'])->delete('/', [AdminWebController::class, 'microActionsDeleteAll'])->name('delete-all');
         });
         
         // Game configurations - View and Edit permissions

@@ -12,12 +12,21 @@
             <p class="text-gray-600 mt-1">Управление техниками снятия стресса</p>
         </div>
         
-        @can('situations.create')
-        <a href="{{ route('admin.micro-actions.create') }}" 
-           class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700">
-            <i class="fas fa-plus mr-2"></i>Добавить микро-действие
-        </a>
-        @endcan
+        <div class="flex gap-3">
+            @can('situations.delete')
+            <button onclick="deleteAllMicroActions()" 
+                    class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700">
+                <i class="fas fa-trash mr-2"></i>Удалить все
+            </button>
+            @endcan
+            
+            @can('situations.create')
+            <a href="{{ route('admin.micro-actions.create') }}" 
+               class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700">
+                <i class="fas fa-plus mr-2"></i>Добавить микро-действие
+            </a>
+            @endcan
+        </div>
     </div>
 
     <!-- Filters -->
@@ -371,4 +380,40 @@
     </div>
 
 </div>
+
+@push('scripts')
+<script>
+function deleteAllMicroActions() {
+    if (!confirm('Вы уверены, что хотите удалить ВСЕ микро-действия? Это действие необратимо!')) {
+        return;
+    }
+    
+    if (!confirm('Это удалит все микро-действия и связанные данные игроков. Вы точно уверены?')) {
+        return;
+    }
+
+    fetch('{{ route('admin.micro-actions.delete-all') }}', {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            window.location.reload();
+        } else {
+            alert('Ошибка: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Произошла ошибка при удалении');
+    });
+}
+</script>
+@endpush
 @endsection

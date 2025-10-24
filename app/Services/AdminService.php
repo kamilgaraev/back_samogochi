@@ -175,6 +175,14 @@ class AdminService
         try {
             DB::beginTransaction();
 
+            $customizationKey = null;
+            if (!empty($data['required_customization_key'])) {
+                $rawKey = trim($data['required_customization_key']);
+                if (preg_match('/^Character_\d+_\d+$/i', $rawKey)) {
+                    $customizationKey = $rawKey;
+                }
+            }
+
             $situation = Situation::create([
                 'title' => $data['title'],
                 'description' => $data['description'],
@@ -185,7 +193,7 @@ class AdminService
                 'experience_reward' => $data['experience_reward'],
                 'is_active' => $data['is_active'] ?? true,
                 'position' => $data['position'] ?? 'phone',
-                'required_customization_key' => $data['required_customization_key'] ?? null,
+                'required_customization_key' => $customizationKey,
                 'link' => $data['link'] ?? null,
                 'article_title' => $data['article_title'] ?? null,
             ]);
@@ -242,6 +250,17 @@ class AdminService
                 ];
             }
 
+            $customizationKey = $situation->required_customization_key;
+            if (array_key_exists('required_customization_key', $data)) {
+                $customizationKey = null;
+                if (!empty($data['required_customization_key'])) {
+                    $rawKey = trim($data['required_customization_key']);
+                    if (preg_match('/^Character_\d+_\d+$/i', $rawKey)) {
+                        $customizationKey = $rawKey;
+                    }
+                }
+            }
+
             $situation->update([
                 'title' => $data['title'] ?? $situation->title,
                 'description' => $data['description'] ?? $situation->description,
@@ -252,7 +271,7 @@ class AdminService
                 'experience_reward' => $data['experience_reward'] ?? $situation->experience_reward,
                 'is_active' => $data['is_active'] ?? $situation->is_active,
                 'position' => $data['position'] ?? $situation->position,
-                'required_customization_key' => array_key_exists('required_customization_key', $data) ? $data['required_customization_key'] : $situation->required_customization_key,
+                'required_customization_key' => $customizationKey,
                 'link' => array_key_exists('link', $data) ? $data['link'] : $situation->link,
                 'article_title' => array_key_exists('article_title', $data) ? $data['article_title'] : $situation->article_title,
             ]);

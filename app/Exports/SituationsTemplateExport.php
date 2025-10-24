@@ -132,7 +132,7 @@ class SituationsTemplateExport implements FromCollection, WithHeadings, WithStyl
                 );
                 
                 $event->sheet->getDelegate()->getComment('I2')->getText()->createTextRun(
-                    "Оставьте пустым, чтобы ситуация показывалась всем.\nУкажите название кастомизации (например Character_1_1), чтобы показывать только игрокам с этим скином."
+                    "Оставьте пустым, чтобы ситуация показывалась всем.\nФормат: Character_X_Y (например Character_1_1, Character_2_3).\nТолько игроки с этим скином увидят ситуацию."
                 );
 
                 $event->sheet->getDelegate()->getComment('J2')->getText()->createTextRun(

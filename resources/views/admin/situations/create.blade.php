@@ -126,8 +126,9 @@
                     <input type="text" name="required_customization_key" id="required_customization_key" maxlength="100"
                            value="{{ old('required_customization_key') }}"
                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('required_customization_key') border-red-500 @enderror"
-                           placeholder="Например: Character_1_1">
-                    <p class="text-xs text-gray-500 mt-1">Ситуация будет показана только игрокам с выбранным скином (name элемента)</p>
+                           placeholder="Character_1_1"
+                           pattern="^Character_\d+_\d+$">
+                    <p class="text-xs text-gray-500 mt-1">Формат: Character_X_Y (например Character_1_1, Character_2_3). Ситуация показывается только игрокам с этим скином.</p>
                     @error('required_customization_key')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror

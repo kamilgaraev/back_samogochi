@@ -51,6 +51,14 @@ class SituationsImport implements ToCollection, WithHeadingRow
                 $position = trim($positionRaw ?? 'phone');
                 $position = in_array($position, $validPositions) ? $position : 'phone';
 
+                $customizationKey = null;
+                if (!empty($row['priviazka_k_kastomizacii_character_1_1_i_td'])) {
+                    $rawKey = trim($row['priviazka_k_kastomizacii_character_1_1_i_td']);
+                    if (preg_match('/^Character_\d+_\d+$/i', $rawKey)) {
+                        $customizationKey = $rawKey;
+                    }
+                }
+
                 $situation = Situation::create([
                     'title' => $row['nazvanie'],
                     'description' => $row['opisanie'],
@@ -60,9 +68,7 @@ class SituationsImport implements ToCollection, WithHeadingRow
                     'stress_impact' => max(-50, min(50, intval($row['vliianie_na_stress_50_do_50'] ?? 0))),
                     'experience_reward' => max(1, min(100, intval($row['nagrada_opytom_1_100'] ?? 10))),
                     'position' => $position,
-                    'required_customization_key' => !empty($row['priviazka_k_kastomizacii_character_1_1_i_td']) 
-                        ? $row['priviazka_k_kastomizacii_character_1_1_i_td'] 
-                        : null,
+                    'required_customization_key' => $customizationKey,
                     'link' => !empty($row['ssylka']) ? $row['ssylka'] : null,
                     'article_title' => !empty($row['nazvanie_stati']) ? $row['nazvanie_stati'] : null,
                     'is_active' => !empty($row['aktivna_10']) && $row['aktivna_10'] == '1',

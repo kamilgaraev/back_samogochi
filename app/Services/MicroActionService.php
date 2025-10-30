@@ -367,13 +367,13 @@ class MicroActionService
      */
     private function replaceAllPlaceholders(string $name, string $description, $player): array
     {
-        // Маппинг всех возможных плейсхолдеров
+        // Маппинг всех возможных плейсхолдеров с правильными формами
         $placeholders = [
-            '{{favorite_book}}' => $player->favorite_book ?: 'любимую книгу',
-            '{{favorite_movie}}' => $player->favorite_movie ?: 'любимый фильм',
+            '{{favorite_book}}' => $player->favorite_book ? "«{$player->favorite_book}»" : 'любимую книгу',
+            '{{favorite_movie}}' => $player->favorite_movie ? "«{$player->favorite_movie}»" : 'любимый фильм',
             '{{favorite_song}}' => $player->favorite_song ?: 'любимую песню',
             '{{favorite_dish}}' => $player->favorite_dish ?: 'любимое блюдо',
-            '{{best_friend_name}}' => $player->best_friend_name ?: 'лучшего друга',
+            '{{best_friend_name}}' => $player->best_friend_name ?: 'другу',
         ];
 
         // Заменяем все плейсхолдеры в названии и описании

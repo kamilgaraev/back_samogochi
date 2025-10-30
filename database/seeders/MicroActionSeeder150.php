@@ -59,8 +59,8 @@ class MicroActionSeeder150 extends Seeder
                 'personalization_key' => null,
             ],
             [
-                'name' => 'Позвонить {{best_friend_name}}',
-                'description' => 'Короткий звонок близкому человеку',
+                'name' => 'Позвонить другу',
+                'description' => 'Короткий звонок другу {{best_friend_name}}',
                 'energy_reward' => 12,
                 'experience_reward' => 6,
                 'cooldown_minutes' => 60,
@@ -132,7 +132,7 @@ class MicroActionSeeder150 extends Seeder
             ],
             [
                 'name' => 'Голосовое сообщение',
-                'description' => 'Отправить голосовую поддержку {{best_friend_name}}',
+                'description' => 'Отправить голосовую поддержку другу {{best_friend_name}}',
                 'energy_reward' => 8,
                 'experience_reward' => 4,
                 'cooldown_minutes' => 40,
@@ -168,7 +168,7 @@ class MicroActionSeeder150 extends Seeder
             ],
             [
                 'name' => 'Аудиокнига',
-                'description' => 'Послушать главу из {{favorite_book}}',
+                'description' => 'Послушать главу из книги {{favorite_book}}',
                 'energy_reward' => 15,
                 'experience_reward' => 8,
                 'cooldown_minutes' => 120,
@@ -180,7 +180,7 @@ class MicroActionSeeder150 extends Seeder
             ],
             [
                 'name' => 'Мемы с друзьями',
-                'description' => 'Обменяться смешными мемами с {{best_friend_name}}',
+                'description' => 'Обменяться смешными мемами с другом {{best_friend_name}}',
                 'energy_reward' => 7,
                 'experience_reward' => 3,
                 'cooldown_minutes' => 30,
@@ -468,7 +468,7 @@ class MicroActionSeeder150 extends Seeder
             ],
             [
                 'name' => 'Семейный фильм',
-                'description' => 'Посмотреть {{favorite_movie}} вместе с близкими',
+                'description' => 'Посмотреть фильм {{favorite_movie}} вместе с близкими',
                 'energy_reward' => 20,
                 'experience_reward' => 8,
                 'cooldown_minutes' => 240,
@@ -1188,7 +1188,7 @@ class MicroActionSeeder150 extends Seeder
             ],
             [
                 'name' => 'Чтение в постели',
-                'description' => 'Почитать главу из {{favorite_book}}',
+                'description' => 'Почитать главу из книги {{favorite_book}}',
                 'energy_reward' => 18,
                 'experience_reward' => 7,
                 'cooldown_minutes' => 120,

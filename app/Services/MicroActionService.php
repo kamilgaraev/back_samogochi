@@ -353,47 +353,33 @@ class MicroActionService
         $name = $microAction->name;
         $description = $microAction->description;
 
-        // Если нет ключа персонализации, возвращаем как есть
+        // Если нет ключа персонализации, возвращаем как есть (но заменяем все возможные плейсхолдеры на всякий случай)
         if (!$microAction->personalization_key) {
-            return [
-                'name' => $name,
-                'description' => $description,
-            ];
+            return $this->replaceAllPlaceholders($name, $description, $player);
         }
 
-        // Маппинг ключей персонализации на поля профиля
-        $personalizationMap = [
-            'favorite_book' => $player->favorite_book,
-            'favorite_movie' => $player->favorite_movie,
-            'favorite_song' => $player->favorite_song,
-            'favorite_dish' => $player->favorite_dish,
-            'best_friend_name' => $player->best_friend_name,
+        // Заменяем все плейсхолдеры в тексте, независимо от personalization_key
+        return $this->replaceAllPlaceholders($name, $description, $player);
+    }
+
+    /**
+     * Заменяет все плейсхолдеры в названии и описании на значения из профиля пользователя
+     */
+    private function replaceAllPlaceholders(string $name, string $description, $player): array
+    {
+        // Маппинг всех возможных плейсхолдеров
+        $placeholders = [
+            '{{favorite_book}}' => $player->favorite_book ?: 'любимую книгу',
+            '{{favorite_movie}}' => $player->favorite_movie ?: 'любимый фильм',
+            '{{favorite_song}}' => $player->favorite_song ?: 'любимую песню',
+            '{{favorite_dish}}' => $player->favorite_dish ?: 'любимое блюдо',
+            '{{best_friend_name}}' => $player->best_friend_name ?: 'лучшего друга',
         ];
 
-        $personalValue = $personalizationMap[$microAction->personalization_key] ?? null;
-
-        // Если значение заполнено - заменяем плейсхолдеры
-        if ($personalValue) {
-            // Заменяем все плейсхолдеры для данного ключа
-            $placeholder = '{{' . $microAction->personalization_key . '}}';
-            $name = str_replace($placeholder, $personalValue, $name);
-            $description = str_replace($placeholder, $personalValue, $description);
-        } else {
-            // Если значение не заполнено, заменяем на общие формулировки
-            $defaultReplacements = [
-                'favorite_book' => 'любимую книгу',
-                'favorite_movie' => 'любимый фильм',
-                'favorite_song' => 'любимую песню',
-                'favorite_dish' => 'любимое блюдо',
-                'best_friend_name' => 'лучшего друга',
-            ];
-
-            $replacement = $defaultReplacements[$microAction->personalization_key] ?? '';
-            if ($replacement) {
-                $placeholder = '{{' . $microAction->personalization_key . '}}';
-                $name = str_replace($placeholder, $replacement, $name);
-                $description = str_replace($placeholder, $replacement, $description);
-            }
+        // Заменяем все плейсхолдеры в названии и описании
+        foreach ($placeholders as $placeholder => $replacement) {
+            $name = str_replace($placeholder, $replacement, $name);
+            $description = str_replace($placeholder, $replacement, $description);
         }
 
         return [

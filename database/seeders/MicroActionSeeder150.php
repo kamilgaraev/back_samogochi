@@ -20,9 +20,10 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'social',
                 'position' => 'phone',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
-                'name' => 'Послушать музыку',
+                'name' => 'Послушать {{favorite_song}}',
                 'description' => 'Включить любимый трек для настроения',
                 'energy_reward' => 10,
                 'experience_reward' => 3,
@@ -31,6 +32,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'phone',
                 'is_active' => true,
+                'personalization_key' => 'favorite_song',
             ],
             [
                 'name' => 'Дыхательная практика',
@@ -42,6 +44,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'phone',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Фото для Instagram',
@@ -53,9 +56,10 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'phone',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
-                'name' => 'Позвонить другу',
+                'name' => 'Позвонить {{best_friend_name}}',
                 'description' => 'Короткий звонок близкому человеку',
                 'energy_reward' => 12,
                 'experience_reward' => 6,
@@ -64,6 +68,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'social',
                 'position' => 'phone',
                 'is_active' => true,
+                'personalization_key' => 'best_friend_name',
             ],
             [
                 'name' => 'Мини-игра',
@@ -75,6 +80,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'phone',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Написать благодарность',
@@ -86,6 +92,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'phone',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Видео-шутка',
@@ -97,6 +104,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'phone',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Мобильная йога',
@@ -108,6 +116,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'exercise',
                 'position' => 'phone',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Цифровой детокс',
@@ -119,10 +128,11 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'phone',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Голосовое сообщение',
-                'description' => 'Отправить голосовую поддержку другу',
+                'description' => 'Отправить голосовую поддержку {{best_friend_name}}',
                 'energy_reward' => 8,
                 'experience_reward' => 4,
                 'cooldown_minutes' => 40,
@@ -130,6 +140,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'social',
                 'position' => 'phone',
                 'is_active' => true,
+                'personalization_key' => 'best_friend_name',
             ],
             [
                 'name' => 'Чек-лист дня',
@@ -141,6 +152,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'phone',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Фитнес-трекер',
@@ -152,10 +164,11 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'exercise',
                 'position' => 'phone',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Аудиокнига',
-                'description' => 'Послушать главу мотивирующей книги',
+                'description' => 'Послушать главу из {{favorite_book}}',
                 'energy_reward' => 15,
                 'experience_reward' => 8,
                 'cooldown_minutes' => 120,
@@ -163,10 +176,11 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'phone',
                 'is_active' => true,
+                'personalization_key' => 'favorite_book',
             ],
             [
                 'name' => 'Мемы с друзьями',
-                'description' => 'Обменяться смешными мемами в чате',
+                'description' => 'Обменяться смешными мемами с {{best_friend_name}}',
                 'energy_reward' => 7,
                 'experience_reward' => 3,
                 'cooldown_minutes' => 30,
@@ -174,6 +188,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'social',
                 'position' => 'phone',
                 'is_active' => true,
+                'personalization_key' => 'best_friend_name',
             ],
             [
                 'name' => 'Мини-викторина',
@@ -185,6 +200,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'phone',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Растяжка за столом',
@@ -196,6 +212,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'exercise',
                 'position' => 'table',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Выпить воды',
@@ -207,6 +224,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'table',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Упражнения для глаз',
@@ -218,6 +236,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'table',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Набросать идеи',
@@ -229,6 +248,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'table',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Перекус фруктами',
@@ -240,6 +260,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'table',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Массаж рук',
@@ -251,6 +272,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'table',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Чайная пауза',
@@ -262,6 +284,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'table',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Дудлинг',
@@ -273,6 +296,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'table',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Письмо себе',
@@ -284,6 +308,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'table',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Настольная игра',
@@ -295,6 +320,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'social',
                 'position' => 'table',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Оригами',
@@ -306,6 +332,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'table',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Кроссворд',
@@ -317,6 +344,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'table',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Позитивные аффирмации',
@@ -328,6 +356,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'table',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Упражнение для спины',
@@ -339,6 +368,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'exercise',
                 'position' => 'table',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Записать мечту',
@@ -350,6 +380,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'table',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Дыхание 4-7-8',
@@ -361,6 +392,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'table',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Комедийный сериал',
@@ -372,6 +404,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'tv',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Документальный фильм',
@@ -383,6 +416,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'tv',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Танцевальное шоу',
@@ -394,6 +428,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'exercise',
                 'position' => 'tv',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Йога с видео',
@@ -405,10 +440,11 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'exercise',
                 'position' => 'tv',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Кулинарное шоу',
-                'description' => 'Вдохновиться новыми рецептами',
+                'description' => 'Найти рецепт {{favorite_dish}}',
                 'energy_reward' => 12,
                 'experience_reward' => 6,
                 'cooldown_minutes' => 60,
@@ -416,6 +452,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'tv',
                 'is_active' => true,
+                'personalization_key' => 'favorite_dish',
             ],
             [
                 'name' => 'Мотивационная речь',
@@ -427,10 +464,11 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'tv',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Семейный фильм',
-                'description' => 'Посмотреть фильм вместе с близкими',
+                'description' => 'Посмотреть {{favorite_movie}} вместе с близкими',
                 'energy_reward' => 20,
                 'experience_reward' => 8,
                 'cooldown_minutes' => 240,
@@ -438,10 +476,11 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'social',
                 'position' => 'tv',
                 'is_active' => true,
+                'personalization_key' => 'favorite_movie',
             ],
             [
                 'name' => 'Караоке дома',
-                'description' => 'Спеть любимые песни',
+                'description' => 'Спеть {{favorite_song}}',
                 'energy_reward' => 18,
                 'experience_reward' => 7,
                 'cooldown_minutes' => 120,
@@ -449,6 +488,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'tv',
                 'is_active' => true,
+                'personalization_key' => 'favorite_song',
             ],
             [
                 'name' => 'Фитнес-тренировка',
@@ -460,6 +500,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'exercise',
                 'position' => 'tv',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Природные пейзажи',
@@ -471,6 +512,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'tv',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Игровое шоу',
@@ -482,6 +524,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'social',
                 'position' => 'tv',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Ретро-мультфильмы',
@@ -493,6 +536,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'tv',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Стретчинг перед TV',
@@ -504,6 +548,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'exercise',
                 'position' => 'tv',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Stand-up комедия',
@@ -515,6 +560,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'tv',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Путешествия по миру',
@@ -526,10 +572,11 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'tv',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Концерт любимой группы',
-                'description' => 'Посмотреть запись концерта',
+                'description' => 'Посмотреть концерт исполнителя {{favorite_song}}',
                 'energy_reward' => 20,
                 'experience_reward' => 7,
                 'cooldown_minutes' => 150,
@@ -537,6 +584,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'tv',
                 'is_active' => true,
+                'personalization_key' => 'favorite_song',
             ],
             [
                 'name' => 'Проверить время',
@@ -548,6 +596,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'wallClock',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Планирование дня',
@@ -559,6 +608,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'wallClock',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Таймер для перерыва',
@@ -570,6 +620,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'wallClock',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Техника Помодоро',
@@ -581,6 +632,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'wallClock',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Медитация на время',
@@ -592,6 +644,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'wallClock',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Благодарность за день',
@@ -603,6 +656,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'wallClock',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Ритуал завершения',
@@ -614,6 +668,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'wallClock',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Напоминание о воде',
@@ -625,6 +680,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'wallClock',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Время для движения',
@@ -636,6 +692,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'exercise',
                 'position' => 'wallClock',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Отложенная награда',
@@ -647,6 +704,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'wallClock',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Email-детокс',
@@ -658,6 +716,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'lapTop',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Онлайн-курс',
@@ -669,6 +728,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'lapTop',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Написать статью',
@@ -680,6 +740,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'lapTop',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Видеозвонок',
@@ -691,6 +752,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'social',
                 'position' => 'lapTop',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Фоторедактор',
@@ -702,6 +764,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'lapTop',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Онлайн-игра с друзьями',
@@ -713,6 +776,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'social',
                 'position' => 'lapTop',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Составить плейлист',
@@ -724,6 +788,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'lapTop',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Почистить рабочий стол',
@@ -735,6 +800,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'lapTop',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Цифровое искусство',
@@ -746,6 +812,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'lapTop',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Вебинар',
@@ -757,6 +824,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'lapTop',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Социальные сети',
@@ -768,6 +836,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'social',
                 'position' => 'lapTop',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Написать код',
@@ -779,6 +848,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'lapTop',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Медитация онлайн',
@@ -790,6 +860,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'lapTop',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Портфолио',
@@ -801,6 +872,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'lapTop',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Форум по интересам',
@@ -812,6 +884,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'social',
                 'position' => 'lapTop',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Виртуальный музей',
@@ -823,6 +896,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'lapTop',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Достать полезный перекус',
@@ -834,6 +908,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'fridge',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Выпить холодной воды',
@@ -845,6 +920,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'fridge',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Проверить продукты',
@@ -856,6 +932,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'fridge',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Смузи-награда',
@@ -867,6 +944,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'fridge',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Свежий сок',
@@ -878,6 +956,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'fridge',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Организовать холодильник',
@@ -889,6 +968,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'fridge',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Протеиновый перекус',
@@ -900,6 +980,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'exercise',
                 'position' => 'fridge',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Список покупок',
@@ -911,6 +992,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'fridge',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Ледяная маска',
@@ -922,6 +1004,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'fridge',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Приготовить салат',
@@ -933,6 +1016,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'fridge',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Выбросить мусор',
@@ -944,6 +1028,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'exercise',
                 'position' => 'trashCan',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Разобрать бумаги',
@@ -955,6 +1040,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'trashCan',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Цифровая уборка',
@@ -966,6 +1052,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'trashCan',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Освободить место',
@@ -977,6 +1064,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'trashCan',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Избавиться от токсичных мыслей',
@@ -988,6 +1076,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'trashCan',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Сортировка мусора',
@@ -999,6 +1088,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'trashCan',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Очистка email',
@@ -1010,6 +1100,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'trashCan',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Минимализм',
@@ -1021,6 +1112,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'trashCan',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Уборка рабочей зоны',
@@ -1032,6 +1124,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'exercise',
                 'position' => 'trashCan',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Журнал избавлений',
@@ -1043,10 +1136,11 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'trashCan',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Короткий сон',
-                'description' => 'Power nap 15-20 минут',
+                'description' => 'Вздемнуть 15-20 минут',
                 'energy_reward' => 25,
                 'experience_reward' => 5,
                 'cooldown_minutes' => 240,
@@ -1054,6 +1148,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'bed',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Медитация лежа',
@@ -1065,6 +1160,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'bed',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Визуализация целей',
@@ -1076,6 +1172,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'bed',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Дневник сновидений',
@@ -1087,10 +1184,11 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'bed',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Чтение в постели',
-                'description' => 'Почитать главу книги',
+                'description' => 'Почитать главу из {{favorite_book}}',
                 'energy_reward' => 18,
                 'experience_reward' => 7,
                 'cooldown_minutes' => 120,
@@ -1098,6 +1196,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'bed',
                 'is_active' => true,
+                'personalization_key' => 'favorite_book',
             ],
             [
                 'name' => 'Утренняя растяжка',
@@ -1109,6 +1208,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'exercise',
                 'position' => 'bed',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Упражнения в кровати',
@@ -1120,6 +1220,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'exercise',
                 'position' => 'bed',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Прогрессивная релаксация',
@@ -1131,6 +1232,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'bed',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Благодарность перед сном',
@@ -1142,6 +1244,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'bed',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Аудиомедитация',
@@ -1153,6 +1256,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'bed',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Подушечная йога',
@@ -1164,6 +1268,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'exercise',
                 'position' => 'bed',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Сменить постельное белье',
@@ -1175,6 +1280,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'bed',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Ароматерапия',
@@ -1186,6 +1292,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'bed',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Планирование завтра',
@@ -1197,6 +1304,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'bed',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Любовное письмо себе',
@@ -1208,6 +1316,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'bed',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Шавасана',
@@ -1219,6 +1328,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'bed',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Позитивная аффирмация',
@@ -1230,6 +1340,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'mirror',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Улыбка себе',
@@ -1241,6 +1352,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'mirror',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Уход за кожей',
@@ -1252,6 +1364,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'mirror',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Гимнастика для лица',
@@ -1263,6 +1376,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'exercise',
                 'position' => 'mirror',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Проверить осанку',
@@ -1274,6 +1388,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'exercise',
                 'position' => 'mirror',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Практика мимики',
@@ -1285,6 +1400,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'mirror',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Примерка образов',
@@ -1296,6 +1412,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'mirror',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Селфи дня',
@@ -1307,6 +1424,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'mirror',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Утренний ритуал',
@@ -1318,6 +1436,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'mirror',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Контакт с собой',
@@ -1329,6 +1448,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'mirror',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Танец перед зеркалом',
@@ -1340,6 +1460,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'exercise',
                 'position' => 'mirror',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Проверка языка тела',
@@ -1351,6 +1472,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'social',
                 'position' => 'mirror',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Благодарность себе',
@@ -1362,6 +1484,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'mirror',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Макияж-терапия',
@@ -1373,6 +1496,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'creativity',
                 'position' => 'mirror',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Речевая практика',
@@ -1384,6 +1508,7 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'social',
                 'position' => 'mirror',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
             [
                 'name' => 'Смех-терапия',
@@ -1395,12 +1520,20 @@ class MicroActionSeeder150 extends Seeder
                 'category' => 'relaxation',
                 'position' => 'mirror',
                 'is_active' => true,
+                'personalization_key' => null,
             ],
         ];
 
         foreach ($microActions as $action) {
-            MicroAction::create($action);
+            MicroAction::updateOrCreate(
+                ['name' => $action['name']],
+                $action
+            );
         }
+        
+        $this->command->info('Создано/обновлено ' . count($microActions) . ' микро-действий');
+        $personalizedCount = collect($microActions)->whereNotNull('personalization_key')->count();
+        $this->command->info('Из них с персонализацией: ' . $personalizedCount);
     }
 }
 

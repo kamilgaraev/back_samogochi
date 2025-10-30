@@ -49,10 +49,13 @@ class MicroActionService
                 $cooldownEndTime = $this->microActionRepository->getCooldownEndTime($player->id, $microAction->id);
             }
 
+            // Персонализация текста
+            $personalized = $this->personalizeMicroAction($microAction, $player);
+
             return [
                 'id' => $microAction->id,
-                'name' => $microAction->name,
-                'description' => $microAction->description,
+                'name' => $personalized['name'],
+                'description' => $personalized['description'],
                 'category' => [
                     'value' => $microAction->category->value,
                     'label' => $microAction->category->getLabel(),
@@ -159,6 +162,7 @@ class MicroActionService
             DB::commit();
 
             $updatedPlayer = $this->playerRepository->findByUserId($userId);
+            $personalized = $this->personalizeMicroAction($microAction, $updatedPlayer);
 
             return [
                 'success' => true,
@@ -166,7 +170,7 @@ class MicroActionService
                 'data' => [
                     'micro_action' => [
                         'id' => $microAction->id,
-                        'name' => $microAction->name,
+                        'name' => $personalized['name'],
                         'category' => [
                             'value' => $microAction->category->value,
                             'label' => $microAction->category->getLabel(),
@@ -257,10 +261,11 @@ class MicroActionService
             'success' => true,
             'data' => [
                 'recommendations' => $recommendations->map(function ($microAction) use ($player) {
+                    $personalized = $this->personalizeMicroAction($microAction, $player);
                     return [
                         'id' => $microAction->id,
-                        'name' => $microAction->name,
-                        'description' => $microAction->description,
+                        'name' => $personalized['name'],
+                        'description' => $personalized['description'],
                         'category' => [
                             'value' => $microAction->category->value,
                             'label' => $microAction->category->getLabel(),
@@ -305,14 +310,15 @@ class MicroActionService
         }
 
         $randomMicroAction = $recommendations->random();
+        $personalized = $this->personalizeMicroAction($randomMicroAction, $player);
 
         return [
             'success' => true,
             'data' => [
                 'micro_action' => [
                     'id' => $randomMicroAction->id,
-                    'name' => $randomMicroAction->name,
-                    'description' => $randomMicroAction->description,
+                    'name' => $personalized['name'],
+                    'description' => $personalized['description'],
                     'category' => [
                         'value' => $randomMicroAction->category->value,
                         'label' => $randomMicroAction->category->getLabel(),
@@ -336,6 +342,63 @@ class MicroActionService
                 ]
             ],
             'player_state' => $this->playerStateService->getPlayerStateByProfile($player)
+        ];
+    }
+
+    /**
+     * Персонализирует название и описание микродействия на основе персональных данных пользователя
+     */
+    private function personalizeMicroAction($microAction, $player): array
+    {
+        $name = $microAction->name;
+        $description = $microAction->description;
+
+        // Если нет ключа персонализации, возвращаем как есть
+        if (!$microAction->personalization_key) {
+            return [
+                'name' => $name,
+                'description' => $description,
+            ];
+        }
+
+        // Маппинг ключей персонализации на поля профиля
+        $personalizationMap = [
+            'favorite_book' => $player->favorite_book,
+            'favorite_movie' => $player->favorite_movie,
+            'favorite_song' => $player->favorite_song,
+            'favorite_dish' => $player->favorite_dish,
+            'best_friend_name' => $player->best_friend_name,
+        ];
+
+        $personalValue = $personalizationMap[$microAction->personalization_key] ?? null;
+
+        // Если значение заполнено - заменяем плейсхолдеры
+        if ($personalValue) {
+            // Заменяем все плейсхолдеры для данного ключа
+            $placeholder = '{{' . $microAction->personalization_key . '}}';
+            $name = str_replace($placeholder, $personalValue, $name);
+            $description = str_replace($placeholder, $personalValue, $description);
+        } else {
+            // Если значение не заполнено, заменяем на общие формулировки
+            $defaultReplacements = [
+                'favorite_book' => 'любимую книгу',
+                'favorite_movie' => 'любимый фильм',
+                'favorite_song' => 'любимую песню',
+                'favorite_dish' => 'любимое блюдо',
+                'best_friend_name' => 'лучшего друга',
+            ];
+
+            $replacement = $defaultReplacements[$microAction->personalization_key] ?? '';
+            if ($replacement) {
+                $placeholder = '{{' . $microAction->personalization_key . '}}';
+                $name = str_replace($placeholder, $replacement, $name);
+                $description = str_replace($placeholder, $replacement, $description);
+            }
+        }
+
+        return [
+            'name' => $name,
+            'description' => $description,
         ];
     }
 }

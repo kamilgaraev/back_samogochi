@@ -20,6 +20,7 @@ class MicroAction extends Model
         'category',
         'is_active',
         'position',
+        'personalization_key',
     ];
 
     protected function casts(): array

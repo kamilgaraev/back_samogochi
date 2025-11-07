@@ -80,20 +80,21 @@
             font-size: 14px;
         }
         .highlight-box {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f5f5f5;
             padding: 25px;
             margin: 25px 0;
-            border-radius: 8px;
+            border-radius: 4px;
             text-align: center;
+            border-left: 4px solid #455a64;
         }
         .highlight-box h3 {
-            color: #ffffff;
+            color: #212121;
             font-size: 18px;
             font-weight: 600;
             margin: 0 0 10px 0;
         }
         .highlight-box p {
-            color: #f0f0f0;
+            color: #616161;
             font-size: 15px;
             margin: 5px 0;
             line-height: 1.6;

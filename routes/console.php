@@ -38,3 +38,5 @@ Schedule::command('game:send-end-emails')
         $targetDate = \Carbon\Carbon::create(2026, 4, 15);
         return now()->isSameDay($targetDate);
     });
+
+Schedule::command('game:send-sleep-end-emails')->everyMinute();

@@ -337,11 +337,11 @@ class RealtimeMetricsController extends Controller
     private function getHourlyActivity(): array
     {
         return Cache::remember('metrics:hourly_activity', 600, function () {
-            // Оптимизированный запрос - группируем за один запрос
+            // Оптимизированный запрос - группируем за один запрос (PostgreSQL синтаксис)
             $hourlyCounts = DB::table('player_situations')
-                ->selectRaw('HOUR(created_at) as hour, COUNT(*) as count')
+                ->selectRaw('EXTRACT(HOUR FROM created_at)::integer as hour, COUNT(*) as count')
                 ->where('created_at', '>=', now()->subWeek())
-                ->groupBy('hour')
+                ->groupBy(DB::raw('EXTRACT(HOUR FROM created_at)'))
                 ->pluck('count', 'hour')
                 ->toArray();
             

@@ -630,7 +630,7 @@ class RealtimeMetricsService
         return Cache::remember(self::CACHE_PREFIX . 'top_performers', self::CACHE_TTL * 10, function () use ($limit) {
             return PlayerProfile::with('user')
                 ->orderByDesc('level')
-                ->orderByDesc('experience')
+                ->orderByDesc('total_experience')
                 ->limit($limit)
                 ->get()
                 ->map(function ($profile) {
@@ -638,7 +638,7 @@ class RealtimeMetricsService
                         'id' => $profile->id,
                         'username' => $profile->user->username ?? 'Unknown',
                         'level' => $profile->level,
-                        'experience' => $profile->experience,
+                        'experience' => $profile->total_experience,
                         'situations_completed' => PlayerSituation::where('player_id', $profile->id)
                             ->whereNotNull('completed_at')
                             ->count(),

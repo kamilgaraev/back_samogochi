@@ -845,11 +845,22 @@ class RealtimeMetrics {
         if (charts.top_micro_actions) {
             const hasData = charts.top_micro_actions.labels && charts.top_micro_actions.labels.length > 0;
             if (hasData) {
-                this.charts.topMicroActions.data.labels = charts.top_micro_actions.labels;
+                // Обрезаем и очищаем названия
+                const cleanLabels = charts.top_micro_actions.labels.map(label => {
+                    // Убираем placeholder-ы типа {{variable}}
+                    let cleaned = label.replace(/\{\{[^}]+\}\}/g, '[данные игрока]');
+                    // Обрезаем длинные названия
+                    if (cleaned.length > 40) {
+                        cleaned = cleaned.substring(0, 37) + '...';
+                    }
+                    return cleaned;
+                });
+                
+                this.charts.topMicroActions.data.labels = cleanLabels;
                 this.charts.topMicroActions.data.datasets[0].data = charts.top_micro_actions.data;
             } else {
                 // Если нет данных, показываем заглушку
-                this.charts.topMicroActions.data.labels = ['Нет данных'];
+                this.charts.topMicroActions.data.labels = ['Нет данных за последние 24 часа'];
                 this.charts.topMicroActions.data.datasets[0].data = [0];
             }
             this.charts.topMicroActions.update('none');

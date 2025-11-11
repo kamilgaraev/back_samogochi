@@ -847,11 +847,11 @@ class RealtimeMetrics {
             if (hasData) {
                 // Обрезаем и очищаем названия
                 const cleanLabels = charts.top_micro_actions.labels.map(label => {
-                    // Убираем placeholder-ы типа {{variable}}
-                    let cleaned = label.replace(/\{\{[^}]+\}\}/g, '[данные игрока]');
+                    // Убираем placeholder-ы типа {placeholder}
+                    let cleaned = label.replace(/\{[^}]+\}/g, '[данные]');
                     // Обрезаем длинные названия
-                    if (cleaned.length > 40) {
-                        cleaned = cleaned.substring(0, 37) + '...';
+                    if (cleaned.length > 50) {
+                        cleaned = cleaned.substring(0, 47) + '...';
                     }
                     return cleaned;
                 });

@@ -188,6 +188,9 @@ class RealtimeMetricsController extends Controller
         try {
             $startTime = microtime(true);
             
+            // Сначала очищаем кэш метрик
+            $this->clearAllMetricsCache();
+            
             // Вызываем команду обновления метрик
             \Illuminate\Support\Facades\Artisan::call('metrics:update-realtime');
             
@@ -216,20 +219,7 @@ class RealtimeMetricsController extends Controller
     public function clearMetricsCache(): JsonResponse
     {
         try {
-            // Очищаем кэш метрик
-            $patterns = [
-                'realtime_metrics:*',
-                'metrics:*',
-            ];
-            
-            foreach ($patterns as $pattern) {
-                $keys = Cache::getRedis()->keys($pattern);
-                if (!empty($keys)) {
-                    foreach ($keys as $key) {
-                        Cache::forget(str_replace(config('cache.prefix') . ':', '', $key));
-                    }
-                }
-            }
+            $this->clearAllMetricsCache();
             
             return response()->json([
                 'success' => true,
@@ -241,6 +231,35 @@ class RealtimeMetricsController extends Controller
                 'message' => 'Failed to clear metrics cache',
                 'error' => $e->getMessage(),
             ], 500);
+        }
+    }
+
+    private function clearAllMetricsCache(): void
+    {
+        // Очищаем кэш метрик
+        $patterns = [
+            'realtime_metrics:*',
+            'metrics:*',
+            'laravel_cache:realtime_metrics:*',
+            'laravel_cache:metrics:*',
+        ];
+        
+        foreach ($patterns as $pattern) {
+            try {
+                $keys = Cache::getRedis()->keys($pattern);
+                if (!empty($keys)) {
+                    foreach ($keys as $key) {
+                        // Убираем префикс если есть
+                        $cleanKey = str_replace([
+                            config('cache.prefix') . ':',
+                            'laravel_cache:',
+                        ], '', $key);
+                        Cache::forget($cleanKey);
+                    }
+                }
+            } catch (\Exception $e) {
+                // Игнорируем ошибки очистки кэша
+            }
         }
     }
 

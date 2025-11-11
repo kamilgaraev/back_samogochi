@@ -398,7 +398,6 @@
 @endsection
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 class RealtimeMetrics {
     constructor() {
@@ -690,11 +689,18 @@ class RealtimeMetrics {
 
     async fetchMetrics() {
         try {
+            console.log('Fetching metrics from /admin/metrics/dashboard...');
             const response = await fetch('/admin/metrics/dashboard');
+            console.log('Response status:', response.status);
+            
             const data = await response.json();
+            console.log('Received data:', data);
             
             if (data.success) {
                 this.updateMetrics(data.data);
+            } else {
+                console.error('Response not successful:', data);
+                this.updateConnectionStatus(false);
             }
         } catch (error) {
             console.error('Ошибка получения метрик:', error);

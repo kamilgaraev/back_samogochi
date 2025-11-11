@@ -21,6 +21,8 @@
     <style>
         [x-cloak] { display: none !important; }
     </style>
+    
+    @stack('styles')
 </head>
 <body class="bg-gray-50">
     <div x-data="{ sidebarOpen: false }" class="flex h-screen overflow-hidden">

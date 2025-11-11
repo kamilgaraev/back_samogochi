@@ -70,11 +70,20 @@ Route::middleware(['auth:api', 'admin', 'throttle.game:30,1'])->prefix('admin')-
     });
 
     Route::prefix('metrics')->group(function () {
+        // Получение метрик
         Route::get('current', [\App\Http\Controllers\Admin\RealtimeMetricsController::class, 'getCurrentMetrics']);
         Route::get('dashboard', [\App\Http\Controllers\Admin\RealtimeMetricsController::class, 'getDashboardData']);
+        Route::get('business', [\App\Http\Controllers\Admin\RealtimeMetricsController::class, 'getBusinessMetrics']);
         Route::get('health', [\App\Http\Controllers\Admin\RealtimeMetricsController::class, 'getSystemHealth']);
+        Route::get('cohorts', [\App\Http\Controllers\Admin\RealtimeMetricsController::class, 'getCohortAnalysis']);
+        Route::get('segments', [\App\Http\Controllers\Admin\RealtimeMetricsController::class, 'getUserSegments']);
+        Route::get('top-performers', [\App\Http\Controllers\Admin\RealtimeMetricsController::class, 'getTopPerformers']);
         Route::get('{metric}/history', [\App\Http\Controllers\Admin\RealtimeMetricsController::class, 'getMetricHistory']);
         Route::get('{metric}/trend', [\App\Http\Controllers\Admin\RealtimeMetricsController::class, 'getMetricTrend']);
+        
+        // Управление метриками
+        Route::post('refresh', [\App\Http\Controllers\Admin\RealtimeMetricsController::class, 'refreshMetrics']);
+        Route::post('clear-cache', [\App\Http\Controllers\Admin\RealtimeMetricsController::class, 'clearMetricsCache']);
     });
 });
 

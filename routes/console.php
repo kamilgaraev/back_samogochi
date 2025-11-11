@@ -28,7 +28,8 @@ Schedule::job(new EnergyRegenJob)->hourly();
 
 Schedule::job(new DailyRewardJob)->daily();
 
-Schedule::job(new UpdateRealtimeMetrics)->everyMinute();
+// Обновление метрик каждую минуту
+Schedule::command('metrics:update-realtime')->everyMinute();
 
 Schedule::command('players:recalculate-levels')->hourly();
 

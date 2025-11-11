@@ -40,9 +40,21 @@
             <div class="text-right">
                 <div class="text-sm text-blue-100">Последнее обновление</div>
                 <div id="last-update" class="text-lg font-semibold">--:--:--</div>
-                <div class="flex items-center mt-1">
+                <div class="flex items-center justify-end mt-1">
                     <div id="connection-status" class="w-3 h-3 bg-green-400 rounded-full mr-2 pulse"></div>
-                    <span class="text-sm">Подключено</span>
+                    <span class="text-sm mr-3">Подключено</span>
+                </div>
+                <div class="flex gap-2 mt-3">
+                    <button id="refresh-metrics-btn" onclick="refreshMetrics()" 
+                            class="px-4 py-2 bg-white text-blue-600 rounded-lg hover:bg-blue-50 transition flex items-center gap-2 font-medium">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>Обновить сейчас</span>
+                    </button>
+                    <button onclick="clearMetricsCache()" 
+                            class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
+                        <i class="fas fa-trash-alt"></i>
+                        <span>Очистить кэш</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -847,14 +859,113 @@ class RealtimeMetrics {
     }
 
     connectWebSocket() {
-        // TODO: Implement WebSocket connection when Broadcasting is configured
-        console.log('WebSocket connection would be initialized here');
+        // WebSocket не используется - метрики обновляются через polling
+        console.log('Metrics update via polling every minute');
     }
+}
+
+// Функция для ручного обновления метрик
+async function refreshMetrics() {
+    const btn = document.getElementById('refresh-metrics-btn');
+    const icon = btn.querySelector('i');
+    const text = btn.querySelector('span');
+    
+    // Дизейблим кнопку и показываем загрузку
+    btn.disabled = true;
+    icon.classList.add('fa-spin');
+    text.textContent = 'Обновление...';
+    
+    try {
+        const response = await fetch('/admin/metrics/refresh', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Перезагружаем метрики
+            window.realtimeMetrics.fetchMetrics();
+            
+            // Показываем уведомление об успехе
+            showNotification('Метрики успешно обновлены!', 'success');
+        } else {
+            showNotification('Ошибка при обновлении метрик: ' + (data.message || 'Неизвестная ошибка'), 'error');
+        }
+    } catch (error) {
+        console.error('Error refreshing metrics:', error);
+        showNotification('Ошибка при обновлении метрик', 'error');
+    } finally {
+        // Возвращаем кнопку в исходное состояние
+        btn.disabled = false;
+        icon.classList.remove('fa-spin');
+        text.textContent = 'Обновить сейчас';
+    }
+}
+
+// Функция для очистки кэша метрик
+async function clearMetricsCache() {
+    if (!confirm('Вы уверены, что хотите очистить кэш метрик? Это может временно замедлить работу дашборда.')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch('/admin/metrics/clear-cache', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showNotification('Кэш метрик очищен!', 'success');
+            // Обновляем метрики
+            window.realtimeMetrics.fetchMetrics();
+        } else {
+            showNotification('Ошибка при очистке кэша: ' + (data.message || 'Неизвестная ошибка'), 'error');
+        }
+    } catch (error) {
+        console.error('Error clearing cache:', error);
+        showNotification('Ошибка при очистке кэша', 'error');
+    }
+}
+
+// Функция для показа уведомлений
+function showNotification(message, type = 'info') {
+    // Создаем элемент уведомления
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 px-6 py-4 rounded-lg shadow-lg z-50 transition-all duration-300 ${
+        type === 'success' ? 'bg-green-500 text-white' :
+        type === 'error' ? 'bg-red-500 text-white' :
+        'bg-blue-500 text-white'
+    }`;
+    notification.innerHTML = `
+        <div class="flex items-center gap-3">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Убираем уведомление через 3 секунды
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
 }
 
 // Initialize when page loads
 document.addEventListener('DOMContentLoaded', function() {
-    new RealtimeMetrics();
+    window.realtimeMetrics = new RealtimeMetrics();
 });
 </script>
 @endpush

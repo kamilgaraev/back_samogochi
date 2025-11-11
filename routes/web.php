@@ -32,6 +32,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::prefix('metrics')->name('metrics.')->group(function () {
             Route::get('dashboard', [\App\Http\Controllers\Admin\RealtimeMetricsController::class, 'getDashboardData'])->name('dashboard');
             Route::get('current', [\App\Http\Controllers\Admin\RealtimeMetricsController::class, 'getCurrentMetrics'])->name('current');
+            Route::post('refresh', [\App\Http\Controllers\Admin\RealtimeMetricsController::class, 'refreshMetrics'])->name('refresh');
+            Route::post('clear-cache', [\App\Http\Controllers\Admin\RealtimeMetricsController::class, 'clearMetricsCache'])->name('clear-cache');
         });
         
         Route::post('logout', [AdminWebController::class, 'logout'])->name('logout');

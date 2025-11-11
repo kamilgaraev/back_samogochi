@@ -822,12 +822,17 @@ class RealtimeMetrics {
         }
 
         if (charts.situation_categories) {
-            const hasData = charts.situation_categories.some(val => val > 0);
+            // Преобразуем в массив если это объект
+            const categoriesData = Array.isArray(charts.situation_categories) 
+                ? charts.situation_categories 
+                : Object.values(charts.situation_categories);
+            
+            const hasData = categoriesData.some(val => val > 0);
             if (!hasData) {
                 // Если все значения 0, показываем хотя бы по 1 чтобы график был видным
                 this.charts.situationCategories.data.datasets[0].data = [1, 1, 1, 1];
             } else {
-                this.charts.situationCategories.data.datasets[0].data = charts.situation_categories;
+                this.charts.situationCategories.data.datasets[0].data = categoriesData;
             }
             this.charts.situationCategories.update('none');
         }
@@ -862,12 +867,17 @@ class RealtimeMetrics {
         }
 
         if (charts.platform_distribution) {
-            const hasData = charts.platform_distribution.some(val => val > 0);
+            // Преобразуем в массив если это объект
+            const platformData = Array.isArray(charts.platform_distribution) 
+                ? charts.platform_distribution 
+                : Object.values(charts.platform_distribution);
+            
+            const hasData = platformData.some(val => val > 0);
             if (!hasData) {
                 // Если все значения 0, показываем равномерное распределение для визуализации
                 this.charts.platformDistribution.data.datasets[0].data = [1, 1, 1, 1];
             } else {
-                this.charts.platformDistribution.data.datasets[0].data = charts.platform_distribution;
+                this.charts.platformDistribution.data.datasets[0].data = platformData;
             }
             this.charts.platformDistribution.update('none');
         }

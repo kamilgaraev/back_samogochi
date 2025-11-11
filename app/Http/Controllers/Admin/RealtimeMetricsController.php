@@ -446,20 +446,25 @@ class RealtimeMetricsController extends Controller
     private function getPlatformDistribution(): array
     {
         return Cache::remember('metrics:platform_distribution', 300, function () {
-            // Оптимизированный запрос - одним запросом
+            // Оптимизированный запрос - одним запросом (PostgreSQL синтаксис с одинарными кавычками)
             $distribution = DB::table('player_micro_actions')
                 ->join('micro_actions', 'player_micro_actions.micro_action_id', '=', 'micro_actions.id')
-                ->selectRaw('
+                ->selectRaw("
                     CASE 
-                        WHEN micro_actions.position = "desktop" THEN "desktop"
-                        WHEN micro_actions.position = "phone" THEN "mobile"
-                        WHEN micro_actions.position = "tablet" THEN "tablet"
-                        ELSE "other"
+                        WHEN micro_actions.position = 'desktop' THEN 'desktop'
+                        WHEN micro_actions.position = 'phone' THEN 'mobile'
+                        WHEN micro_actions.position = 'tablet' THEN 'tablet'
+                        ELSE 'other'
                     END as platform,
                     COUNT(*) as count
-                ')
+                ")
                 ->where('player_micro_actions.created_at', '>=', now()->subDay())
-                ->groupBy('platform')
+                ->groupBy(DB::raw("CASE 
+                    WHEN micro_actions.position = 'desktop' THEN 'desktop'
+                    WHEN micro_actions.position = 'phone' THEN 'mobile'
+                    WHEN micro_actions.position = 'tablet' THEN 'tablet'
+                    ELSE 'other'
+                END"))
                 ->pluck('count', 'platform')
                 ->toArray();
 

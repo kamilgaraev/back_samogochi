@@ -689,12 +689,8 @@ class RealtimeMetrics {
 
     async fetchMetrics() {
         try {
-            console.log('Fetching metrics from /admin/metrics/dashboard...');
             const response = await fetch('/admin/metrics/dashboard');
-            console.log('Response status:', response.status);
-            
             const data = await response.json();
-            console.log('Received data:', data);
             
             if (data.success) {
                 this.updateMetrics(data.data);
@@ -787,6 +783,11 @@ class RealtimeMetrics {
             this.charts.playersActivity.data.labels = labels;
             this.charts.playersActivity.data.datasets[0].data = data;
             this.charts.playersActivity.update('none');
+        } else {
+            // Если нет данных, показываем пустой график
+            this.charts.playersActivity.data.labels = [];
+            this.charts.playersActivity.data.datasets[0].data = [];
+            this.charts.playersActivity.update('none');
         }
         
         if (charts.system_performance && charts.system_performance.length > 0) {
@@ -821,7 +822,13 @@ class RealtimeMetrics {
         }
 
         if (charts.situation_categories) {
-            this.charts.situationCategories.data.datasets[0].data = charts.situation_categories;
+            const hasData = charts.situation_categories.some(val => val > 0);
+            if (!hasData) {
+                // Если все значения 0, показываем хотя бы по 1 чтобы график был видным
+                this.charts.situationCategories.data.datasets[0].data = [1, 1, 1, 1];
+            } else {
+                this.charts.situationCategories.data.datasets[0].data = charts.situation_categories;
+            }
             this.charts.situationCategories.update('none');
         }
 
@@ -831,8 +838,15 @@ class RealtimeMetrics {
         }
 
         if (charts.top_micro_actions) {
-            this.charts.topMicroActions.data.labels = charts.top_micro_actions.labels || [];
-            this.charts.topMicroActions.data.datasets[0].data = charts.top_micro_actions.data || [];
+            const hasData = charts.top_micro_actions.labels && charts.top_micro_actions.labels.length > 0;
+            if (hasData) {
+                this.charts.topMicroActions.data.labels = charts.top_micro_actions.labels;
+                this.charts.topMicroActions.data.datasets[0].data = charts.top_micro_actions.data;
+            } else {
+                // Если нет данных, показываем заглушку
+                this.charts.topMicroActions.data.labels = ['Нет данных'];
+                this.charts.topMicroActions.data.datasets[0].data = [0];
+            }
             this.charts.topMicroActions.update('none');
         }
 
@@ -848,7 +862,13 @@ class RealtimeMetrics {
         }
 
         if (charts.platform_distribution) {
-            this.charts.platformDistribution.data.datasets[0].data = charts.platform_distribution;
+            const hasData = charts.platform_distribution.some(val => val > 0);
+            if (!hasData) {
+                // Если все значения 0, показываем равномерное распределение для визуализации
+                this.charts.platformDistribution.data.datasets[0].data = [1, 1, 1, 1];
+            } else {
+                this.charts.platformDistribution.data.datasets[0].data = charts.platform_distribution;
+            }
             this.charts.platformDistribution.update('none');
         }
     }
@@ -866,7 +886,6 @@ class RealtimeMetrics {
 
     connectWebSocket() {
         // WebSocket не используется - метрики обновляются через polling
-        console.log('Metrics update via polling every minute');
     }
 }
 
